@@ -12,8 +12,16 @@ Router.post(PATHS_USERS_AUTH.REGISTER, (req, res, next) =>
   userController.register(req, res, next, "users")
 );
 
+Router.post(PATHS_USERS_AUTH.LOGIN, (req, res, next) =>
+  userController.login(req, res, next, "users")
+);
+
 Router.post(PATHS_ADMIN_AUTH.REGISTER, (req, res, next) =>
   userController.register(req, res, next, "cms")
+);
+
+Router.post(PATHS_ADMIN_AUTH.LOGIN, (req, res, next) =>
+  userController.login(req, res, next, "cms")
 );
 
 Router.use((req, res, next) => {

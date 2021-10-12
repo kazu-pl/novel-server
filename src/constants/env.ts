@@ -10,10 +10,10 @@ export const MONGO_DB_URI = `mongodb+srv://${MONGO_USERNAME}:${MONGO_USERNAME_PA
 export const HOSTNAME = process.env.HOSTNAME || "localhost";
 export const PORT = process.env.PORT || 4000;
 
-export const ACCESS_TOKEN_EXPIRETIME =
-  process.env.ACCESS_TOKEN_EXPIRETIME || "15s";
-export const REFRESH_TOKEN_EXPIRETIME =
-  process.env.REFRESH_TOKEN_EXPIRETIME || "30d";
+export const ACCESS_TOKEN_EXPIRETIME_IN_SECONDS =
+  process.env.ACCESS_TOKEN_EXPIRETIME_IN_SECONDS || 15;
+export const REFRESH_TOKEN_EXPIRETIME_IN_SECONDS =
+  process.env.REFRESH_TOKEN_EXPIRETIME_IN_SECONDS || 2592000;
 
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
