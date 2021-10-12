@@ -11,9 +11,9 @@ export const HOSTNAME = process.env.HOSTNAME || "localhost";
 export const PORT = process.env.PORT || 4000;
 
 export const ACCESS_TOKEN_EXPIRETIME_IN_SECONDS =
-  process.env.ACCESS_TOKEN_EXPIRETIME_IN_SECONDS || 15;
+  Number(process.env.ACCESS_TOKEN_EXPIRETIME_IN_SECONDS) || 25;
 export const REFRESH_TOKEN_EXPIRETIME_IN_SECONDS =
-  process.env.REFRESH_TOKEN_EXPIRETIME_IN_SECONDS || 2592000;
+  Number(process.env.REFRESH_TOKEN_EXPIRETIME_IN_SECONDS) || 2592000;
 
-export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
-export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
+export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;

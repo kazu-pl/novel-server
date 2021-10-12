@@ -13,6 +13,7 @@ import {
 import RefreshTokenModel from "models/RefreshTokenModel";
 
 type Variant = "users" | "cms";
+export type Role = "admin" | "user";
 
 const register = (
   req: Request,
@@ -118,29 +119,15 @@ export const login = async (
             message: "Unauthorized",
           });
         } else if (result) {
-          const timeSinceEpochInMs = new Date().getTime();
-          const accessTokenExpirationTime = Number(
-            Math.floor(
-              timeSinceEpochInMs +
-                Number(ACCESS_TOKEN_EXPIRETIME_IN_SECONDS) * 1000
-            )
-          );
-
-          const refreshTokenExpirationTime = Number(
-            Math.floor(
-              timeSinceEpochInMs +
-                Number(REFRESH_TOKEN_EXPIRETIME_IN_SECONDS) * 1000
-            )
-          );
-
           try {
             const accessToken = jwt.sign(
               {
                 login: user.login,
+                role: variant === "cms" ? "admin" : "user",
               },
-              ACCESS_TOKEN_SECRET as string,
+              ACCESS_TOKEN_SECRET,
               {
-                expiresIn: accessTokenExpirationTime,
+                expiresIn: ACCESS_TOKEN_EXPIRETIME_IN_SECONDS,
               }
             );
 
@@ -148,9 +135,9 @@ export const login = async (
               {
                 login: user.login,
               },
-              REFRESH_TOKEN_SECRET as string,
+              REFRESH_TOKEN_SECRET,
               {
-                expiresIn: refreshTokenExpirationTime,
+                expiresIn: REFRESH_TOKEN_EXPIRETIME_IN_SECONDS,
               }
             );
 

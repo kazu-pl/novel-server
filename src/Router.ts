@@ -1,6 +1,8 @@
 import express from "express";
 import { PATHS_USERS_AUTH, PATHS_ADMIN_AUTH } from "constants/paths";
 import userController from "controllers/authController";
+import authenticate from "middleware/authenticate";
+import authorize from "middleware/authorize";
 
 const Router = express.Router();
 
@@ -15,6 +17,18 @@ Router.post(PATHS_USERS_AUTH.REGISTER, (req, res, next) =>
 Router.post(PATHS_USERS_AUTH.LOGIN, (req, res, next) =>
   userController.login(req, res, next, "users")
 );
+
+Router.get(
+  PATHS_USERS_AUTH.PROTECTED,
+  authenticate,
+  authorize("user"),
+  (req, res, next) =>
+    res.status(200).json({ message: "you're alloved to be here" })
+);
+
+// Router.get(PATHS_ADMIN_AUTH.PROTECTED, extractJWT, (req, res, next) =>
+//   res.status(200).json({ message: "you're alloved to be here - admin" })
+// );
 
 Router.post(PATHS_ADMIN_AUTH.REGISTER, (req, res, next) =>
   userController.register(req, res, next, "cms")
