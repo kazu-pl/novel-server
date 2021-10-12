@@ -24,8 +24,8 @@ const authenticate = (
 
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, (error, decoded) => {
     if (error) {
-      return res.status(403).json({
-        message: "Forbidden",
+      return res.status(401).json({
+        message: "Unauthorized",
       });
     } else {
       req.jwt = decoded;

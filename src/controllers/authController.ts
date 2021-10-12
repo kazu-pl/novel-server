@@ -174,4 +174,63 @@ export const login = async (
     });
 };
 
-export default { register, login };
+const refreshAccessToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  variant: Variant
+) => {
+  const { refreshToken } = req.body;
+
+  RefreshTokenModel.find({ value: refreshToken })
+    .exec()
+    .then(async (tokens) => {
+      if (tokens.length !== 1) {
+        return res.status(403).json({
+          message: "Forbidden",
+        });
+      }
+
+      jwt.verify(
+        refreshToken,
+        REFRESH_TOKEN_SECRET,
+        async (err: any, data: any) => {
+          if (err) {
+            return res.status(403).json({
+              message: "Forbidden",
+            });
+          }
+
+          try {
+            const newAccessToken = await jwt.sign(
+              {
+                login: data.login,
+                role: variant === "cms" ? "admin" : "user",
+              },
+              ACCESS_TOKEN_SECRET,
+              {
+                expiresIn: ACCESS_TOKEN_EXPIRETIME_IN_SECONDS,
+              }
+            );
+
+            return res.status(200).json({
+              accessToken: newAccessToken,
+            });
+          } catch (error) {
+            return res.status(500).json({
+              message: "Could not regenerate access token",
+              error,
+            });
+          }
+        }
+      );
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        message: error.message,
+        error,
+      });
+    });
+};
+
+export default { register, login, refreshAccessToken };
