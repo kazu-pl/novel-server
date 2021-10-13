@@ -244,10 +244,12 @@ const refreshAccessToken = (
         });
       }
 
-      jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, data) => {
+      jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (err, data) => {
         if (err) {
-          return res.status(403).json({
-            message: "Forbidden",
+          await RefreshTokenModel.deleteOne({ value: refreshToken });
+
+          return res.status(401).json({
+            message: "Unauthorized - refresh token expired",
           });
         }
 
