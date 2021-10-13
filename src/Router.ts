@@ -26,20 +26,12 @@ Router.get(
     res.status(200).json({ message: "you're alloved to be here" })
 );
 
-Router.get(
-  PATHS_ADMIN_AUTH.PROTECTED,
-  authenticate,
-  authorize("admin"),
-  (req, res, next) =>
-    res.status(200).json({ message: "you're alloved to be here - admin" })
-);
-
 Router.post(PATHS_USERS_AUTH.REFRESH_TOKEN, (req, res, next) =>
   userController.refreshAccessToken(req, res, next, "users")
 );
 
-Router.post(PATHS_ADMIN_AUTH.REFRESH_TOKEN, (req, res, next) =>
-  userController.refreshAccessToken(req, res, next, "cms")
+Router.post(PATHS_USERS_AUTH.LOGOUT, (req, res, next) =>
+  userController.logout(req, res, next)
 );
 
 Router.post(PATHS_ADMIN_AUTH.REGISTER, (req, res, next) =>
@@ -48,6 +40,22 @@ Router.post(PATHS_ADMIN_AUTH.REGISTER, (req, res, next) =>
 
 Router.post(PATHS_ADMIN_AUTH.LOGIN, (req, res, next) =>
   userController.login(req, res, next, "cms")
+);
+
+Router.get(
+  PATHS_ADMIN_AUTH.PROTECTED,
+  authenticate,
+  authorize("admin"),
+  (req, res, next) =>
+    res.status(200).json({ message: "you're alloved to be here - admin" })
+);
+
+Router.post(PATHS_ADMIN_AUTH.REFRESH_TOKEN, (req, res, next) =>
+  userController.refreshAccessToken(req, res, next, "cms")
+);
+
+Router.post(PATHS_ADMIN_AUTH.LOGOUT, (req, res, next) =>
+  userController.logout(req, res, next)
 );
 
 Router.use((req, res, next) => {

@@ -11,6 +11,7 @@ import {
 } from "constants/env";
 
 import RefreshTokenModel from "models/RefreshTokenModel";
+import cache from "config/cache";
 
 type Variant = "users" | "cms";
 export type Role = "admin" | "user";
@@ -23,20 +24,42 @@ const register = (
 ) => {
   const { login, password, repeatedPassword } = req.body;
 
+  if (!login) {
+    return res.status(422).json({
+      message: "login was not provided",
+    });
+  }
+
+  if (!password) {
+    return res.status(422).json({
+      message: "Password was not provided",
+    });
+  }
+
   if (!repeatedPassword) {
-    return res.status(400).json({
+    return res.status(422).json({
       message: "Repeated password was not provided",
     });
   }
 
   if (password !== repeatedPassword) {
-    return res.status(400).json({
+    return res.status(422).json({
       message: "Different passwords",
     });
   }
 
+  if (
+    typeof login !== "string" ||
+    typeof password !== "string" ||
+    typeof repeatedPassword !== "string"
+  ) {
+    return res.status(422).json({
+      message: "login, password and repeatedPassword should be of type string",
+    });
+  }
+
   if (typeof password === "string" && password.length < 8) {
-    return res.status(400).json({
+    return res.status(422).json({
       message: "Password must be at least 8 characters",
     });
   }
@@ -101,6 +124,24 @@ export const login = async (
   variant: Variant
 ) => {
   let { login, password } = req.body;
+
+  if (!login) {
+    return res.status(422).json({
+      message: "login was not provided",
+    });
+  }
+
+  if (!password) {
+    return res.status(422).json({
+      message: "login was not provided",
+    });
+  }
+
+  if (typeof login !== "string" || typeof password !== "string") {
+    return res.status(422).json({
+      message: "login and password should be of type string",
+    });
+  }
 
   UserModel.find({ login, ...(variant === "cms" && { isAdmin: true }) })
     .exec()
@@ -182,48 +223,57 @@ const refreshAccessToken = (
 ) => {
   const { refreshToken } = req.body;
 
+  if (!refreshToken) {
+    return res.status(422).json({
+      message: "refreshToken was not provided",
+    });
+  }
+
+  if (typeof refreshToken !== "string") {
+    return res.status(422).json({
+      message: "refreshToken should be of type string",
+    });
+  }
+
   RefreshTokenModel.find({ value: refreshToken })
     .exec()
-    .then(async (tokens) => {
+    .then((tokens) => {
       if (tokens.length !== 1) {
         return res.status(403).json({
           message: "Forbidden",
         });
       }
 
-      jwt.verify(
-        refreshToken,
-        REFRESH_TOKEN_SECRET,
-        async (err: any, data: any) => {
-          if (err) {
-            return res.status(403).json({
-              message: "Forbidden",
-            });
-          }
+      jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, data) => {
+        if (err) {
+          return res.status(403).json({
+            message: "Forbidden",
+          });
+        }
 
-          try {
-            const newAccessToken = await jwt.sign(
-              {
-                login: data.login,
-                role: variant === "cms" ? "admin" : "user",
-              },
-              ACCESS_TOKEN_SECRET,
-              {
-                expiresIn: ACCESS_TOKEN_EXPIRETIME_IN_SECONDS,
-              }
-            );
+        jwt.sign(
+          {
+            login: data && data.login,
+            role: variant === "cms" ? "admin" : "user",
+          },
+          ACCESS_TOKEN_SECRET,
+          {
+            expiresIn: ACCESS_TOKEN_EXPIRETIME_IN_SECONDS,
+          },
+          (error, encodedAccessToken) => {
+            if (error) {
+              return res.status(500).json({
+                message: "Could not regenerate access token",
+                error,
+              });
+            }
 
             return res.status(200).json({
-              accessToken: newAccessToken,
-            });
-          } catch (error) {
-            return res.status(500).json({
-              message: "Could not regenerate access token",
-              error,
+              accessToken: encodedAccessToken,
             });
           }
-        }
-      );
+        );
+      });
     })
     .catch((error) => {
       return res.status(500).json({
@@ -233,4 +283,58 @@ const refreshAccessToken = (
     });
 };
 
-export default { register, login, refreshAccessToken };
+const logout = (req: Request, res: Response, next: NextFunction) => {
+  const { refreshToken, accessToken } = req.body;
+
+  if (!refreshToken || !accessToken) {
+    return res.status(422).json({
+      message: "refreshToken and/or accessToken was not provided",
+    });
+  }
+
+  if (typeof refreshToken !== "string" || typeof accessToken !== "string") {
+    return res.status(422).json({
+      message: "refreshToken and accessToken should be of type string",
+    });
+  }
+
+  jwt.verify(accessToken, ACCESS_TOKEN_SECRET, (error, decoded) => {
+    const removeRefreshTokenFromDB = () => {
+      RefreshTokenModel.deleteOne({ value: refreshToken })
+        .then(() => {
+          return res.status(200).json({ message: "logout successed" });
+        })
+        .catch((error) => {
+          return res.status(500).json({
+            message: error.message,
+            error,
+          });
+        });
+    };
+
+    if (error) {
+      removeRefreshTokenFromDB();
+      // error means accessToken expired already so there's no need to blacklist it
+      console.log("ACCESS TOKEN EXPIRED ALREADY");
+    } else {
+      console.log("ACCESS TOKEN OK");
+      const expireBlacklistedTokenAt =
+        decoded && decoded.exp
+          ? decoded.exp - Math.floor(new Date().getTime() / 1000)
+          : 0;
+
+      cache.set(
+        accessToken,
+        {
+          accessToken,
+          ...(decoded && { login: decoded.login, role: decoded.role }),
+        },
+        expireBlacklistedTokenAt
+      );
+
+      removeRefreshTokenFromDB();
+    }
+  });
+};
+
+export default { register, login, refreshAccessToken, logout };
