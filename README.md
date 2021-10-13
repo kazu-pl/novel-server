@@ -74,7 +74,3 @@ found [here](https://stackoverflow.com/questions/61342753/paths-from-tsconfig-js
 If you run `yarn build` command which is ` "build": "rm -rf build && tsc"` and it does nothing (should create `build` folder with transpiled files) then you probably have UNCOMMENTED field `"noEmit": true` in your `tsconfig.json` file.
 When it is COMMENTED it ENABLES to transpile build files (emit them)
 WHEN it is UNcommented it DISables to transpile build fules (you can run `yarn build` but it won't do anything)
-
-# Run translited code from build dir
-
-TS does great job with
