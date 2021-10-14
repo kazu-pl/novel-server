@@ -1,0 +1,227 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Express API for JSONPlaceholder",
+    "version": "1.0.0",
+    "description": "This is a REST API application made with Express. It retrieves data from JSONPlaceholder.",
+    "license": {
+      "name": "Licensed Under MIT",
+      "url": "https://spdx.org/licenses/MIT.html"
+    },
+    "contact": {
+      "name": "JSONPlaceholder",
+      "url": "https://jsonplaceholder.typicode.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "200": {
+          "description": "A successfull resposne"
+        },
+        "description": "Use to reqwuest all custoemrs",
+        "responses": null
+      }
+    },
+    "/books": {
+      "get": {
+        "summary": "Returns the list of all the books",
+        "tags": [
+          "Books"
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of the books",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Book"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new book",
+        "tags": [
+          "Books"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Book"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The book was successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Some server error"
+          }
+        }
+      }
+    },
+    "/books/{id}": {
+      "get": {
+        "summary": "Get the book by id",
+        "tags": [
+          "Books"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The book id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The book description by id",
+            "contens": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The book was not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update the book by the id",
+        "tags": [
+          "Books"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The book id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Book"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The book was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The book was not found"
+          },
+          "500": {
+            "description": "Some error happened"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove the book by id",
+        "tags": [
+          "Books"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The book id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The book was deleted"
+          },
+          "404": {
+            "description": "The book was not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Book": {
+        "type": "object",
+        "required": [
+          "title",
+          "author"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The auto-generated id of the book"
+          },
+          "title": {
+            "type": "string",
+            "description": "the book title"
+          },
+          "author": {
+            "type": "string",
+            "description": "the book author"
+          }
+        },
+        "example": {
+          "id": "0000-0000-0000-0000",
+          "title": "The New Turning Omibus",
+          "author": "John Doe"
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Books",
+      "description": "The books managing API"
+    }
+  ]
+}
