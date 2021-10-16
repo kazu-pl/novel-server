@@ -157,7 +157,8 @@ export const login = async (
       bcryptjs.compare(password, user.password, async (error, result) => {
         if (error) {
           return res.status(401).json({
-            message: "Unauthorized",
+            message: error.message,
+            error,
           });
         } else if (result) {
           try {
@@ -244,12 +245,14 @@ const refreshAccessToken = (
         });
       }
 
-      jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (err, data) => {
-        if (err) {
+      jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (error, data) => {
+        if (error) {
           await RefreshTokenModel.deleteOne({ value: refreshToken });
 
           return res.status(401).json({
-            message: "Unauthorized - refresh token expired",
+            message:
+              "Unauthorized - refresh token expired or other error occured",
+            error,
           });
         }
 
@@ -317,9 +320,7 @@ const logout = (req: Request, res: Response, next: NextFunction) => {
     if (error) {
       removeRefreshTokenFromDB();
       // error means accessToken expired already so there's no need to blacklist it
-      console.log("ACCESS TOKEN EXPIRED ALREADY");
     } else {
-      console.log("ACCESS TOKEN OK");
       const expireBlacklistedTokenAt =
         decoded && decoded.exp
           ? decoded.exp - Math.floor(new Date().getTime() / 1000)
