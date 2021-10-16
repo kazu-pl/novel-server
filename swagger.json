@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Express API for JSONPlaceholder",
+    "title": "Novel-server",
     "version": "1.0.0",
-    "description": "This is a REST API application made with Express. It retrieves data from JSONPlaceholder.",
+    "description": "This is a server for Novel project.",
     "license": {
       "name": "Licensed Under MIT",
       "url": "https://spdx.org/licenses/MIT.html"
@@ -22,46 +22,165 @@
   "paths": {
     "/register": {
       "post": {
-        "200": {
-          "description": "A successfull resposne"
-        },
-        "description": "Use to reqwuest all custoemrs",
-        "responses": null
-      }
-    },
-    "/books": {
-      "get": {
-        "summary": "Returns the list of all the books",
+        "summary": "Used to register new user",
         "tags": [
-          "Books"
-        ],
-        "responses": {
-          "200": {
-            "description": "The list of the books",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Book"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new book",
-        "tags": [
-          "Books"
+          "Auth regular user"
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Book"
+                "type": "object",
+                "required": [
+                  "login",
+                  "password",
+                  "repeatedPassword"
+                ],
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "description": "unique login that will be used to log in"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "password"
+                  },
+                  "repeatedPassword": {
+                    "type": "string",
+                    "description": "the same password repated twice"
+                  }
+                },
+                "example": {
+                  "login": "myLogin",
+                  "password": "Pa$sWorD",
+                  "repeatedPassword": "Pa$sWorD"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A successful resposne"
+          },
+          "422": {
+            "description": "Missing required data or incorrect type"
+          },
+          "500": {
+            "description": "An error occured while trying to register new user"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Used to log in regular user",
+        "tags": [
+          "Auth regular user"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "login",
+                  "poassword"
+                ],
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "description": "the same login that was used to register"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "the smae password that was used to register"
+                  }
+                },
+                "example": {
+                  "login": "myLogin",
+                  "password": "Pa$sWorD"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "access token and refresh token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tokens"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Account with that login and password does not exist"
+          },
+          "422": {
+            "description": "Missing required data or incorrect type"
+          }
+        }
+      }
+    },
+    "/protected": {
+      "get": {
+        "summary": "sample protected route",
+        "tags": [
+          "Auth regular user"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The book id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The book description by id"
+          },
+          "401": {
+            "description": "you are not logged in or your tokens expired"
+          },
+          "403": {
+            "description": "you are logged in but you don't have permission for the resource"
+          }
+        }
+      }
+    },
+    "/refresh-token": {
+      "post": {
+        "summary": "regerenates accessToken based on refreshToken",
+        "tags": [
+          "Auth regular user"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "refreshToken"
+                ],
+                "properties": {
+                  "refreshToken": {
+                    "type": "string",
+                    "description": "refreshToken obtained when logging in"
+                  }
+                },
+                "example": {
+                  "refreshToken": "5bhk88956redhjjgfhI1NiIsInR5cCI6IkpXVCJ9.B6rfTYJr4GHhdbig56y7h7hg4g4ghy6Hh6MTYzNDM3MjQ3fggfghreeghute3NjM0T.KVLILQs_Brp_WRtOmPGi86l40hOnoxnd32XK5rI33EQ"
+                }
               }
             }
           }
@@ -72,156 +191,264 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Book"
+                  "$ref": "#/components/schemas/AccessToken"
                 }
               }
             }
           },
-          "500": {
-            "description": "Some server error"
+          "401": {
+            "description": "Unauthorized because of expired refreshToken (you have to logout and login again)"
+          },
+          "403": {
+            "description": "Forbidden - refreshToken does not exist in DB (if you first got 401 and tried to refresh again you will get this  403 because refreshTokens are removed from DB when trying to refresh accessToken with expried refreshToken to save DB space)"
+          },
+          "422": {
+            "description": "Missing or incorect refreshToken"
           }
         }
       }
     },
-    "/books/{id}": {
-      "get": {
-        "summary": "Get the book by id",
+    "/logout": {
+      "post": {
+        "summary": "logout logged in user",
         "tags": [
-          "Books"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "The book id"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The book description by id",
-            "contens": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Book"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The book was not found"
-          }
-        }
-      },
-      "put": {
-        "summary": "Update the book by the id",
-        "tags": [
-          "Books"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "The book id"
-          }
+          "Auth regular user"
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Book"
+                "$ref": "#/components/schemas/Tokens"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "The book was updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Book"
-                }
-              }
-            }
+            "description": "logout successed"
           },
-          "404": {
-            "description": "The book was not found"
+          "422": {
+            "description": "incorrect or missing refreshToken and/or accessToken"
           },
           "500": {
             "description": "Some error happened"
           }
         }
-      },
-      "delete": {
-        "summary": "Remove the book by id",
+      }
+    },
+    "/cms/register": {
+      "post": {
+        "summary": "Used to register new admin in CMS",
         "tags": [
-          "Books"
+          "Auth CMS admins"
         ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "description": "The book id"
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "login",
+                  "password",
+                  "repeatedPassword"
+                ],
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "description": "unique login that will be used to log in"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "password"
+                  },
+                  "repeatedPassword": {
+                    "type": "string",
+                    "description": "the same password repated twice"
+                  }
+                },
+                "example": {
+                  "login": "myLogin",
+                  "password": "Pa$sWorD",
+                  "repeatedPassword": "Pa$sWorD"
+                }
+              }
+            }
           }
+        },
+        "responses": {
+          "201": {
+            "description": "A successful resposne"
+          },
+          "422": {
+            "description": "Missing required data or incorrect type"
+          },
+          "500": {
+            "description": "An error occured while trying to register new user"
+          }
+        }
+      }
+    },
+    "/cms/login": {
+      "post": {
+        "summary": "Used to log in admin in CMS",
+        "tags": [
+          "Auth CMS admins"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "login",
+                  "poassword"
+                ],
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "description": "the same login that was used to register"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "the smae password that was used to register"
+                  }
+                },
+                "example": {
+                  "login": "testLogin",
+                  "password": "qwerty123"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "access token and refresh token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tokens"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Account with that login and password does not exist"
+          },
+          "422": {
+            "description": "Missing required data or incorrect type"
+          }
+        }
+      }
+    },
+    "/cms/protected": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "sample protected route",
+        "tags": [
+          "Auth CMS admins"
         ],
         "responses": {
           "200": {
-            "description": "The book was deleted"
+            "description": "The book description by id"
           },
-          "404": {
-            "description": "The book was not found"
+          "401": {
+            "description": "you are not logged in or your tokens expired"
+          },
+          "403": {
+            "description": "you are logged in but you don't have permission for the resource"
           }
         }
       }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Book": {
-        "type": "object",
-        "required": [
-          "title",
-          "author"
+    },
+    "/cms/refresh-token": {
+      "post": {
+        "summary": "regerenates accessToken based on refreshToken",
+        "tags": [
+          "Auth CMS admins"
         ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "The auto-generated id of the book"
-          },
-          "title": {
-            "type": "string",
-            "description": "the book title"
-          },
-          "author": {
-            "type": "string",
-            "description": "the book author"
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "refreshToken"
+                ],
+                "properties": {
+                  "refreshToken": {
+                    "type": "string",
+                    "description": "refreshToken obtained when logging in"
+                  }
+                },
+                "example": {
+                  "refreshToken": "5bhk88956redhjjgfhI1NiIsInR5cCI6IkpXVCJ9.B6rfTYJr4GHhdbig56y7h7hg4g4ghy6Hh6MTYzNDM3MjQ3fggfghreeghute3NjM0T.KVLILQs_Brp_WRtOmPGi86l40hOnoxnd32XK5rI33EQ"
+                }
+              }
+            }
           }
         },
-        "example": {
-          "id": "0000-0000-0000-0000",
-          "title": "The New Turning Omibus",
-          "author": "John Doe"
+        "responses": {
+          "200": {
+            "description": "The book was successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessToken"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized because of expired refreshToken (you have to logout and login again)"
+          },
+          "403": {
+            "description": "Forbidden - refreshToken does not exist in DB (if you first got 401 and tried to refresh again you will get this  403 because refreshTokens are removed from DB when trying to refresh accessToken with expried refreshToken to save DB space)"
+          },
+          "422": {
+            "description": "Missing or incorect refreshToken"
+          }
+        }
+      }
+    },
+    "/cms/logout": {
+      "post": {
+        "summary": "logout logged in user",
+        "tags": [
+          "Auth CMS admins"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Tokens"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "logout successed"
+          },
+          "422": {
+            "description": "incorrect or missing refreshToken and/or accessToken"
+          },
+          "500": {
+            "description": "Some error happened"
+          }
         }
       }
     }
   },
-  "tags": [
-    {
-      "name": "Books",
-      "description": "The books managing API"
-    }
-  ]
+  "components": {},
+  "tags": []
 }

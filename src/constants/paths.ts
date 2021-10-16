@@ -13,3 +13,8 @@ export const PATHS_ADMIN_AUTH = {
   REFRESH_TOKEN: "/cms/refresh-token",
   LOGOUT: "/cms/logout",
 };
+
+export const PATHS_SWAGGER = {
+  SWAGGER: "/swagger",
+  SWAGGER_SCHEMA_JSON: "/swagger-schema.json",
+};

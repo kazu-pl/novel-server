@@ -182,3 +182,56 @@ Additionaly, you can modify your `start` script to generate types with every sta
     "generate-types": "node ./generateTypes.js"
   },
 ```
+
+# How to add JWT authorize option to swagger:
+
+- `1` - make sure you have swagger options configured like this:
+
+```
+const swggerOptions: Options = {
+  swaggerDefinition: {
+    openapi: "3.0.0", // you need this
+    components: { // also needed to JWT
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+  },
+};
+
+export const swaggerSpec = swaggerJSDoc(swggerOptions);
+```
+
+- `2` - add security fields in swagger jsdoc annotations like this:
+
+```
+// Router.ts
+
+/**
+ * @swagger
+ *  /cms/protected:
+ *  get:
+ *    security:             // <--- you need this
+ *      - bearerAuth: []    // <--- you need this
+ *    summary: sample protected route
+ *    tags: [Auth CMS admins]
+ *    responses:
+ *      200:
+ *        description: The book description by id
+ */
+ Router.get(
+  PATHS_ADMIN_AUTH.PROTECTED,
+  authenticate,
+  authorize("admin"),
+  (req, res, next) =>
+    res.status(200).json({ message: "you're alloved to be here - admin" })
+);
+
+
+```
+
+Found [here](https://stackoverflow.com/questions/50736784/how-to-authorise-swagger-jsdoc-with-jwt-token) - search for `To make this work, you will need to add the openapi property to your swaggerDefinition object.`
