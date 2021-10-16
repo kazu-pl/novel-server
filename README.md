@@ -110,6 +110,10 @@ WHEN it is UNcommented it DISables to transpile build fules (you can run `yarn b
 
 - `3` - run `swagger-jsdoc -d src/config/swagger-def.json src/Router.ts` where `src/Router.ts` are the paths to your files with JSDoc comments
 
+#### WARNING:
+
+if you just want to generate interfaces (not whole client) then you can create `schemas.ts` and describe `@swagger` schemas inside of it and pass path to that file. `src/Router.ts` needs to be passed if you have schemas described inside of `Router.ts` and not in separate file or if you want to generate whole client
+
 - `3a` - you can also add script for generating `json` file like so:
 
 ```
@@ -182,6 +186,21 @@ Additionaly, you can modify your `start` script to generate types with every sta
     "generate-types": "node ./generateTypes.js"
   },
 ```
+
+# After generated `swagger-schema.json` on server and use it to generate types on front no file is created
+
+Types generated via `swagger-typescript-api` comes from `"components": {}` key in `swagger-schema.json`. If no file is created after generating types with `swagger-typescript-api` it means that `"components": {}` in json file generated on server is empty
+Possible problems:
+
+- schemas are described in another file than jsdoc comments - swagger will work but it wont generate json file correctly so you need to have schemas in the same folder as route comments
+
+### Warning 1:
+
+if you just want to generate interfaces for typed Redux and you want to have schemas in separate file than routig describing comments then you can just pass path to `schemas.ts` because even if you would have more information in generated `swagger-schema.json` file it won't be used (generating interfaces only cares about `"components": {}`)
+
+### Warning 2:
+
+if you want to generate whole client then you have to place schemas and tags in the same folder as routing describing components
 
 # How to add JWT authorize option to swagger:
 
