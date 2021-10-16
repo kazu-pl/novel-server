@@ -40,25 +40,7 @@ Router.use(PATHS_SWAGGER.SWAGGER_SCHEMA_JSON, (req, res) =>
  *      content:
  *        application/json:
  *          schema:
- *            type: object
- *            required:
- *              - login
- *              - password
- *              - repeatedPassword
- *            properties:
- *              login:
- *                type: string
- *                description: unique login that will be used to log in
- *              password:
- *                type: string
- *                description: password
- *              repeatedPassword:
- *                type: string
- *                description: the same password repated twice
- *            example:
- *              login: myLogin
- *              password: Pa$sWorD
- *              repeatedPassword: Pa$sWorD
+ *            $ref: '#/components/schemas/RequestRegisterCredentials'
  *    responses:
  *      201:
  *        description: A successful resposne
@@ -82,20 +64,7 @@ Router.post(PATHS_USERS_AUTH.REGISTER, (req, res, next) =>
  *      content:
  *        application/json:
  *          schema:
- *            type: object
- *            required:
- *              - login
- *              - poassword
- *            properties:
- *              login:
- *                type: string
- *                description: the same login that was used to register
- *              password:
- *                type: string
- *                description: the smae password that was used to register
- *            example:
- *              login: myLogin
- *              password: Pa$sWorD
+ *            $ref: '#/components/schemas/RequestLoginCredentials'
  *
  *     responses:
  *      200:
@@ -161,15 +130,7 @@ Router.get(
  *        content:
  *          application/json:
  *            schema:
- *              type: object
- *              required:
- *                - refreshToken
- *              properties:
- *                refreshToken:
- *                  type: string
- *                  description: refreshToken obtained when logging in
- *              example:
- *                refreshToken: 5bhk88956redhjjgfhI1NiIsInR5cCI6IkpXVCJ9.B6rfTYJr4GHhdbig56y7h7hg4g4ghy6Hh6MTYzNDM3MjQ3fggfghreeghute3NjM0T.KVLILQs_Brp_WRtOmPGi86l40hOnoxnd32XK5rI33EQ
+ *              $ref: '#/components/schemas/RequestRefreshTokenCredentials'
  *      responses:
  *        200:
  *          description: The book was successfully created
@@ -223,25 +184,7 @@ Router.post(PATHS_USERS_AUTH.LOGOUT, (req, res, next) =>
  *      content:
  *        application/json:
  *          schema:
- *            type: object
- *            required:
- *              - login
- *              - password
- *              - repeatedPassword
- *            properties:
- *              login:
- *                type: string
- *                description: unique login that will be used to log in
- *              password:
- *                type: string
- *                description: password
- *              repeatedPassword:
- *                type: string
- *                description: the same password repated twice
- *            example:
- *              login: myLogin
- *              password: Pa$sWorD
- *              repeatedPassword: Pa$sWorD
+ *            $ref: '#/components/schemas/RequestRegisterCredentials'
  *    responses:
  *      201:
  *        description: A successful resposne
@@ -265,21 +208,7 @@ Router.post(PATHS_ADMIN_AUTH.REGISTER, (req, res, next) =>
  *      content:
  *        application/json:
  *          schema:
- *            type: object
- *            required:
- *              - login
- *              - poassword
- *            properties:
- *              login:
- *                type: string
- *                description: the same login that was used to register
- *              password:
- *                type: string
- *                description: the smae password that was used to register
- *            example:
- *              login: testLogin
- *              password: qwerty123
- *
+ *            $ref: '#/components/schemas/RequestLoginCredentials'
  *     responses:
  *      200:
  *         description: access token and refresh token
@@ -302,8 +231,26 @@ Router.post(PATHS_ADMIN_AUTH.LOGIN, (req, res, next) =>
  *  get:
  *    security:
  *      - bearerAuth: []
- *    summary: sample protected route
+ *    summary: sample protected route wtih optional parameters in body
  *    tags: [Auth CMS admins]
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            required:
+ *              - requiredField
+ *            properties:
+ *              requiredField:
+ *                type: string
+ *                description: required field
+ *              optionalField:
+ *                type: string
+ *                description: this is optional field
+ *            example:
+ *              requiredField: click 'Schema' above to see how it looks
+ *              optionalField: some optional info
  *    responses:
  *      200:
  *        description: The book description by id
@@ -331,15 +278,7 @@ Router.get(
  *        content:
  *          application/json:
  *            schema:
- *              type: object
- *              required:
- *                - refreshToken
- *              properties:
- *                refreshToken:
- *                  type: string
- *                  description: refreshToken obtained when logging in
- *              example:
- *                refreshToken: 5bhk88956redhjjgfhI1NiIsInR5cCI6IkpXVCJ9.B6rfTYJr4GHhdbig56y7h7hg4g4ghy6Hh6MTYzNDM3MjQ3fggfghreeghute3NjM0T.KVLILQs_Brp_WRtOmPGi86l40hOnoxnd32XK5rI33EQ
+ *              $ref: '#/components/schemas/RequestRefreshTokenCredentials'
  *      responses:
  *        200:
  *          description: The book was successfully created
