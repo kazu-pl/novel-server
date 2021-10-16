@@ -129,7 +129,12 @@
     },
     "/protected": {
       "get": {
-        "summary": "sample protected route",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "example of endpoint with params in path and url (underneath endpoint does not allow any of this. Its only to show how to code params in swagger-jsdoc commoents)",
         "tags": [
           "Auth regular user"
         ],
@@ -141,7 +146,16 @@
               "type": "string"
             },
             "required": true,
-            "description": "The book id"
+            "description": "The book id (to make use of it you need to have url like `/books/:id`)"
+          },
+          {
+            "in": "query",
+            "name": "color",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "book color"
           }
         ],
         "responses": {
