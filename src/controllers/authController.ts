@@ -147,7 +147,7 @@ export const login = async (
     .exec()
     .then((users) => {
       if (!users.length) {
-        return res.status(404).json({
+        return res.status(401).json({
           message: "Account with that login and password does not exist",
         });
       }
@@ -199,11 +199,16 @@ export const login = async (
               "Login",
               "Could not sign tokens when trying to login"
             );
-            return res.status(500).json({
+            return res.status(401).json({
               message: "Unauthorized",
               error,
             });
           }
+        } else {
+          return res.status(401).json({
+            message: "Account with that login and password does not exist",
+            error,
+          });
         }
       });
     })
