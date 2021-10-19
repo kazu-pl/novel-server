@@ -23,6 +23,12 @@ const authenticate = (
 
   const accessToken = token[1];
 
+  if (typeof accessToken !== "string") {
+    return res.status(401).json({
+      message: "Unauthorized - accessToken should be of type string",
+    });
+  }
+
   if (cache.has(accessToken)) {
     return res.status(401).json({
       message: "Unauthorized - blacklisted token",

@@ -147,7 +147,7 @@ export const login = async (
     .exec()
     .then((users) => {
       if (!users.length) {
-        return res.status(401).json({
+        return res.status(404).json({
           message: "Account with that login and password does not exist",
         });
       }
@@ -190,7 +190,6 @@ export const login = async (
             });
 
             await newRefreshTokenInDB.save();
-
             return res.status(200).json({
               accessToken,
               refreshToken,
@@ -200,7 +199,7 @@ export const login = async (
               "Login",
               "Could not sign tokens when trying to login"
             );
-            return res.status(401).json({
+            return res.status(500).json({
               message: "Unauthorized",
               error,
             });
@@ -249,9 +248,8 @@ const refreshAccessToken = (
         if (error) {
           await RefreshTokenModel.deleteOne({ value: refreshToken });
 
-          return res.status(401).json({
-            message:
-              "Unauthorized - refresh token expired or other error occured",
+          return res.status(403).json({
+            message: "Forbidden - refresh token expired or other error occured",
             error,
           });
         }
