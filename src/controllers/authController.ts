@@ -248,9 +248,8 @@ const refreshAccessToken = (
         if (error) {
           await RefreshTokenModel.deleteOne({ value: refreshToken });
 
-          return res.status(401).json({
-            message:
-              "Unauthorized - refresh token expired or other error occured",
+          return res.status(403).json({
+            message: "Forbidden - refresh token expired or other error occured",
             error,
           });
         }

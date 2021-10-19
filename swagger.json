@@ -120,6 +120,27 @@
         "example": {
           "refreshToken": "5bhk88956redhjjgfhI1NiIsInR5cCI6IkpXVCJ9.B6rfTYJr4GHhdbig56y7h7hg4g4ghy6Hh6MTYzNDM3MjQ3fggfghreeghute3NjM0T.KVLILQs_Brp_WRtOmPGi86l40hOnoxnd32XK5rI33EQ"
         }
+      },
+      "UserProfile": {
+        "type": "object",
+        "required": [
+          "name",
+          "surname"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "user name"
+          },
+          "surname": {
+            "type": "string",
+            "description": "user surname"
+          }
+        },
+        "example": {
+          "name": "John",
+          "surname": "Doe"
+        }
       }
     }
   },
