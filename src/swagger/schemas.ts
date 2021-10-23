@@ -36,40 +36,50 @@ export {};
  *    RequestRegisterCredentials:
  *      type: object
  *      required:
- *        - login
  *        - password
  *        - repeatedPassword
+ *        - email
+ *        - name
+ *        - surname
  *      properties:
- *        login:
- *          type: string
- *          description: login used to register
  *        password:
  *          type: string
  *          description: password
  *        repeatedPassword:
  *          type: string
  *          description: the same password passed twice
+ *        email:
+ *          type: string
+ *          description: email
+ *        name:
+ *          type: string
+ *          description: your name
+ *        surname:
+ *          type: string
+ *          description: your surname
  *      example:
- *        login: myLogin
- *        password: Pa$sWorD
- *        repeatedPassword: Pa$sWorD
+ *        password: admin123
+ *        repeatedPassword: admin123
+ *        email:  admin@asd.pl
+ *        name: John
+ *        surname: Doe
  *
  *
  *    RequestLoginCredentials:
  *      type: object
  *      required:
- *        - login
+ *        - email
  *        - password
  *      properties:
- *        login:
+ *        email:
  *          type: string
- *          description: Login that is used to log in
+ *          description: email that is used to log in
  *        password:
  *          type: string
  *          description: password
  *      example:
- *        login: myLogin
- *        password: Pa$sWorD
+ *        email: admin@asd.pl
+ *        password: admin123
  *
  *
  *    RequestRefreshTokenCredentials:
@@ -88,6 +98,7 @@ export {};
  *      required:
  *        - name
  *        - surname
+ *        - email
  *      properties:
  *        name:
  *          type: string
@@ -95,7 +106,11 @@ export {};
  *        surname:
  *          type: string
  *          description: user surname
+ *        email:
+ *          type: string
+ *          description: email
  *      example:
  *        name: John
  *        surname: Doe
+ *        email: admin@asd.pl
  */

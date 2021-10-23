@@ -45,3 +45,13 @@ const getUserData = (req: Request, res: Response) => {
 };
 
 export default { getUserData };
+
+// TODO:
+// udało mi się przerobić auth i logowanie na email a nie login
+// 1 - dodać możliwość zmiany imienia, nazwiska, hasła i emailu
+// 2 - dodać przypominanie hasła
+
+// FRONT:
+// 3 - na froncie obslużyc nowe opcje logowania
+// 4 - dodać widok "/account" gdzie będzie można zmienić imie, nazwisko itd
+// 5 - dodać widok to resetu hasła/przypiominania

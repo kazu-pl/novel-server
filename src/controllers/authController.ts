@@ -16,19 +16,13 @@ import cache from "config/cache";
 type Variant = "users" | "cms";
 export type Role = "admin" | "user";
 
-const register = (
+const register = async (
   req: Request,
   res: Response,
   next: NextFunction,
   variant: Variant
 ) => {
-  const { login, password, repeatedPassword } = req.body;
-
-  if (!login) {
-    return res.status(422).json({
-      message: "login was not provided",
-    });
-  }
+  const { password, repeatedPassword, email, name, surname } = req.body;
 
   if (!password) {
     return res.status(422).json({
@@ -48,13 +42,32 @@ const register = (
     });
   }
 
+  if (!email) {
+    return res.status(422).json({
+      message: "email was not provided",
+    });
+  }
+  if (!name) {
+    return res.status(422).json({
+      message: "name was not provided",
+    });
+  }
+  if (!surname) {
+    return res.status(422).json({
+      message: "surname was not provided",
+    });
+  }
+
   if (
-    typeof login !== "string" ||
+    typeof email !== "string" ||
+    typeof name !== "string" ||
+    typeof surname !== "string" ||
     typeof password !== "string" ||
     typeof repeatedPassword !== "string"
   ) {
     return res.status(422).json({
-      message: "login, password and repeatedPassword should be of type string",
+      message:
+        "login, password, repeatedPassword, name, surname and email should be of type string",
     });
   }
 
@@ -64,22 +77,27 @@ const register = (
     });
   }
 
-  UserModel.find({ login })
+  if (!email.includes("@") || !email.includes(".")) {
+    return res.status(422).json({
+      message: "wrong email format",
+    });
+  }
+
+  UserModel.find()
+    .where("data.email")
+    .in([email])
+    .where("isAdmin")
+    .in([variant === "cms"])
     .exec()
-    .then((users) => {
-      if (
-        users.filter((user) => {
-          return variant === "cms" ? user.isAdmin : !user.isAdmin;
-        }).length
-      ) {
+    .then((results) => {
+      if (results.length && results[0].data.email === email) {
         return res.status(422).json({
           message:
             variant === "cms"
-              ? "Admin with that login already exists"
-              : "User with that login already exists",
+              ? "Admin with that email already exists"
+              : "User with that email already exists",
         });
       }
-
       bcryptjs.hash(password, 10, (hashError, hashedPassword) => {
         if (hashError) {
           return res.status(500).json({
@@ -89,9 +107,13 @@ const register = (
         }
 
         const newUser = new UserModel({
-          login,
           password: hashedPassword,
           ...(variant === "cms" && { isAdmin: true }),
+          data: {
+            email,
+            name,
+            surname,
+          },
         });
 
         return newUser
@@ -101,7 +123,7 @@ const register = (
               "userController",
               `New ${
                 variant === "cms" ? "admin" : "user"
-              } with login ${login} was added to the database`
+              } with email ${email} was added to the database`
             );
             return res.status(201).json({
               message: "Successfuly created user",
@@ -114,6 +136,12 @@ const register = (
             });
           });
       });
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        message: error.message,
+        error,
+      });
     });
 };
 
@@ -123,11 +151,11 @@ export const login = async (
   next: NextFunction,
   variant: Variant
 ) => {
-  let { login, password } = req.body;
+  let { email, password } = req.body;
 
-  if (!login) {
+  if (!email) {
     return res.status(422).json({
-      message: "login was not provided",
+      message: "email was not provided",
     });
   }
 
@@ -137,18 +165,22 @@ export const login = async (
     });
   }
 
-  if (typeof login !== "string" || typeof password !== "string") {
+  if (typeof email !== "string" || typeof password !== "string") {
     return res.status(422).json({
-      message: "login and password should be of type string",
+      message: "email and password should be of type string",
     });
   }
 
-  UserModel.find({ login, ...(variant === "cms" && { isAdmin: true }) })
+  UserModel.find()
+    .where("data.email")
+    .in([email])
+    .where("isAdmin")
+    .in([variant === "cms"])
     .exec()
     .then((users) => {
       if (!users.length) {
         return res.status(401).json({
-          message: "Account with that login and password does not exist",
+          message: "Account with that email and password does not exist",
         });
       }
 
@@ -164,7 +196,7 @@ export const login = async (
           try {
             const accessToken = jwt.sign(
               {
-                login: user.login,
+                email: user.data.email,
                 role: variant === "cms" ? "admin" : "user",
               },
               ACCESS_TOKEN_SECRET,
@@ -175,7 +207,7 @@ export const login = async (
 
             const refreshToken = jwt.sign(
               {
-                login: user.login,
+                email: user.data.email,
               },
               REFRESH_TOKEN_SECRET,
               {
@@ -185,7 +217,7 @@ export const login = async (
 
             const newRefreshTokenInDB = new RefreshTokenModel({
               value: refreshToken,
-              forAccount: user.login,
+              forAccount: user.data.email,
               isAccountAdmin: variant === "cms",
             });
 
@@ -196,8 +228,8 @@ export const login = async (
             });
           } catch (error) {
             logging.error(
-              "Login",
-              "Could not sign tokens when trying to login"
+              "email",
+              "Could not sign tokens when trying to email"
             );
             return res.status(401).json({
               message: "Unauthorized",
@@ -206,7 +238,7 @@ export const login = async (
           }
         } else {
           return res.status(401).json({
-            message: "Account with that login and password does not exist",
+            message: "Account with that email and password does not exist",
             error,
           });
         }
@@ -261,7 +293,7 @@ const refreshAccessToken = (
 
         jwt.sign(
           {
-            login: data && data.login,
+            email: data && data.email,
             role: variant === "cms" ? "admin" : "user",
           },
           ACCESS_TOKEN_SECRET,

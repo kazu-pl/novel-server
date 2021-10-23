@@ -13,7 +13,7 @@ const UserRouter = express.Router();
  *    summary: Used to get user data
  *    tags: [User]
  *    responses:
- *      201:
+ *      200:
  *        description: A successful resposne
  *        content:
  *          application/json:
