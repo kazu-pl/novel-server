@@ -106,6 +106,8 @@ UserRouter.post(PATHS_USER_DATA.REMIND_PASSWORD, userController.remindPassword);
  *    responses:
  *      200:
  *        description: A successful resposne
+ *      401:
+ *        description: Link expired or user didn't request to change password
  *      404:
  *        description: user profile not found
  *      422:

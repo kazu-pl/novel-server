@@ -11,7 +11,7 @@ import {
 } from "constants/env";
 
 import RefreshTokenModel from "models/RefreshTokenModel";
-import cache from "config/cache";
+import cache, { createTokenName } from "config/cache";
 
 type Variant = "users" | "cms";
 export type Role = "admin" | "user";
@@ -346,7 +346,7 @@ const logout = (req: Request, res: Response) => {
           : 0;
 
       cache.set(
-        accessToken,
+        createTokenName(accessToken),
         {
           accessToken,
           ...(decoded && { _id: decoded._id, role: decoded.role }),

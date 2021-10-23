@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
 import UserModel from "models/userModel";
 import jwt from "jsonwebtoken";
-import { ACCESS_TOKEN_SECRET, HOSTNAME, PORT } from "constants/env";
+import {
+  ACCESS_TOKEN_SECRET,
+  HOSTNAME,
+  PORT,
+  RENEW_PASSWORD_EXPIRATION_TIME_IN_SECONDS,
+} from "constants/env";
 import { transporter, SendMailOptions } from "config/nodemailer";
 import bcryptjs from "bcryptjs";
+import cache, { createNewPasswdLinkName } from "config/cache";
 
 const getUserData = (req: Request, res: Response) => {
   const accessToken = req.headers.authorization?.split(" ")[1];
@@ -154,11 +160,23 @@ const remindPassword = (req: Request, res: Response) => {
         });
       }
 
+      cache.set(
+        createNewPasswdLinkName(result._id),
+        {
+          user_id: result._id,
+        },
+        RENEW_PASSWORD_EXPIRATION_TIME_IN_SECONDS
+      );
+
       const mailOptions: SendMailOptions = {
         from: "emailer.test777",
         to: email,
         subject: "Novel - renew email",
-        text: `You can reset your password here: ${HOSTNAME}:${PORT}/reset-password/${result._id}`,
+        text: `You can reset your password here: ${HOSTNAME}:${PORT}/reset-password/${
+          result._id
+        }. Link expires in ${
+          RENEW_PASSWORD_EXPIRATION_TIME_IN_SECONDS / 60
+        } minutes`,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
@@ -215,6 +233,13 @@ const renewPassword = (req: Request, res: Response) => {
     });
   }
 
+  if (!cache.has(createNewPasswdLinkName(req.params.id))) {
+    return res.status(401).json({
+      message:
+        "Changing password link expired or user didn't request to change password",
+    });
+  }
+
   UserModel.findOne({ _id: req.params.id })
     .exec()
     .then((result) => {
@@ -237,6 +262,8 @@ const renewPassword = (req: Request, res: Response) => {
             password: hashedPassword,
           })
           .then(() => {
+            cache.has(createNewPasswdLinkName(req.params.id)) &&
+              cache.del(createNewPasswdLinkName(req.params.id));
             return res.status(200).json({
               message: "Updated successfuly",
             });
