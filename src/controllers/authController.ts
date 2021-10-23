@@ -229,7 +229,6 @@ export const login = async (req: Request, res: Response, variant: Variant) => {
         } else {
           return res.status(401).json({
             message: "Account with that email and password does not exist",
-            error,
           });
         }
       });
