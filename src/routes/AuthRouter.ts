@@ -27,7 +27,7 @@ const AuthRouter = express.Router();
  *        description: An error occured while trying to register new user
  */
 AuthRouter.post(PATHS_USERS_AUTH.REGISTER, (req, res, next) =>
-  userController.register(req, res, next, "users")
+  userController.register(req, res, "users")
 );
 
 /**
@@ -56,7 +56,7 @@ AuthRouter.post(PATHS_USERS_AUTH.REGISTER, (req, res, next) =>
  *        description: Missing required data or incorrect type
  */
 AuthRouter.post(PATHS_USERS_AUTH.LOGIN, (req, res, next) =>
-  userController.login(req, res, next, "users")
+  userController.login(req, res, "users")
 );
 
 /**
@@ -123,7 +123,7 @@ AuthRouter.get(
  *          description: Missing or incorect refreshToken
  */
 AuthRouter.post(PATHS_USERS_AUTH.REFRESH_TOKEN, (req, res, next) =>
-  userController.refreshAccessToken(req, res, next, "users")
+  userController.refreshAccessToken(req, res, "users")
 );
 
 /**
@@ -147,7 +147,7 @@ AuthRouter.post(PATHS_USERS_AUTH.REFRESH_TOKEN, (req, res, next) =>
  *          description: Some error happened
  */
 AuthRouter.post(PATHS_USERS_AUTH.LOGOUT, (req, res, next) =>
-  userController.logout(req, res, next)
+  userController.logout(req, res)
 );
 
 /**
@@ -171,7 +171,7 @@ AuthRouter.post(PATHS_USERS_AUTH.LOGOUT, (req, res, next) =>
  *        description: An error occured while trying to register new user
  */
 AuthRouter.post(PATHS_ADMIN_AUTH.REGISTER, (req, res, next) =>
-  userController.register(req, res, next, "cms")
+  userController.register(req, res, "cms")
 );
 
 /**
@@ -199,7 +199,7 @@ AuthRouter.post(PATHS_ADMIN_AUTH.REGISTER, (req, res, next) =>
  *        description: Missing required data or incorrect type
  */
 AuthRouter.post(PATHS_ADMIN_AUTH.LOGIN, (req, res, next) =>
-  userController.login(req, res, next, "cms")
+  userController.login(req, res, "cms")
 );
 
 /**
@@ -240,7 +240,7 @@ AuthRouter.get(
   PATHS_ADMIN_AUTH.PROTECTED,
   authenticate,
   authorize("admin"),
-  (req, res, next) =>
+  (req, res) =>
     res.status(200).json({ message: "you're alloved to be here - admin" })
 );
 
@@ -271,7 +271,7 @@ AuthRouter.get(
  *          description: Missing or incorect refreshToken
  */
 AuthRouter.post(PATHS_ADMIN_AUTH.REFRESH_TOKEN, (req, res, next) =>
-  userController.refreshAccessToken(req, res, next, "cms")
+  userController.refreshAccessToken(req, res, "cms")
 );
 
 /**
@@ -295,7 +295,7 @@ AuthRouter.post(PATHS_ADMIN_AUTH.REFRESH_TOKEN, (req, res, next) =>
  *          description: Some error happened
  */
 AuthRouter.post(PATHS_ADMIN_AUTH.LOGOUT, (req, res, next) =>
-  userController.logout(req, res, next)
+  userController.logout(req, res)
 );
 
 export default AuthRouter;
