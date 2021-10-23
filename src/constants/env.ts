@@ -22,3 +22,5 @@ export const NODEMAILER_AUTH_USER = process.env.NODEMAILER_AUTH_USER;
 export const NODEMAILER_AUTH_PASS = process.env.NODEMAILER_AUTH_PASS;
 export const RENEW_PASSWORD_EXPIRATION_TIME_IN_SECONDS = (process.env
   .RENEW_PASSWORD_EXPIRATION_TIME_IN_SECONDS || 300) as number;
+
+export const FRONT_APP_URL = process.env.FRONT_APP_URL;

@@ -23,4 +23,5 @@ export const PATHS_USER_DATA = {
   ME: "/users/me",
   REMIND_PASSWORD: "/users/remind-password",
   RENEW_PASSWORD: "/users/renew-password/:id",
+  UPDATE_PASSWORD: "/users/me/update-password",
 };
