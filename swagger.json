@@ -186,6 +186,42 @@
           "surname": "Doe",
           "email": "admin@asd.pl"
         }
+      },
+      "RequestRemindPasswordCredentials": {
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "On the email we will send you your password"
+          }
+        },
+        "example": {
+          "email": "admin@asd.pl"
+        }
+      },
+      "RequestRenewPassword": {
+        "type": "object",
+        "required": [
+          "password",
+          "repeatedPassword"
+        ],
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "new password"
+          },
+          "repeatedPassword": {
+            "type": "string",
+            "desciption": "the same password"
+          }
+        },
+        "example": {
+          "password": "qwerty123",
+          "repeatedPassword": "qwerty123"
+        }
       }
     }
   },

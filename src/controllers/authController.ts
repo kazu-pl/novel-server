@@ -11,7 +11,7 @@ import {
 } from "constants/env";
 
 import RefreshTokenModel from "models/RefreshTokenModel";
-import cache from "config/cache";
+import cache, { createTokenName } from "config/cache";
 
 type Variant = "users" | "cms";
 export type Role = "admin" | "user";
@@ -229,7 +229,6 @@ export const login = async (req: Request, res: Response, variant: Variant) => {
         } else {
           return res.status(401).json({
             message: "Account with that email and password does not exist",
-            error,
           });
         }
       });
@@ -347,7 +346,7 @@ const logout = (req: Request, res: Response) => {
           : 0;
 
       cache.set(
-        accessToken,
+        createTokenName(accessToken),
         {
           accessToken,
           ...(decoded && { _id: decoded._id, role: decoded.role }),

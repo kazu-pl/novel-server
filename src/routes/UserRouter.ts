@@ -59,4 +59,62 @@ UserRouter.get(PATHS_USER_DATA.ME, authenticate, userController.getUserData);
  */
 UserRouter.put(PATHS_USER_DATA.ME, authenticate, userController.updateUserData);
 
+/**
+ * @swagger
+ * /users/remind-password:
+ *  post:
+ *    summary: Used to send a link to change password
+ *    tags: [User]
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/RequestRemindPasswordCredentials'
+ *    responses:
+ *      200:
+ *        description: A successful resposne
+ *      404:
+ *        description: user profile not found
+ *      422:
+ *        description: Missing required data or incorrect type
+ *      500:
+ *        description: An error occured
+ */
+UserRouter.post(PATHS_USER_DATA.REMIND_PASSWORD, userController.remindPassword);
+
+/**
+ * @swagger
+ * path:
+ * /users/renew-password/{id}:
+ *  post:
+ *    summary: Used to renew forgotten password
+ *    tags: [User]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: user id
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/RequestRenewPassword'
+ *    responses:
+ *      200:
+ *        description: A successful resposne
+ *      401:
+ *        description: Link expired or user didn't request to change password
+ *      404:
+ *        description: user profile not found
+ *      422:
+ *        description: Missing required data or incorrect type
+ *      500:
+ *        description: An error occured while trying to renew password
+ */
+UserRouter.post(PATHS_USER_DATA.RENEW_PASSWORD, userController.renewPassword);
+
 export default UserRouter;

@@ -17,3 +17,8 @@ export const REFRESH_TOKEN_EXPIRETIME_IN_SECONDS =
 
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
+
+export const NODEMAILER_AUTH_USER = process.env.NODEMAILER_AUTH_USER;
+export const NODEMAILER_AUTH_PASS = process.env.NODEMAILER_AUTH_PASS;
+export const RENEW_PASSWORD_EXPIRATION_TIME_IN_SECONDS = (process.env
+  .RENEW_PASSWORD_EXPIRATION_TIME_IN_SECONDS || 300) as number;
