@@ -3,8 +3,7 @@ import UserModel from "models/userModel";
 import jwt from "jsonwebtoken";
 import {
   ACCESS_TOKEN_SECRET,
-  HOSTNAME,
-  PORT,
+  FRONT_APP_URL,
   RENEW_PASSWORD_EXPIRATION_TIME_IN_SECONDS,
 } from "constants/env";
 import { transporter, SendMailOptions } from "config/nodemailer";
@@ -160,6 +159,9 @@ const remindPassword = (req: Request, res: Response) => {
         });
       }
 
+      cache.has(createNewPasswdLinkName(result._id)) &&
+        cache.del(createNewPasswdLinkName(result._id));
+
       cache.set(
         createNewPasswdLinkName(result._id),
         {
@@ -172,7 +174,7 @@ const remindPassword = (req: Request, res: Response) => {
         from: "emailer.test777",
         to: email,
         subject: "Novel - renew email",
-        text: `You can reset your password here: ${HOSTNAME}:${PORT}/reset-password/${
+        text: `You can reset your password here: ${FRONT_APP_URL}/reset-password/${
           result._id
         }. Link expires in ${
           RENEW_PASSWORD_EXPIRATION_TIME_IN_SECONDS / 60
@@ -283,4 +285,99 @@ const renewPassword = (req: Request, res: Response) => {
     });
 };
 
-export default { getUserData, updateUserData, remindPassword, renewPassword };
+const updatePassword = (req: Request, res: Response) => {
+  const { password, repeatedPassword } = req.body;
+  const accessToken = req.headers.authorization?.split(" ")[1];
+
+  if (!password) {
+    return res.status(422).json({
+      message: "Password was not provided",
+    });
+  }
+
+  if (!repeatedPassword) {
+    return res.status(422).json({
+      message: "Repeated password was not provided",
+    });
+  }
+
+  if (password !== repeatedPassword) {
+    return res.status(422).json({
+      message: "Different passwords",
+    });
+  }
+
+  if (typeof password !== "string" || typeof repeatedPassword !== "string") {
+    return res.status(422).json({
+      message: "password, repeatedPassword should be of type string",
+    });
+  }
+
+  if (!accessToken) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+
+  jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
+    if (error) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    } else {
+      if (!decoded) {
+        return res.status(401).json({
+          message: "Unauthorized",
+        });
+      }
+
+      try {
+        const result = await UserModel.findOne({ _id: decoded._id }).exec();
+
+        if (!result) {
+          return res.status(404).json({
+            message: "User profile not found",
+          });
+        }
+
+        bcryptjs.hash(password, 10, (hashError, hashedPassword) => {
+          if (hashError) {
+            return res.status(500).json({
+              message: hashError.message,
+              error: hashError,
+            });
+          }
+
+          result
+            .updateOne({
+              password: hashedPassword,
+            })
+            .then(() => {
+              return res.status(200).json({
+                message: "Updated successfuly",
+              });
+            })
+            .catch((error) => {
+              return res.status(500).json({
+                message: "Could not update user profile",
+                error,
+              });
+            });
+        });
+      } catch (error) {
+        return res.status(500).json({
+          message: "An error occured",
+          error,
+        });
+      }
+    }
+  });
+};
+
+export default {
+  getUserData,
+  updateUserData,
+  remindPassword,
+  renewPassword,
+  updatePassword,
+};
