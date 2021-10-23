@@ -25,8 +25,7 @@ const getUserData = (req: Request, res: Response) => {
       }
 
       try {
-        const result = await UserModel.findOne({ _id: decoded._id })
-        .exec();
+        const result = await UserModel.findOne({ _id: decoded._id }).exec();
 
         if (!result) {
           return res.status(404).json({
@@ -132,22 +131,3 @@ const updateUserData = (req: Request, res: Response) => {
 };
 
 export default { getUserData, updateUserData };
-
-//  ##################### TODO #####################
-// trzeba zakodować w tokenue id i szukać po id bo jeśli zmieni się email to nie mozna drugi raz dostać danych samego siebie
-
-// 1 - teraz jest błąd taki że jak np zmienisz email i potem znowu uderzysz pod /get/users/me to dostaniesz not found bo aktualnie ten url przeszukuje bazę po email. jak zmienisz to na _id to będzie działać
-
-// 2 - authorize czy tam authenticate dodaje do req.jwt object więc dobrze byloby dodać jakiś np typ AuthoruzedRequest który miałby ten object żebym nie musiał w każddym endpoincie wyciągać acessTokenu bezpośrednio z headrs tylko z tylko nowego objectu
-
-// 3 - dodać niezabezpieczony endpoint pod który wysyłasz email i node na ten email wysyła link do resetu hasła podając id w url
-
-// TODO:
-// udało mi się przerobić auth i logowanie na email a nie login
-// 1 - dodać możliwość zmiany imienia, nazwiska, hasła i emailu
-// 2 - dodać przypominanie hasła
-
-// FRONT:
-// 3 - na froncie obslużyc nowe opcje logowania
-// 4 - dodać widok "/account" gdzie będzie można zmienić imie, nazwisko itd
-// 5 - dodać widok to resetu hasła/przypiominania

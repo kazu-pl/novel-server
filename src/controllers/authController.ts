@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import logging from "../config/logging";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";

@@ -159,6 +159,33 @@
           "surname": "Doe",
           "email": "admin@asd.pl"
         }
+      },
+      "RequestUpdateUser": {
+        "type": "object",
+        "required": [
+          "name",
+          "surname",
+          "email"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "user name"
+          },
+          "surname": {
+            "type": "string",
+            "description": "user surname"
+          },
+          "email": {
+            "type": "string",
+            "description": "user email"
+          }
+        },
+        "example": {
+          "name": "John",
+          "surname": "Doe",
+          "email": "admin@asd.pl"
+        }
       }
     }
   },
