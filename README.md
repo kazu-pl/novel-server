@@ -69,6 +69,10 @@ found [here](https://stackoverflow.com/questions/61342753/paths-from-tsconfig-js
 
 ---
 
+# How to store images and other files in MongoDB:
+
+Here is a [link](https://stackoverflow.com/questions/59717140/how-to-replace-gridstore-to-gridfsbucket) that shows how to fix `gfs` problems. Just search for answer starting with: `I ended up having the same issue, you have most likely determined that readstream`
+
 # yarn build does nothing (should build files)
 
 If you run `yarn build` command which is ` "build": "rm -rf build && tsc"` and it does nothing (should create `build` folder with transpiled files) then you probably have UNCOMMENTED field `"noEmit": true` in your `tsconfig.json` file.
@@ -253,4 +257,327 @@ export const swaggerSpec = swaggerJSDoc(swggerOptions);
 
 ```
 
-Found [here](https://stackoverflow.com/questions/50736784/how-to-authorise-swagger-jsdoc-with-jwt-token) - search for `To make this work, you will need to add the openapi property to your swaggerDefinition object.`
+Found [here](https://stackoverflow.com/questions/50736784/how-to-authorise-swagger-jsdoc-with-jwt-token) - search for `To make this work, you will need to add the openAPI property to your swaggerDefinition object.`
+
+# How to receive files and store them in mongoDB:
+
+To receive single file (or couple of files) you have to use `multer`.
+Multer is simillar to `express.json()` - it receives images and allows you to use it.
+Additionally, you will need `multer-gridfs-storage` - that package allows you to split large files into smaller chunks and store that chunks in mongoDB.
+Multer will catch files from request from front-end (front-end sends it in `form-data`), upload file(s) to mongoDB (or locally on server if you wish) and return their name.
+
+#### Upload files to mongoDB:
+
+- `1` - Create middleware `fileUpload.ts`:
+
+```
+// src/middleware/fileUpload.ts
+// this middleware WILL PUSH IMAGES TO MongoDB INSTANTLY ONCE ITS APPLIED AS MIDDLEWARE IN ANY ENDPOINT!
+
+import multer from "multer";
+import { GridFsStorage } from "multer-gridfs-storage";
+import { MONGO_DB_URI } from "constants/env";
+
+export const photosBucketName = "photos";
+
+const allowedExtensions = ["image/png", "image/jpeg", "image/jpg", "image/gif"];
+
+const storage = new GridFsStorage({
+  url: MONGO_DB_URI, // connection string to your mongoDB database in Atlas or local one
+  file: (req: Request, file) => {
+    if (allowedExtensions.indexOf(file.mimetype) === -1) {
+      return file.originalname;
+    }
+
+    const originalNameWithoutSpaces =
+      file.originalname.split(" ").length > 1
+        ? file.originalname.split(" ").join("_")
+        : file.originalname;
+
+    return {
+      bucketName: "photos", // multer will create 2 collections with that name: photos.files and photos.chunks
+      filename: `${Date.now()}-${originalNameWithoutSpaces}`,
+    };
+  },
+});
+
+export default multer({ storage });
+
+```
+
+- `2` - Use `fileUpload.ts` middleware in any endpoint like:
+
+```
+// Router.ts
+import express from "express";
+
+const Router = express.Router();
+
+Router.put(
+  '/users/me/avatar',
+  fileUpload.single("file"),
+  userController.putAvatar
+);
+
+// fileUpload.single("") method will receive single file from front-end request and upload it to mongoDB.
+// "file" name in `.single("file")` is the name of the field from `form-data` that contains a file.
+
+
+// if  you want to receive multiple files, use .array() instead:
+
+Router.put(
+  '/products/bike/images',
+  fileUpload.array("file"), // just send multiple files in `form-data` under the same name as here ("file')
+  userController.putProductImages
+);
+
+```
+
+- `3` - create Models for files and its chunks to make saerching for files easy:
+
+Multer middleware fill upload file to mongoDB (or your server filesystem if you config it like that) and it won't return you any model.
+It also doesn't create any paricular model. It just uploads files to mongoDB and returns its `filename` in `req` object in controllers.
+So to make it easy for searching the images, you need to create your own model that you will never use to create new files (multer does it).
+You need them just to enable searching for images.
+
+Actuall file model:
+
+```
+// src/models/photoFileModel.ts
+
+import mongoose, { Schema, Document } from "mongoose";
+import { photosBucketName } from "middleware/fileUpload";
+
+interface PhotoFile extends Document {
+  length: number;
+  chunkSize: number;
+  uploadDate: Date;
+  filename: string;
+  contentType: string;
+}
+
+const PhotoFileSchema: Schema = new Schema({
+  length: { type: Number, required: true },
+  chunkSize: { type: Number, required: true },
+  uploadDate: { type: Date, required: true },
+  filename: { type: String, required: true },
+  contentType: { type: String, required: true },
+});
+
+export default mongoose.model<PhotoFile>(
+  `${photosBucketName}.file`,
+  PhotoFileSchema
+);
+
+```
+
+File chunks model:
+
+```
+// src/models/FileChunksModel.ts
+
+import mongoose, { Schema, Document } from "mongoose";
+import { photosBucketName } from "middleware/fileUpload";
+
+interface PhotoChunk extends Document {
+  files_id: string;
+  n: number;
+  data: string;
+}
+
+const PhotoChunkSchema: Schema = new Schema({
+  files_id: { type: Schema.Types.ObjectId, required: true },
+  n: { type: Number, required: true },
+  data: { type: Buffer, required: true },
+});
+
+export default mongoose.model<PhotoChunk>(
+  `${photosBucketName}.chunk`,
+  PhotoChunkSchema
+);
+
+```
+
+- `4` - now you can receive that files in controller methods like this:
+
+```
+// userController.ts
+
+// REMEMBER THAT HERE IN CONTROLLER, IMAGES ARE ALREADY IN MONGO-DB !
+
+const putAvatar = (req: Request, res: Response) => {
+
+  // HERE, you can use file(s) that multer adds to `req` object. If you used `.single()` method, you can get file by:
+  // req.file
+
+  // if you used .array() method you can get multiple files by:
+  // req.files
+
+  // here, you can use your custom PhotoFileModel to search for that images,
+  // THAT'S THE ONLY WAY TO SEARCH FOR THEM because multer won't allow you to customize the data that it sends to mondoDB
+  const prevAvatar = await PhotoFileModel.findOne({
+    filename: user.data.avatar?.split("/")[2], // path will be like "/files/photoName.png" and [2] is "photoName.png"
+  });
+  await PhotoChunkModel.deleteMany({ files_id: prevAvatar?._id });
+  await prevAvatar?.delete();
+
+  // here, you're creating a endpoint under which you can receive the image that is already in mongo db
+  const newAvatarUrl = `/files/${req.file.filename}`; // req.file.filename contains name of the file that is already stored in mongoDB
+    await user.update({
+      data: {
+        ...user.data,
+        avatar: newAvatarUrl,
+      },
+    });
+
+  return res.status(201).json({ avatarUrl: newAvatarUrl });
+
+};
+
+export default {
+  putAvatar
+}
+
+
+```
+
+#### How to send images from front-end to backend:
+
+- `1` - create `ref` and `<input type="file" />` tag and pass that ref to the input:
+
+```
+const Component =() => {
+
+const inputFileRef = useRef<HTMLInputElement | null>(null);
+
+return (
+  <>
+    <input id={id} type="file" hidden ref={inputRef} {...rest} />
+    <label htmlFor={id}>
+      <Button component="span" {...buttonProps}>
+        {text}
+      </Button>
+    </label>
+  </>
+)
+}
+```
+
+- `2` - create `form-data` and append onto it images that you will find in `ref.current`:
+
+```
+const fileFromInputRef = inputFileRef.current.files[0];
+
+const formData = new FormData();
+formData.append("file", fileFromInputRef); // "file" name is the same name that you use in multer `.single("file")` or `.array('file')`
+
+```
+
+Or, if you want to send multiple files (and use .array('files') option to receive multiple files):
+
+- `2-a` - turn files from ref into array and by using forEach, append it with the same name:
+
+```
+const filesFromInputRef = Array.from(inputFilesRef.current.files);
+
+const formData = new FormData();
+
+filesFromInputRef.forEach((file) => {
+  formData.append("files", file); // "files" is the name under which you send array of images so put 'files' in .array('files')
+});
+
+```
+
+- `2-b` - add prop `encType="multipart/form-data"` to form that contains `<input type="file" />`:
+
+```
+<Formik
+  initialValues={initialMultipleFileValues}
+  onSubmit={handleAsyncMultipleSubmit}
+  validationSchema={validationMultipleFilesSchema}
+>
+  {({ isSubmitting, values }) => (
+    <Form encType="multipart/form-data"> // add encType="multipart/form-data" to correctly send muliple files
+      <FileInputFormik
+        name="files"
+        id="contained-button-file"
+        accept="images"
+        inputRef={inputFilesRef}
+        multiple
+        text="select files"
+      />
+    </Form>
+  )}
+</Formik>
+
+```
+
+- `3` - send that data via axios:
+
+```
+const response = await axiosSecureInstance.put(`/users/me/files`, formData);
+
+```
+
+#### Send files stored in mongoDB to front-end:
+
+```
+// index.ts // <--- this is main server file
+
+import mongoose from "mongoose";
+import { GridFSBucket } from "mongodb";
+
+// on the internet you can find examples with `gridfs-stream` package but its depreacated
+// so you will need to use gridFSBucket from mongodb
+export let gridFSBucket: GridFSBucket;
+
+const conn = mongoose.connection;
+conn.once("open", () => {
+  gridFSBucket = new mongoose.mongo.GridFSBucket(conn.db, {
+    bucketName: 'photos,
+  });
+});
+
+const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+mongoose
+  .connect(MONGO_DB_URI, {
+    retryWrites: true,
+    w: "majority",
+  })
+  .then((result) => {
+    logging.info(NAMESPACE, `Connected to MongoDB!`);
+  })
+  .catch((err) => {
+    logging.error(NAMESPACE, err.message, err);
+  });
+
+
+
+app.get('/files/:filename', (req, res) => {
+  // this endpoint will produce error if it is applied onto Router and not directly here, thats why it's directly in main server file
+  PhotoFileModel.findOne({ filename: req.params.filename }) // you need PhotoFileModel to search for files, however you won't need this to create files (multes does it automatically)
+    .exec()
+    .then((file) => {
+      if (file === undefined || file === null) {
+        return res.status(404).json({ message: "Photo Not found" });
+      }
+
+      //  below line produces an error when you build server via `yarn build` and run via `yarn start`.
+      const readStream = gridFSBucket.openDownloadStream(file._id);
+      readStream.pipe(res); // here you send file (e.g. picture) to front-end
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "an error occured",
+        error,
+      });
+    });
+});
+
+
+
+```

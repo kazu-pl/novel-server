@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import UserModel from "models/userModel";
+import UserModel from "models/UserModel";
 import jwt from "jsonwebtoken";
 import {
   ACCESS_TOKEN_SECRET,
@@ -9,6 +9,9 @@ import {
 import { transporter, SendMailOptions } from "config/nodemailer";
 import bcryptjs from "bcryptjs";
 import cache, { createNewPasswdLinkName } from "config/cache";
+import { Request as MulterRequest } from "types/multer.types";
+import PhotoFileModel from "models/PhotoFileModel";
+import PhotoChunkModel from "models/PhotoChunkModel";
 
 const getUserData = (req: Request, res: Response) => {
   const accessToken = req.headers.authorization?.split(" ")[1];
@@ -374,10 +377,111 @@ const updatePassword = (req: Request, res: Response) => {
   });
 };
 
+const putAvatar = (req: Request & MulterRequest, res: Response) => {
+  const accessToken = req.headers.authorization?.split(" ")[1];
+
+  if (!accessToken) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+
+  jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
+    if (error || !decoded) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
+    try {
+      if (req.file === undefined) return res.send("you must select a file.");
+
+      const user = await UserModel.findOne({ _id: decoded._id }).exec();
+
+      if (!user) {
+        return res.status(404).json({
+          message: "User profile not found",
+        });
+      }
+
+      if (req.file === undefined) return res.send("you must select a file.");
+
+      const prevAvatar = await PhotoFileModel.findOne({
+        filename: user.data.avatar?.split("/")[2], // path will be like "/files/photoName.png" and [2] is "photoName.png"
+      });
+      await PhotoChunkModel.deleteMany({ files_id: prevAvatar?._id });
+      await prevAvatar?.delete();
+
+      const newAvatarUrl = `/files/${req.file.filename}`;
+      await user.update({
+        data: {
+          ...user.data,
+          avatar: newAvatarUrl,
+        },
+      });
+
+      return res.status(201).json({ avatarUrl: newAvatarUrl });
+    } catch (error) {
+      return res.status(500).json({
+        error,
+      });
+    }
+  });
+};
+
+const deleteAvatar = (req: Request & MulterRequest, res: Response) => {
+  const accessToken = req.headers.authorization?.split(" ")[1];
+
+  if (!accessToken) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+
+  jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
+    if (error || !decoded) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
+    try {
+      const user = await UserModel.findOne({ _id: decoded._id }).exec();
+
+      if (!user) {
+        return res.status(404).json({
+          message: "User profile not found",
+        });
+      }
+
+      const avatar = await PhotoFileModel.findOne({
+        filename: user.data.avatar?.split("/")[2], // path will be like "/files/photoName.png" and [2] is "photoName.png"
+      });
+      await PhotoChunkModel.deleteMany({ files_id: avatar?._id });
+      await avatar?.delete();
+
+      await user.update({
+        data: {
+          ...user.data,
+          avatar: "",
+        },
+      });
+
+      return res.status(200).json({ message: "avatar was deleted" });
+    } catch (error) {
+      return res.status(500).json({
+        error,
+      });
+    }
+  });
+};
+
 export default {
   getUserData,
   updateUserData,
   remindPassword,
   renewPassword,
   updatePassword,
+  putAvatar,
+  deleteAvatar,
 };

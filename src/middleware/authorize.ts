@@ -1,13 +1,13 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { Role } from "controllers/authController";
-import { JwtPayload } from "jsonwebtoken";
 import logging from "config/logging";
+import { RequestWithJWT } from "types/jwt.types";
 
 const NAMESPACE = "authorize middleware";
 
 const authorize = (allowedRole: Role) => {
   const authorizeRole = (
-    req: Request & { jwt?: JwtPayload },
+    req: RequestWithJWT,
     res: Response,
     next: NextFunction
   ) => {

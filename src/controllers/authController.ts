@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import logging from "../config/logging";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import UserModel from "models/userModel";
+import UserModel from "models/UserModel";
 import {
   ACCESS_TOKEN_EXPIRETIME_IN_SECONDS,
   ACCESS_TOKEN_SECRET,

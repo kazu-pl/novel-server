@@ -2,6 +2,7 @@ import express from "express";
 import { PATHS_USER_DATA } from "constants/paths";
 import userController from "controllers/userController";
 import authenticate from "middleware/authenticate";
+import fileUpload from "middleware/fileUpload";
 
 const UserRouter = express.Router();
 
@@ -145,5 +146,62 @@ UserRouter.post(PATHS_USER_DATA.RENEW_PASSWORD, userController.renewPassword);
  *        description: An error occured while trying to renew password
  */
 UserRouter.put(PATHS_USER_DATA.UPDATE_PASSWORD, userController.updatePassword);
+
+/**
+ * @swagger
+ * path:
+ * /users/me/avatar:
+ *  put:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: SEND form-data WITH "file" FIELD. Used to update user avatar (if no avatar, it will creaate one, if there is one, it will be replaced).
+ *    tags: [User]
+ *    requestBody:
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: relative link to new avatar
+ *        content:
+ *          application/json:
+ *            schema:
+ *                $ref: '#/components/schemas/Avatar'
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: User profile not found
+ *      500:
+ *        description: An error occured while trying to update avatar
+ */
+UserRouter.put(
+  PATHS_USER_DATA.AVATAR,
+  authenticate,
+  fileUpload.single("file"),
+  userController.putAvatar
+);
+
+/**
+ * @swagger
+ * path:
+ * /users/me/avatar:
+ *  delete:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to delete user avatar
+ *    tags: [User]
+ *    responses:
+ *      200:
+ *        description: A successful resposne
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: User profile not found
+ *      500:
+ *        description: An error occured while trying to update avatar
+ */
+UserRouter.delete(
+  PATHS_USER_DATA.AVATAR,
+  authenticate,
+  userController.deleteAvatar
+);
 
 export default UserRouter;

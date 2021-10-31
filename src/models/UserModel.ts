@@ -7,6 +7,7 @@ export interface User extends Document {
     name: string;
     surname: string;
     email: string;
+    avatar?: string;
   };
 }
 

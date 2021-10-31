@@ -20,3 +20,10 @@ export {};
  *    name: User
  *    description: Communal controller to get and maintain user (or Admin) data
  */
+
+/**
+ * @swagger
+ * tags:
+ *    name: Files
+ *    description: Communal controller to manage files
+ */
