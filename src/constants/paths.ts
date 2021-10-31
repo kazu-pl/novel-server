@@ -24,4 +24,9 @@ export const PATHS_USER_DATA = {
   REMIND_PASSWORD: "/users/remind-password",
   RENEW_PASSWORD: "/users/renew-password/:id",
   UPDATE_PASSWORD: "/users/me/update-password",
+  AVATAR: "/users/me/avatar",
+};
+
+export const PATHS_FILES = {
+  SINGLE_FILE: "/files/:filename",
 };

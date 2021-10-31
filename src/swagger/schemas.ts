@@ -109,10 +109,14 @@ export {};
  *        email:
  *          type: string
  *          description: email
+ *        avatar:
+ *          type: string
+ *          description: relative link to avatar img (empty string if no avatar avaliable)
  *      example:
  *        name: John
  *        surname: Doe
  *        email: admin@asd.pl
+ *        avatar: /files/some_avatar.png
  *
  *
  *    RequestUpdateUser:
@@ -165,4 +169,16 @@ export {};
  *      example:
  *        password: qwerty123
  *        repeatedPassword: qwerty123
+ *
+ *
+ *    Avatar:
+ *      type: object
+ *      required:
+ *        - avatarUrl
+ *      properties:
+ *        avatarUrl:
+ *          type: string
+ *          description: new avatar string or empty string if no avatar avaliable
+ *      example:
+ *        avatarUrl: /files/some_avatar.png
  */
