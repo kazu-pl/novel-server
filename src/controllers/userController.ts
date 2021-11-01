@@ -111,6 +111,7 @@ const updateUserData = (req: Request, res: Response) => {
         result
           .updateOne({
             data: {
+              ...result.data,
               name,
               surname,
               email,
