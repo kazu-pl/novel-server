@@ -287,10 +287,10 @@ export {};
  *          type: number
  *          description: mongodb __v
  *        createdAt:
- *          type: date
+ *          type: string
  *          description: create timestamp
  *        updatedAt:
- *          type: date
+ *          type: string
  *          description: update timestamp
  *      example:
  *        _id: 6181395d67568b70180ce93b

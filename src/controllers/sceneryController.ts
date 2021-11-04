@@ -1,13 +1,15 @@
 import { Response } from "express";
 import { RequestWithJWT } from "types/jwt.types";
-import SceneryModel, { Scenery, SceneryImage } from "models/SceneryModel";
+import SceneryModel, { SceneryImage } from "models/SceneryModel";
 import PhotoChunkModel from "models/PhotoChunkModel";
 import PhotoFileModel from "models/PhotoFileModel";
-import { File, FileOfFilesList } from "types/multer.types";
 
 const getSceneries = async (req: RequestWithJWT, res: Response) => {
   try {
-    const data = await SceneryModel.find().limit(5).exec();
+    const data = await SceneryModel.find()
+      .limit(5)
+      .sort({ createdAt: -1 })
+      .exec();
     const totalItems = await SceneryModel.countDocuments();
 
     return res.status(200).json({
