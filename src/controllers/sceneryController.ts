@@ -5,10 +5,46 @@ import PhotoChunkModel from "models/PhotoChunkModel";
 import PhotoFileModel from "models/PhotoFileModel";
 
 const getSceneries = async (req: RequestWithJWT, res: Response) => {
+  const { sortBy, sortDirection, pageSize, currentPage } = req.query;
+
+  if (
+    typeof sortBy !== "string" ||
+    typeof sortDirection !== "string" ||
+    typeof pageSize !== "string" ||
+    typeof currentPage !== "string"
+  ) {
+    return res.status(400).json({
+      message:
+        "sortBy, sortDirection, pageSize and currentPage should be of type string",
+    });
+  }
+
+  const size = +pageSize;
+  const page = +currentPage;
+
+  if (typeof size !== "number" || typeof page !== "number") {
+    return res.status(400).json({
+      message:
+        "pageSize and currentPage should be of type string but the value should be still a number-like. Example: '1' or '5'",
+    });
+  }
+
+  if (sortDirection && !["asc", "desc"].includes(sortDirection)) {
+    return res.status(400).json({
+      message:
+        "Invalid sortDirection query. Allowed directions: 'asc' or 'desc'",
+    });
+  }
+
+  const sortKey = sortBy || "createdAt";
+  const direction = sortDirection === "asc" ? -1 : 1;
+
   try {
     const data = await SceneryModel.find()
-      .limit(5)
-      .sort({ createdAt: -1 })
+      .limit(size)
+      .sort({ [sortKey]: direction })
+      .skip(size * (page - 1))
+      // .skip(size * page) // use this if you want to start pagination at page=0 instead of page=1
       .exec();
     const totalItems = await SceneryModel.countDocuments();
 

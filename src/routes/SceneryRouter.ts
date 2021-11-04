@@ -15,6 +15,20 @@ const sceneryRouter = express.Router();
  *      - bearerAuth: []
  *    summary: Used to get list of sceneries
  *    tags: [Scenery]
+ *    parameters:
+ *    - in: query
+ *      name: sortBy
+ *      schema:
+ *        type: string
+ *      required: false
+ *      description: sory by. Default sort is asc by createdAt
+ *    - in: query
+ *      name: sortDirection
+ *      description: data sorting direction
+ *      schema:
+ *        type: string
+ *        enum: [asc, desc]
+ *      required: false
  *    responses:
  *      200:
  *        description: list of sceneries
