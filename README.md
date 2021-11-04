@@ -133,6 +133,8 @@ if you just want to generate interfaces (not whole client) then you can create `
 Instruction on how to do this was found [here](https://dev.to/kabartolo/how-to-document-an-express-api-with-swagger-ui-and-jsdoc-50do), just search for `You have to have Java installed, then just run`
 also [here](https://www.youtube.com/watch?v=S8kmHtQeflo) is link to nice YT video on how to start with writting JSdoc comments to document your API
 
+Also, [here](https://dev.to/kabartolo/how-to-document-an-express-api-with-swagger-ui-and-jsdoc-50do) is a link to useful patters like: how to ref some swagger schema in another etc
+
 - `5` - next, you can share your `swagger-schema.json` file via route so you can pass that url in `swagger-typescript-api` package to generate types for front-end application:
 
 Share `json` file on the server via endpoint:

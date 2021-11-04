@@ -27,3 +27,10 @@ export {};
  *    name: Files
  *    description: Communal controller to manage files
  */
+
+/**
+ * @swagger
+ * tags:
+ *    name: Scenery
+ *    description: Scenery manages background images
+ */

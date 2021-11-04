@@ -6,6 +6,7 @@ import swaggerJsonSchema from "../swagger.json";
 
 import AuthRouter from "routes/AuthRouter";
 import UserRouter from "routes/UserRouter";
+import SceneryRouter from "routes/SceneryRouter";
 
 const Router = express.Router();
 
@@ -27,6 +28,7 @@ Router.use(PATHS_SWAGGER.SWAGGER_SCHEMA_JSON, (req, res) =>
 
 Router.use(AuthRouter);
 Router.use(UserRouter);
+Router.use(SceneryRouter);
 
 Router.use((req, res, next) =>
   res.status(404).json({

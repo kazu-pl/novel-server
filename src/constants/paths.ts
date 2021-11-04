@@ -30,3 +30,13 @@ export const PATHS_USER_DATA = {
 export const PATHS_FILES = {
   SINGLE_FILE: "/files/:filename",
 };
+
+export const PATHS_SCENERIES = {
+  ALL: "/scenery",
+  ADD: "/scenery/add",
+  SCENERY_GET: "/scenery/:id",
+  SCENERY_BASIC_EDIT: "/scenery/:id/edit",
+  SCENERY_DELETE: "/scenery/:id/delete",
+  SCENERY_IMAGE_DELETE: "/scenery/:scenery_id/image/:img_filename/delete",
+  SCENERY_ADD_IMAGES: "/scenery/:id/images",
+};
