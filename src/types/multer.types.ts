@@ -46,3 +46,20 @@ export interface Request {
     | File[]
     | undefined;
 }
+
+// this is interface for single file when using .array() because multer types it as File but it's not File type. Its this type below:
+export interface FileOfFilesList {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  id: string;
+  filename: string;
+  metadata: unknown;
+  bucketName: string;
+  chunkSize: number;
+  size: number;
+  md5?: unknown;
+  uploadDate: Date;
+  contentType: string;
+}
