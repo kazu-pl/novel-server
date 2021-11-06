@@ -251,6 +251,15 @@ const updateBasicCharacterData = async (req: RequestWithJWT, res: Response) => {
     });
   }
   try {
+    const characterWithTheSameName = await CharacterModel.findOne({
+      title,
+    }).exec();
+    if (characterWithTheSameName) {
+      return res.status(422).json({
+        message: "character with that name already exists",
+      });
+    }
+
     const character = await CharacterModel.findOne({ _id: id }).exec();
     if (!character) {
       return res.status(404).json({
