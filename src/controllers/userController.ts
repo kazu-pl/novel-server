@@ -284,6 +284,7 @@ const renewPassword = (req: Request, res: Response) => {
     })
     .catch((error) => {
       return res.status(500).json({
+        message: "An error occured",
         error,
       });
     });
@@ -424,6 +425,7 @@ const putAvatar = (req: Request & MulterRequest, res: Response) => {
       return res.status(201).json({ avatarUrl: newAvatarUrl });
     } catch (error) {
       return res.status(500).json({
+        message: "An error occured",
         error,
       });
     }
@@ -470,9 +472,7 @@ const deleteAvatar = (req: Request & MulterRequest, res: Response) => {
 
       return res.status(200).json({ message: "avatar was deleted" });
     } catch (error) {
-      return res.status(500).json({
-        error,
-      });
+      return res.status(500).json({ message: "An error occured", error });
     }
   });
 };
