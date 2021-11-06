@@ -247,19 +247,21 @@ const updateBasicSceneryData = async (req: RequestWithJWT, res: Response) => {
     });
   }
   try {
-    const sceneryWithTheSameName = await SceneryModel.findOne({
+    const potentialSceneryWithTheSameName = await SceneryModel.findOne({
       title,
     }).exec();
-    if (sceneryWithTheSameName) {
-      return res.status(422).json({
-        message: "Scenery with that name already exists",
-      });
-    }
 
     const scenery = await SceneryModel.findOne({ _id: id }).exec();
+
     if (!scenery) {
       return res.status(404).json({
         message: "scenery was not found",
+      });
+    }
+
+    if (potentialSceneryWithTheSameName?.id !== scenery.id) {
+      return res.status(422).json({
+        message: "Scenery with that name already exists",
       });
     }
 
