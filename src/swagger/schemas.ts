@@ -329,5 +329,123 @@ export {};
  *          type: number
  *          description: number of total sceneries
  *
+ * 
+ *    RequestCharacter:
+ *      type: object
+ *      description: type of request data passed in request when creating new character or update basic character data
+ *      required:
+ *        - title
+ *        - description
+ *      properties:
+ *        title:
+ *          type: string
+ *          description: character title
+ *        description:
+ *          type: string
+ *          description: character description
+ *      example:
+ *        title: Yuuta
+ *        description: main character
  *
+ * 
+ *    CharacterImage:
+ *      type: object
+ *      description: single character image
+ *      required:
+ *        - originalName
+ *        - url
+ *        - filename
+ *        - _id
+ *      properties:
+ *        originalName:
+ *          type: string
+ *          description: the original name before being sent to server
+ *        url:
+ *          type: string
+ *          description: url to get character image
+ *        filename:
+ *          type: string
+ *          description: name of the resource under which you can find it on server
+ *        _id:
+ *          type: string
+ *          description: resource id
+ *      example:
+ *        originalName: in-flames_owl_boy.png
+ *        url: /files/1635858781056-in-flames_owl_boy.png
+ *        filename: 1635858781056-in-flames_owl_boy.png
+ *        _id: 6181395d67568b70180ce91b
+ *
+ *    Character:
+ *      type: object
+ *      description: single character
+ *      required:
+ *        - _id
+ *        - title
+ *        - description
+ *        - imagesList
+ *        - __v
+ *        - createdAt
+ *        - updatedAt
+ *      properties:
+ *        _id:
+ *          type: string
+ *          description: mongodb id
+ *        title:
+ *          type: string
+ *          description: scenery title
+ *        description:
+ *          type: string
+ *          description: scenery description
+ *        imagesList:
+ *          type: array
+ *          items:
+ *            $ref: '#/components/schemas/CharacterImage'
+ *          description: array of character images
+ *        __v:
+ *          type: number
+ *          description: mongodb __v
+ *        createdAt:
+ *          type: string
+ *          description: create timestamp
+ *        updatedAt:
+ *          type: string
+ *          description: update timestamp
+ *      example:
+ *        _id: 6181395d67568b70180ce93b
+ *        title: Yuuta
+ *        description: main character
+ *        imagesList: []
+ *        __v: 0
+ *        createdAt: 2021-11-04T11:01:42.143+00:00
+ *        updatedAt: 2021-11-04T11:01:42.143+00:00
+ *
+ *
+ *    CharactersResponse:
+ *      type: object
+ *      description: returns list of characters (if no filters specified, returns first 5 characters)
+ *      required:
+ *        - data
+ *        - totalItems
+ *      properties:
+ *        data:
+ *          type: array
+ *          items:
+ *            $ref: '#/components/schemas/Character'
+ *          description: list of characters
+ *        totalItems:
+ *          type: number
+ *          description: number of total characters
+ *
+ *    SingleCharacterResponse:
+ *      type: object
+ *      description: response with character data in `data` key
+ *      required:
+ *        - data
+ *      properties:
+ *        data:
+ *          type: object
+ *          description: scenery
+ *          $ref: '#/components/schemas/Character'
+ * 
+
  */

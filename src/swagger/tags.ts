@@ -34,3 +34,10 @@ export {};
  *    name: Scenery
  *    description: Scenery manages background images
  */
+
+/**
+ * @swagger
+ * tags:
+ *    name: Characters
+ *    description: Characters in the game
+ */

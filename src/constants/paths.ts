@@ -40,3 +40,14 @@ export const PATHS_SCENERIES = {
   SCENERY_IMAGE_DELETE: "/scenery/:scenery_id/image/:img_filename/delete",
   SCENERY_ADD_IMAGES: "/scenery/:id/images",
 };
+
+export const PATHS_CHARACTERS = {
+  ALL: "/characters",
+  ADD: "/characters/add",
+  CHARACTER_GET: "/characters/:id",
+  CHARACTER_BASIC_EDIT: "/characters/:id/edit",
+  CHARACTER_DELETE: "/characters/:id/delete",
+  CHARACTER_IMAGE_DELETE:
+    "/characters/:character_id/image/:img_filename/delete",
+  CHARACTER_ADD_IMAGES: "/characters/:id/images",
+};

@@ -1,10 +1,10 @@
 import { Response } from "express";
 import { RequestWithJWT } from "types/jwt.types";
-import SceneryModel, { SceneryImage } from "models/SceneryModel";
+import CharacterModel, { CharacterImage } from "models/CharacterModel";
 import PhotoChunkModel from "models/PhotoChunkModel";
 import PhotoFileModel from "models/PhotoFileModel";
 
-const getSceneries = async (req: RequestWithJWT, res: Response) => {
+const getCharacters = async (req: RequestWithJWT, res: Response) => {
   const { sortBy, sortDirection, pageSize, currentPage } = req.query;
 
   if (
@@ -40,13 +40,13 @@ const getSceneries = async (req: RequestWithJWT, res: Response) => {
   const direction = sortDirection === "asc" ? -1 : 1;
 
   try {
-    const data = await SceneryModel.find()
+    const data = await CharacterModel.find()
       .limit(size)
       .sort({ [sortKey]: direction })
       .skip(size * (page - 1))
       // .skip(size * page) // use this if you want to start pagination at page=0 instead of page=1
       .exec();
-    const totalItems = await SceneryModel.countDocuments();
+    const totalItems = await CharacterModel.countDocuments();
 
     return res.status(200).json({
       data,
@@ -54,13 +54,13 @@ const getSceneries = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "User profile not found",
+      message: "An error occured",
       error,
     });
   }
 };
 
-const addScenery = async (req: RequestWithJWT, res: Response) => {
+const addCharacter = async (req: RequestWithJWT, res: Response) => {
   const { title, description } = req.body;
 
   if (!title || !description) {
@@ -76,21 +76,23 @@ const addScenery = async (req: RequestWithJWT, res: Response) => {
   }
 
   try {
-    const scenery = await SceneryModel.findOne({ title }).exec();
-    if (scenery) {
+    const character = await CharacterModel.findOne({ title }).exec();
+    if (character) {
       return res.status(422).json({
-        message: "scenery with that name already exists",
+        message: "character with that name already exists",
       });
     }
 
-    new SceneryModel({
+    new CharacterModel({
       title,
       description,
       imagesList: [],
     })
       .save()
       .then(() => {
-        return res.status(201).json({ message: "scenery created successfuly" });
+        return res
+          .status(201)
+          .json({ message: "character created successfuly" });
       })
       .catch((error) => {
         return res.status(500).json({
@@ -108,13 +110,13 @@ const addScenery = async (req: RequestWithJWT, res: Response) => {
   }
 };
 
-const getSingleScenery = async (req: RequestWithJWT, res: Response) => {
+const getSingleCharacter = async (req: RequestWithJWT, res: Response) => {
   try {
-    const data = await SceneryModel.findOne({ _id: req.params.id }).exec();
+    const data = await CharacterModel.findOne({ _id: req.params.id }).exec();
 
     if (!data) {
       return res.status(404).json({
-        message: "Scenery was not found",
+        message: "character was not found",
       });
     }
 
@@ -129,13 +131,13 @@ const getSingleScenery = async (req: RequestWithJWT, res: Response) => {
   }
 };
 
-const deleteScenery = async (req: RequestWithJWT, res: Response) => {
+const deleteCharacter = async (req: RequestWithJWT, res: Response) => {
   const id = req.params.id;
 
   try {
-    await SceneryModel.deleteOne({ _id: id }).exec();
+    await CharacterModel.deleteOne({ _id: id }).exec();
     return res.status(200).json({
-      message: "Scenery removed",
+      message: "character removed",
     });
   } catch (error) {
     return res.status(500).json({
@@ -145,8 +147,8 @@ const deleteScenery = async (req: RequestWithJWT, res: Response) => {
   }
 };
 
-const addSceneryImages = async (req: RequestWithJWT, res: Response) => {
-  const sceneryId = req.params.id;
+const addCharacterImages = async (req: RequestWithJWT, res: Response) => {
+  const id = req.params.id;
 
   if (!req.files) {
     return res.status(422).json({
@@ -155,11 +157,11 @@ const addSceneryImages = async (req: RequestWithJWT, res: Response) => {
   }
 
   try {
-    const scenery = await SceneryModel.findOne({ _id: sceneryId }).exec();
+    const character = await CharacterModel.findOne({ _id: id }).exec();
 
-    if (!scenery) {
+    if (!character) {
       return res.status(404).json({
-        message: "scenery with that id does no exist",
+        message: "character with that id does no exist",
       });
     }
 
@@ -174,12 +176,12 @@ const addSceneryImages = async (req: RequestWithJWT, res: Response) => {
         filename: item.filename,
         url: `/files/${item.filename}`,
         originalName: item.originalname,
-      } as SceneryImage;
+      } as CharacterImage;
     });
 
-    await scenery
+    await character
       .updateOne({
-        imagesList: [...scenery.imagesList, ...newImages],
+        imagesList: [...character.imagesList, ...newImages],
       })
       .exec();
 
@@ -194,15 +196,17 @@ const addSceneryImages = async (req: RequestWithJWT, res: Response) => {
   }
 };
 
-const deleteSceneryImage = async (req: RequestWithJWT, res: Response) => {
-  const { scenery_id, img_filename } = req.params;
+const deleteCharacterImage = async (req: RequestWithJWT, res: Response) => {
+  const { character_id, img_filename } = req.params;
 
   try {
-    const scenery = await SceneryModel.findOne({ _id: scenery_id }).exec();
+    const character = await CharacterModel.findOne({
+      _id: character_id,
+    }).exec();
 
-    if (!scenery) {
+    if (!character) {
       return res.status(404).json({
-        message: "Scenery was not found",
+        message: "Character was not found",
       });
     }
 
@@ -212,16 +216,16 @@ const deleteSceneryImage = async (req: RequestWithJWT, res: Response) => {
     await PhotoChunkModel.deleteMany({ files_id: imageToBeDeleted?._id });
     await imageToBeDeleted?.delete();
 
-    await scenery
+    await character
       .updateOne({
-        imagesList: scenery.imagesList.filter(
+        imagesList: character.imagesList.filter(
           (item) => item.filename !== img_filename
         ),
       })
       .exec();
 
     return res.status(200).json({
-      message: "image deleted sucessfuly",
+      message: "Image deleted sucessfuly",
     });
   } catch (error) {
     return res.status(500).json({
@@ -231,7 +235,7 @@ const deleteSceneryImage = async (req: RequestWithJWT, res: Response) => {
   }
 };
 
-const updateBasicSceneryData = async (req: RequestWithJWT, res: Response) => {
+const updateBasicCharacterData = async (req: RequestWithJWT, res: Response) => {
   const id = req.params.id;
   const { title, description } = req.body;
 
@@ -247,16 +251,16 @@ const updateBasicSceneryData = async (req: RequestWithJWT, res: Response) => {
     });
   }
   try {
-    const scenery = await SceneryModel.findOne({ _id: id }).exec();
-    if (!scenery) {
+    const character = await CharacterModel.findOne({ _id: id }).exec();
+    if (!character) {
       return res.status(404).json({
-        message: "scenery was not found",
+        message: "Character was not found",
       });
     }
 
-    await scenery.updateOne({ title, description }).exec();
+    await character.updateOne({ title, description }).exec();
     return res.status(200).json({
-      message: "Scenery was updated successfuly",
+      message: "Character was updated successfuly",
     });
   } catch (error) {
     return res.status(500).json({
@@ -267,11 +271,11 @@ const updateBasicSceneryData = async (req: RequestWithJWT, res: Response) => {
 };
 
 export default {
-  getSceneries,
-  getSingleScenery,
-  addScenery,
-  addSceneryImages,
-  updateBasicSceneryData,
-  deleteScenery,
-  deleteSceneryImage,
+  getCharacters,
+  getSingleCharacter,
+  addCharacter,
+  addCharacterImages,
+  updateBasicCharacterData,
+  deleteCharacter,
+  deleteCharacterImage,
 };
