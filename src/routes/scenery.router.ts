@@ -1,20 +1,20 @@
 import express from "express";
 import authenticate from "middleware/authenticate";
 import authorize from "middleware/authorize";
-import { PATHS_CHARACTERS } from "constants/paths";
-import characterController from "controllers/characterController";
+import { PATHS_SCENERIES } from "constants/paths";
+import sceneryController from "controllers/scenery.controller";
 import fileUpload from "middleware/fileUpload";
 
-const CharacterRouter = express.Router();
+const sceneryRouter = express.Router();
 
 /**
  * @swagger
- * /characters:
+ * /scenery:
  *  get:
  *    security:
  *      - bearerAuth: []
- *    summary: Used to get list of characters
- *    tags: [Characters]
+ *    summary: Used to get list of sceneries
+ *    tags: [Scenery]
  *    parameters:
  *    - in: query
  *      name: sortBy
@@ -31,11 +31,11 @@ const CharacterRouter = express.Router();
  *      required: false
  *    responses:
  *      200:
- *        description: list of characters
+ *        description: list of sceneries
  *        content:
  *          application/json:
  *            schema:
- *                $ref: '#/components/schemas/CharactersResponse'
+ *                $ref: '#/components/schemas/SceneriesResponse'
  *      401:
  *        description: unauthorized
  *      422:
@@ -43,67 +43,67 @@ const CharacterRouter = express.Router();
  *      500:
  *        description: An error occured
  */
-CharacterRouter.get(
-  PATHS_CHARACTERS.ALL,
+sceneryRouter.get(
+  PATHS_SCENERIES.ALL,
   authenticate,
   authorize("admin"),
-  characterController.getCharacters
+  sceneryController.getSceneries
 );
 
 /**
  * @swagger
  * path:
- * /characters/{id}:
+ * /scenery/{id}:
  *  get:
  *    security:
  *      - bearerAuth: []
- *    summary: Used to add new character
- *    tags: [Characters]
+ *    summary: Used to add new scenery
+ *    tags: [Scenery]
  *    parameters:
  *      - in: path
  *        name: id
  *        schema:
  *          type: string
  *        required: true
- *        description: get single character by its id
+ *        description: get single scenery by its id
  *    responses:
  *      200:
- *        description: list of characters
+ *        description: list of sceneries
  *        content:
  *          application/json:
  *            schema:
- *                $ref: '#/components/schemas/SingleCharacterResponse'
+ *                $ref: '#/components/schemas/SingleSceneryResponse'
  *      401:
- *        description: unauhhorized
+ *        description: unauthorized
  *      404:
- *        description: character was not found
+ *        description: Scenery was not found
  *      422:
  *        description: Missing required data or incorrect type
  *      500:
  *        description: An error occured
  */
-CharacterRouter.get(
-  PATHS_CHARACTERS.CHARACTER_GET,
+sceneryRouter.get(
+  PATHS_SCENERIES.SCENERY_GET,
   authenticate,
   authorize("admin"),
-  characterController.getSingleCharacter
+  sceneryController.getSingleScenery
 );
 
 /**
  * @swagger
  * path:
- * /characters/add:
+ * /scenery/add:
  *  post:
  *    security:
  *      - bearerAuth: []
- *    summary: Used to add new character
- *    tags: [Characters]
+ *    summary: Used to add new scenery
+ *    tags: [Scenery]
  *    requestBody:
  *      required: true
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/RequestCharacter'
+ *            $ref: '#/components/schemas/RequestScenery'
  *    responses:
  *      200:
  *        description: A successful resposne
@@ -114,137 +114,137 @@ CharacterRouter.get(
  *      500:
  *        description: An error occured
  */
-CharacterRouter.post(
-  PATHS_CHARACTERS.ADD,
+sceneryRouter.post(
+  PATHS_SCENERIES.ADD,
   authenticate,
   authorize("admin"),
-  characterController.addCharacter
+  sceneryController.addScenery
 );
 
 /**
  * @swagger
  * path:
- * /characters/{id}/edit:
+ * /scenery/{id}/edit:
  *  patch:
  *    security:
  *      - bearerAuth: []
- *    summary: update single character
- *    tags: [Characters]
+ *    summary: update single scenery
+ *    tags: [Scenery]
  *    parameters:
  *      - in: path
  *        name: id
  *        schema:
  *          type: string
  *        required: true
- *        description: get single character by its id
+ *        description: get single scenery by its id
  *    requestBody:
  *      required: true
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/RequestCharacter'
+ *            $ref: '#/components/schemas/RequestScenery'
  *    responses:
  *      200:
  *        description: A successful resposne
  *      401:
  *        description: unauthorized
  *      404:
- *        description: character not found
+ *        description: scenery not found
  *      422:
  *        description: Missing required data or incorrect type
  *      500:
  *        description: An error occured
  */
-CharacterRouter.patch(
-  PATHS_CHARACTERS.CHARACTER_BASIC_EDIT,
+sceneryRouter.patch(
+  PATHS_SCENERIES.SCENERY_BASIC_EDIT,
   authenticate,
   authorize("admin"),
-  characterController.updateBasicCharacterData
+  sceneryController.updateBasicSceneryData
 );
 
 /**
  * @swagger
  * path:
- * /characters/:id/delete:
+ * /scenery/:id/delete:
  *  delete:
  *    security:
  *      - bearerAuth: []
- *    summary: delete single character
- *    tags: [Characters]
+ *    summary: delete single scenery
+ *    tags: [Scenery]
  *    parameters:
  *      - in: path
  *        name: id
  *        schema:
  *          type: string
  *        required: true
- *        description: character id
+ *        description: scenery id
  *    responses:
  *      200:
  *        description: A successful resposne
  *      401:
  *        description: unauthorized
  *      404:
- *        description: character not found
+ *        description: scenery not found
  *      500:
  *        description: An error occured
  */
-CharacterRouter.delete(
-  PATHS_CHARACTERS.CHARACTER_DELETE,
+sceneryRouter.delete(
+  PATHS_SCENERIES.SCENERY_DELETE,
   authenticate,
   authorize("admin"),
-  characterController.deleteCharacter
+  sceneryController.deleteScenery
 );
 
 /**
  * @swagger
  * path:
- * /characters/{id}/images:
+ * /scenery/{id}/images:
  *  post:
  *    security:
  *      - bearerAuth: []
- *    summary: add character images
- *    tags: [Characters]
+ *    summary: add images scenery
+ *    tags: [Scenery]
  *    parameters:
  *      - in: path
  *        name: id
  *        schema:
  *          type: string
  *        required: true
- *        description: character id
+ *        description: scenery id
  *    responses:
  *      200:
  *        description: A successful resposne
  *      401:
  *        description: unauthorized
  *      404:
- *        description: character not found
+ *        description: scebery not found
  *      500:
  *        description: An error occured
  */
-CharacterRouter.post(
-  PATHS_CHARACTERS.CHARACTER_ADD_IMAGES,
+sceneryRouter.post(
+  PATHS_SCENERIES.SCENERY_ADD_IMAGES,
   authenticate,
   authorize("admin"),
   fileUpload.array("files"),
-  characterController.addCharacterImages
+  sceneryController.addSceneryImages
 );
 
 /**
  * @swagger
  * path:
- * /characters/{character_id}/image/{img_filename}/delete:
+ * /scenery/{scenery_id}/image/{img_filename}/delete:
  *  delete:
  *    security:
  *      - bearerAuth: []
- *    summary: delete single image of particular character
- *    tags: [Characters]
+ *    summary: delete single image of particular scenery
+ *    tags: [Scenery]
  *    parameters:
  *      - in: path
- *        name: character_id
+ *        name: scenery_id
  *        schema:
  *          type: string
  *        required: true
- *        description: character character_id
+ *        description: scenery scenery_id
  *      - in: path
  *        name: img_filename
  *        schema:
@@ -257,15 +257,15 @@ CharacterRouter.post(
  *      401:
  *        description: unauthorized
  *      404:
- *        description: character not found
+ *        description: scenery not found
  *      500:
  *        description: An error occured
  */
-CharacterRouter.delete(
-  PATHS_CHARACTERS.CHARACTER_IMAGE_DELETE,
+sceneryRouter.delete(
+  PATHS_SCENERIES.SCENERY_IMAGE_DELETE,
   authenticate,
   authorize("admin"),
-  characterController.deleteCharacterImage
+  sceneryController.deleteSceneryImage
 );
 
-export default CharacterRouter;
+export default sceneryRouter;

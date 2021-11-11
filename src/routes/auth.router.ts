@@ -1,10 +1,10 @@
 import express from "express";
 import { PATHS_USERS_AUTH, PATHS_ADMIN_AUTH } from "constants/paths";
-import userController from "controllers/authController";
+import userController from "controllers/auth.controller";
 import authenticate from "middleware/authenticate";
 import authorize from "middleware/authorize";
 
-const AuthRouter = express.Router();
+const authRouter = express.Router();
 
 /**
  * @swagger
@@ -26,7 +26,7 @@ const AuthRouter = express.Router();
  *      500:
  *        description: An error occured while trying to register new user
  */
-AuthRouter.post(PATHS_USERS_AUTH.REGISTER, (req, res, next) =>
+authRouter.post(PATHS_USERS_AUTH.REGISTER, (req, res, next) =>
   userController.register(req, res, "users")
 );
 
@@ -55,7 +55,7 @@ AuthRouter.post(PATHS_USERS_AUTH.REGISTER, (req, res, next) =>
  *      422:
  *        description: Missing required data or incorrect type
  */
-AuthRouter.post(PATHS_USERS_AUTH.LOGIN, (req, res, next) =>
+authRouter.post(PATHS_USERS_AUTH.LOGIN, (req, res, next) =>
   userController.login(req, res, "users")
 );
 
@@ -88,7 +88,7 @@ AuthRouter.post(PATHS_USERS_AUTH.LOGIN, (req, res, next) =>
  *        403:
  *          description: you are logged in but you don't have permission for the resource
  */
-AuthRouter.get(
+authRouter.get(
   PATHS_USERS_AUTH.PROTECTED,
   authenticate,
   authorize("user"),
@@ -122,7 +122,7 @@ AuthRouter.get(
  *        422:
  *          description: Missing or incorect refreshToken
  */
-AuthRouter.post(PATHS_USERS_AUTH.REFRESH_TOKEN, (req, res, next) =>
+authRouter.post(PATHS_USERS_AUTH.REFRESH_TOKEN, (req, res, next) =>
   userController.refreshAccessToken(req, res, "users")
 );
 
@@ -146,7 +146,7 @@ AuthRouter.post(PATHS_USERS_AUTH.REFRESH_TOKEN, (req, res, next) =>
  *        500:
  *          description: Some error happened
  */
-AuthRouter.post(PATHS_USERS_AUTH.LOGOUT, (req, res, next) =>
+authRouter.post(PATHS_USERS_AUTH.LOGOUT, (req, res, next) =>
   userController.logout(req, res)
 );
 
@@ -170,7 +170,7 @@ AuthRouter.post(PATHS_USERS_AUTH.LOGOUT, (req, res, next) =>
  *      500:
  *        description: An error occured while trying to register new user
  */
-AuthRouter.post(PATHS_ADMIN_AUTH.REGISTER, (req, res, next) =>
+authRouter.post(PATHS_ADMIN_AUTH.REGISTER, (req, res, next) =>
   userController.register(req, res, "cms")
 );
 
@@ -198,7 +198,7 @@ AuthRouter.post(PATHS_ADMIN_AUTH.REGISTER, (req, res, next) =>
  *      422:
  *        description: Missing required data or incorrect type
  */
-AuthRouter.post(PATHS_ADMIN_AUTH.LOGIN, (req, res, next) =>
+authRouter.post(PATHS_ADMIN_AUTH.LOGIN, (req, res, next) =>
   userController.login(req, res, "cms")
 );
 
@@ -236,7 +236,7 @@ AuthRouter.post(PATHS_ADMIN_AUTH.LOGIN, (req, res, next) =>
  *      403:
  *       description: you are logged in but you don't have permission for the resource
  */
-AuthRouter.get(
+authRouter.get(
   PATHS_ADMIN_AUTH.PROTECTED,
   authenticate,
   authorize("admin"),
@@ -270,7 +270,7 @@ AuthRouter.get(
  *        422:
  *          description: Missing or incorect refreshToken
  */
-AuthRouter.post(PATHS_ADMIN_AUTH.REFRESH_TOKEN, (req, res, next) =>
+authRouter.post(PATHS_ADMIN_AUTH.REFRESH_TOKEN, (req, res, next) =>
   userController.refreshAccessToken(req, res, "cms")
 );
 
@@ -294,8 +294,8 @@ AuthRouter.post(PATHS_ADMIN_AUTH.REFRESH_TOKEN, (req, res, next) =>
  *        500:
  *          description: Some error happened
  */
-AuthRouter.post(PATHS_ADMIN_AUTH.LOGOUT, (req, res, next) =>
+authRouter.post(PATHS_ADMIN_AUTH.LOGOUT, (req, res, next) =>
   userController.logout(req, res)
 );
 
-export default AuthRouter;
+export default authRouter;

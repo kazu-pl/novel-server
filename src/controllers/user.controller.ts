@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import UserModel from "models/UserModel";
+import UserModel from "models/User.model";
 import jwt from "jsonwebtoken";
 import {
   ACCESS_TOKEN_SECRET,
@@ -10,8 +10,8 @@ import { transporter, SendMailOptions } from "config/nodemailer";
 import bcryptjs from "bcryptjs";
 import cache, { createNewPasswdLinkName } from "config/cache";
 import { Request as MulterRequest } from "types/multer.types";
-import PhotoFileModel from "models/PhotoFileModel";
-import PhotoChunkModel from "models/PhotoChunkModel";
+import PhotoFileModel from "models/PhotoFile.model";
+import PhotoChunkModel from "models/PhotoChunk.model";
 
 const getUserData = (req: Request, res: Response) => {
   const accessToken = req.headers.authorization?.split(" ")[1];
