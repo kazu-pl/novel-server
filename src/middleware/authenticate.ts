@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import logging from "../config/logging";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET } from "constants/env";
-import cache, { createTokenName } from "config/cache";
+import cache, { createAccessTokenName } from "config/cache";
 
 const NAMESPACE = "authenticate middleware";
 
@@ -29,9 +29,9 @@ const authenticate = (
     });
   }
 
-  if (cache.has(createTokenName(accessToken))) {
+  if (cache.has(createAccessTokenName(accessToken))) {
     return res.status(401).json({
-      message: "Unauthorized - blacklisted token",
+      message: "Unauthorized - blacklisted access token",
     });
   }
 

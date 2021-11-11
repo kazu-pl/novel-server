@@ -10,8 +10,10 @@ import {
   REFRESH_TOKEN_SECRET,
 } from "constants/env";
 
-import RefreshTokenModel from "models/RefreshToken.model";
-import cache, { createTokenName } from "config/cache";
+import cache, {
+  createAccessTokenName,
+  createRefreshTokenName,
+} from "config/cache";
 
 type Variant = "users" | "cms";
 export type Role = "admin" | "user";
@@ -205,13 +207,6 @@ export const login = async (req: Request, res: Response, variant: Variant) => {
               }
             );
 
-            const newRefreshTokenInDB = new RefreshTokenModel({
-              value: refreshToken,
-              forAccount: user.data.email,
-              isAccountAdmin: variant === "cms",
-            });
-
-            await newRefreshTokenInDB.save();
             return res.status(200).json({
               accessToken,
               refreshToken,
@@ -255,56 +250,43 @@ const refreshAccessToken = (req: Request, res: Response, variant: Variant) => {
       message: "refreshToken should be of type string",
     });
   }
+  if (cache.has(createRefreshTokenName(refreshToken))) {
+    return res.status(401).json({
+      message: "Unauthorized - blacklisted refreshToken",
+    });
+  }
 
-  RefreshTokenModel.find({ value: refreshToken })
-    .exec()
-    .then((tokens) => {
-      if (tokens.length !== 1) {
-        return res.status(403).json({
-          message: "Forbidden",
-        });
-      }
+  jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (error, data) => {
+    if (error) {
+      return res.status(403).json({
+        message: "Forbidden - refresh token expired or other error occured",
+        error,
+      });
+    }
 
-      jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (error, data) => {
+    jwt.sign(
+      {
+        _id: data && data._id,
+        role: variant === "cms" ? "admin" : "user",
+      },
+      ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: ACCESS_TOKEN_EXPIRETIME_IN_SECONDS,
+      },
+      (error, encodedAccessToken) => {
         if (error) {
-          await RefreshTokenModel.deleteOne({ value: refreshToken });
-
-          return res.status(403).json({
-            message: "Forbidden - refresh token expired or other error occured",
+          return res.status(500).json({
+            message: "Could not regenerate access token",
             error,
           });
         }
 
-        jwt.sign(
-          {
-            _id: data && data._id,
-            role: variant === "cms" ? "admin" : "user",
-          },
-          ACCESS_TOKEN_SECRET,
-          {
-            expiresIn: ACCESS_TOKEN_EXPIRETIME_IN_SECONDS,
-          },
-          (error, encodedAccessToken) => {
-            if (error) {
-              return res.status(500).json({
-                message: "Could not regenerate access token",
-                error,
-              });
-            }
-
-            return res.status(200).json({
-              accessToken: encodedAccessToken,
-            });
-          }
-        );
-      });
-    })
-    .catch((error) => {
-      return res.status(500).json({
-        message: error.message,
-        error,
-      });
-    });
+        return res.status(200).json({
+          accessToken: encodedAccessToken,
+        });
+      }
+    );
+  });
 };
 
 const logout = (req: Request, res: Response) => {
@@ -322,40 +304,54 @@ const logout = (req: Request, res: Response) => {
     });
   }
 
-  jwt.verify(accessToken, ACCESS_TOKEN_SECRET, (error, decoded) => {
-    const removeRefreshTokenFromDB = () => {
-      RefreshTokenModel.deleteOne({ value: refreshToken })
-        .then(() => {
-          return res.status(200).json({ message: "logout successed" });
-        })
-        .catch((error) => {
-          return res.status(500).json({
-            message: error.message,
-            error,
-          });
-        });
-    };
-
+  jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (error, decoded) => {
     if (error) {
-      removeRefreshTokenFromDB();
-      // error means accessToken expired already so there's no need to blacklist it
+      return res.status(500).json({
+        message: error.message,
+        error,
+      });
     } else {
-      const expireBlacklistedTokenAt =
+      const expireBlacklistedRefreshTokenAt =
         decoded && decoded.exp
           ? decoded.exp - Math.floor(new Date().getTime() / 1000)
           : 0;
 
       cache.set(
-        createTokenName(accessToken),
+        createRefreshTokenName(refreshToken),
+        {
+          refreshToken,
+          ...(decoded && { _id: decoded._id, role: decoded.role }),
+        },
+        expireBlacklistedRefreshTokenAt
+      );
+    }
+  });
+
+  jwt.verify(accessToken, ACCESS_TOKEN_SECRET, (error, decoded) => {
+    if (error) {
+      return res.status(500).json({
+        message: error.message,
+        error,
+      });
+    } else {
+      const expireBlacklistedAccessTokenAt =
+        decoded && decoded.exp
+          ? decoded.exp - Math.floor(new Date().getTime() / 1000)
+          : 0;
+
+      cache.set(
+        createAccessTokenName(accessToken),
         {
           accessToken,
           ...(decoded && { _id: decoded._id, role: decoded.role }),
         },
-        expireBlacklistedTokenAt
+        expireBlacklistedAccessTokenAt
       );
-
-      removeRefreshTokenFromDB();
     }
+  });
+
+  return res.status(200).json({
+    message: "Logout successed",
   });
 };
 
