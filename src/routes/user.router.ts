@@ -1,10 +1,10 @@
 import express from "express";
 import { PATHS_USER_DATA } from "constants/paths";
-import userController from "controllers/userController";
+import userController from "controllers/user.controller";
 import authenticate from "middleware/authenticate";
 import fileUpload from "middleware/fileUpload";
 
-const UserRouter = express.Router();
+const userRouter = express.Router();
 
 /**
  * @swagger
@@ -30,7 +30,7 @@ const UserRouter = express.Router();
  *      500:
  *        description: An error occured while trying to register new user
  */
-UserRouter.get(PATHS_USER_DATA.ME, authenticate, userController.getUserData);
+userRouter.get(PATHS_USER_DATA.ME, authenticate, userController.getUserData);
 
 /**
  * @swagger
@@ -58,7 +58,7 @@ UserRouter.get(PATHS_USER_DATA.ME, authenticate, userController.getUserData);
  *      500:
  *        description: An error occured while trying to register new user
  */
-UserRouter.put(PATHS_USER_DATA.ME, authenticate, userController.updateUserData);
+userRouter.put(PATHS_USER_DATA.ME, authenticate, userController.updateUserData);
 
 /**
  * @swagger
@@ -82,7 +82,7 @@ UserRouter.put(PATHS_USER_DATA.ME, authenticate, userController.updateUserData);
  *      500:
  *        description: An error occured
  */
-UserRouter.post(PATHS_USER_DATA.REMIND_PASSWORD, userController.remindPassword);
+userRouter.post(PATHS_USER_DATA.REMIND_PASSWORD, userController.remindPassword);
 
 /**
  * @swagger
@@ -116,7 +116,7 @@ UserRouter.post(PATHS_USER_DATA.REMIND_PASSWORD, userController.remindPassword);
  *      500:
  *        description: An error occured while trying to renew password
  */
-UserRouter.post(PATHS_USER_DATA.RENEW_PASSWORD, userController.renewPassword);
+userRouter.post(PATHS_USER_DATA.RENEW_PASSWORD, userController.renewPassword);
 
 /**
  * @swagger
@@ -145,7 +145,7 @@ UserRouter.post(PATHS_USER_DATA.RENEW_PASSWORD, userController.renewPassword);
  *      500:
  *        description: An error occured while trying to renew password
  */
-UserRouter.put(PATHS_USER_DATA.UPDATE_PASSWORD, userController.updatePassword);
+userRouter.put(PATHS_USER_DATA.UPDATE_PASSWORD, userController.updatePassword);
 
 /**
  * @swagger
@@ -172,7 +172,7 @@ UserRouter.put(PATHS_USER_DATA.UPDATE_PASSWORD, userController.updatePassword);
  *      500:
  *        description: An error occured while trying to update avatar
  */
-UserRouter.put(
+userRouter.put(
   PATHS_USER_DATA.AVATAR,
   authenticate,
   fileUpload.single("file"),
@@ -198,10 +198,10 @@ UserRouter.put(
  *      500:
  *        description: An error occured while trying to update avatar
  */
-UserRouter.delete(
+userRouter.delete(
   PATHS_USER_DATA.AVATAR,
   authenticate,
   userController.deleteAvatar
 );
 
-export default UserRouter;
+export default userRouter;

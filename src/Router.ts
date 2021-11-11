@@ -4,10 +4,10 @@ import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "swagger/swaggerSpec";
 import swaggerJsonSchema from "../swagger.json";
 
-import AuthRouter from "routes/AuthRouter";
-import UserRouter from "routes/UserRouter";
-import SceneryRouter from "routes/SceneryRouter";
-import CharacterRouter from "routes/CharacterRouter";
+import authRouter from "routes/auth.router";
+import userRouter from "routes/user.router";
+import sceneryRouter from "routes/scenery.router";
+import characterRouter from "routes/character.router";
 
 const Router = express.Router();
 
@@ -27,10 +27,10 @@ Router.use(PATHS_SWAGGER.SWAGGER_SCHEMA_JSON, (req, res) =>
   res.send(swaggerJsonSchema)
 );
 
-Router.use(AuthRouter);
-Router.use(UserRouter);
-Router.use(SceneryRouter);
-Router.use(CharacterRouter);
+Router.use(authRouter);
+Router.use(userRouter);
+Router.use(sceneryRouter);
+Router.use(characterRouter);
 
 Router.use((req, res, next) =>
   res.status(404).json({

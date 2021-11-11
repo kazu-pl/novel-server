@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import logging from "../config/logging";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import UserModel from "models/UserModel";
+import UserModel from "models/User.model";
 import {
   ACCESS_TOKEN_EXPIRETIME_IN_SECONDS,
   ACCESS_TOKEN_SECRET,
@@ -10,7 +10,7 @@ import {
   REFRESH_TOKEN_SECRET,
 } from "constants/env";
 
-import RefreshTokenModel from "models/RefreshTokenModel";
+import RefreshTokenModel from "models/RefreshToken.model";
 import cache, { createTokenName } from "config/cache";
 
 type Variant = "users" | "cms";

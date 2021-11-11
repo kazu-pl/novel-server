@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { Role } from "controllers/authController";
+import { Role } from "controllers/auth.controller";
 import logging from "config/logging";
 import { RequestWithJWT } from "types/jwt.types";
 

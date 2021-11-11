@@ -7,7 +7,7 @@ import Router from "Router";
 import mongoose from "mongoose";
 import { GridFSBucket } from "mongodb";
 import { photosBucketName } from "middleware/fileUpload";
-import PhotoFileModel from "models/PhotoFileModel";
+import PhotoFileModel from "models/PhotoFile.model";
 import { PATHS_FILES } from "constants/paths";
 
 export let gridFSBucket: GridFSBucket;
