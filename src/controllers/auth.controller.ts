@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import logging from "../config/logging";
 import bcryptjs from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
 import UserModel from "models/User.model";
 import {
   ACCESS_TOKEN_EXPIRETIME_IN_SECONDS,
@@ -258,10 +258,18 @@ const refreshAccessToken = (req: Request, res: Response, variant: Variant) => {
 
   jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (error, data) => {
     if (error) {
-      return res.status(403).json({
-        message: "Forbidden - refresh token expired or other error occured",
-        error,
-      });
+      const err = error as TokenExpiredError;
+      if (err.message === "jwt expired") {
+        return res.status(403).json({
+          message: "Your refresh token session expired. Log in again.",
+          error,
+        });
+      } else {
+        return res.status(403).json({
+          message: "Forbidden - some error occured",
+          error,
+        });
+      }
     }
 
     jwt.sign(
@@ -306,10 +314,13 @@ const logout = (req: Request, res: Response) => {
 
   jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (error, decoded) => {
     if (error) {
-      return res.status(500).json({
-        message: error.message,
-        error,
-      });
+      const err = error as TokenExpiredError;
+      if (err.message !== "jwt expired") {
+        return res.status(500).json({
+          message: error.message,
+          error,
+        });
+      }
     } else {
       const expireBlacklistedRefreshTokenAt =
         decoded && decoded.exp
@@ -329,10 +340,13 @@ const logout = (req: Request, res: Response) => {
 
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, (error, decoded) => {
     if (error) {
-      return res.status(500).json({
-        message: error.message,
-        error,
-      });
+      const err = error as TokenExpiredError;
+      if (err.message !== "jwt expired") {
+        return res.status(500).json({
+          message: error.message,
+          error,
+        });
+      }
     } else {
       const expireBlacklistedAccessTokenAt =
         decoded && decoded.exp
