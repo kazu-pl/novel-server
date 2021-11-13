@@ -73,6 +73,13 @@ found [here](https://stackoverflow.com/questions/61342753/paths-from-tsconfig-js
 
 Here is a [link](https://stackoverflow.com/questions/59717140/how-to-replace-gridstore-to-gridfsbucket) that shows how to fix `gfs` problems. Just search for answer starting with: `I ended up having the same issue, you have most likely determined that readstream`
 
+Here are some links with usefull information:
+
+- `1` - [link](https://dev.to/shubhambattoo/uploading-files-to-mongodb-with-gridfs-and-multer-using-nodejs-5aed) with some example on using GridFsStorage
+- `2` - [link](https://blog.logrocket.com/uploading-files-using-multer-and-node-js/)
+- `3` - [link](https://www.geeksforgeeks.org/upload-and-retrieve-image-on-mongodb-using-mongoose/)
+- `4` - [link](https://www.dotnetcurry.com/nodejs/1422/store-binary-using-mongodb-gridfs)
+
 # yarn build does nothing (should build files)
 
 If you run `yarn build` command which is ` "build": "rm -rf build && tsc"` and it does nothing (should create `build` folder with transpiled files) then you probably have UNCOMMENTED field `"noEmit": true` in your `tsconfig.json` file.
