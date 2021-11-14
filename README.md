@@ -1,3 +1,101 @@
+# How to push this repo to heroku:
+
+Basic steps are shown on your profile heroku dashboard:
+
+- `1` - Install the Heroku CLI (if you haven't):
+
+- Download and install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+  -If you haven't already, log in to your Heroku account and follow the prompts to create a new SSH public key.
+- login in heroku from your terminal:
+
+```
+$ heroku login
+```
+
+- `2` - Deploy your changes:
+
+```
+$ git push heroku master
+```
+
+BUT, the problem with that command is that it pushes YOUR master to heroku master by default.
+Heroku will update its app when you push to heroku repo master banch.
+If you want to push your other branch like develop (becuase you want to create stagging app from your develop for example), then run:
+
+```
+$ git push heroku develop:master
+```
+
+If you want to push your develop into heroku master branch but you use `git push heroku master` then app may won't work and throw an error like:
+
+#### Procfile
+
+Heroku app will search for `Procfile` file to get to know to to run your app. If it's not provided, it will just run `node index.js` but this repo can't be started with that command (you use `ts-node-dev` which imports `ts-node` and `tsconfig-paths` to resolve paths in files).
+So to run the app correctly on heroku, you need to create `Procfile` file in the app root dir and paste following command:
+
+```
+./Profile   (pay attention that its lowercase and there's no any extension type)
+
+web: node -r ts-node/register/transpile-only -r tsconfig-paths/register build/src/index.js
+```
+
+command `node -r ts-node/register/transpile-only -r tsconfig-paths/register build/src/index.js` is exactly the same one that you can find in `package.json` with `yarn start` script.
+
+Above command uses packages:
+
+```
+  "ts-node-dev": "^1.1.8",
+  "tsconfig-paths": "^3.11.0"
+```
+
+Because those 2 packages are required to run builded app, you have to put them in `dependencies` and not in `devDependecies` because if they will be in devDependencies they will be removed after app is builded and the start script won't work.
+
+#### How to log into your heroku app bash from your command to see file structure of your app on heroku etc:
+
+To log connect with your heroku app in bash, you can use:
+
+```
+
+$ heroku run bash -a APPNAME
+
+```
+
+When you use this command you can use commands like `ls` or `cd ..` etc
+
+To logout, use:
+
+```
+
+$ exit
+
+ctrl + c
+
+```
+
+#### track errors when build failed:
+
+with command `heroku logs --tail` runned in your terminal you have real-time logs of your app. If anything happend, you can check in your terminal for the errors. If you accidently pushed from master branh (which may be not ready by the time) or forgot about putting `ts-node-dev` and `tsconfig-paths` into dependencies, you may see error like this:
+
+```
+Restarting
+State changed from up to starting
+Stopping all processes with SIGTERM
+Process exited with status 143
+Starting process with command `node -r ts-node/register/transpile-only -r tsconfig-paths/register build/src/index.js`
+
+internal/modules/cjs/loader.js:905
+throw err;
+^
+
+Error: Cannot find module 'ts-node/register/transpile-only'   (THIS IS THE ERROR)
+Require stack:
+- internal/preload
+```
+
+REMEMBER THAT IF YOU PUSH WITH heroku APP LOGIN (THEY WAY IT'S SHOWN ABOVE) YOU HAVE TO MANUALLY PUSH UPDATES TO HEROKU APP. OTHERWISE YOU CAN PUSH TO REMOTE GITHUB REPO BUT THE HEROKU APP WILL NOT APPLY ANY CHANGES.
+
+But you can also deploy by connecting to your GitHub and automate the whole process so you don't need to manually push changes to heroku app.
+
 # how to run TS in node with auto refresh when a file got edited
 
 - `yarn ts-node-dev typescript -D`
