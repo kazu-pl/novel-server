@@ -72,6 +72,12 @@ ctrl + c
 
 ```
 
+found [here](https://stackoverflow.com/questions/38924458/how-to-see-files-and-file-structure-on-a-deployed-heroku-app)
+
+#### env in heroku app:
+
+if your app uses `.env` file wih some environment variables, then you can add them in heroku dashboard. To do so, go to `Settings` and search for `Config Vars`
+
 #### track errors when build failed:
 
 with command `heroku logs --tail` runned in your terminal you have real-time logs of your app. If anything happend, you can check in your terminal for the errors. If you accidently pushed from master branh (which may be not ready by the time) or forgot about putting `ts-node-dev` and `tsconfig-paths` into dependencies, you may see error like this:
