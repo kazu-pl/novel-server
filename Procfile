@@ -1,1 +1,1 @@
-web: node -r ts-node/register/transpile-only -r tsconfig-paths/register build/index.js
+web: node -r ts-node/register/transpile-only -r tsconfig-paths/register build/src/index.js
