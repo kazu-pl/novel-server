@@ -8,6 +8,7 @@ import authRouter from "routes/auth.router";
 import userRouter from "routes/user.router";
 import sceneryRouter from "routes/scenery.router";
 import characterRouter from "routes/character.router";
+import actRouter from "routes/act.router";
 
 const Router = express.Router();
 
@@ -31,6 +32,7 @@ Router.use(authRouter);
 Router.use(userRouter);
 Router.use(sceneryRouter);
 Router.use(characterRouter);
+Router.use(actRouter);
 
 Router.use((req, res, next) =>
   res.status(404).json({
