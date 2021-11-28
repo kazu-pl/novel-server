@@ -512,9 +512,9 @@ export {};
  *        title:
  *          type: string
  *          description: scene title
- *        description:
+ *        bgImgUrl:
  *          type: string
- *          description: scene description
+ *          description: scene background image
  *        dialogs:
  *          type: array
  *          items:
