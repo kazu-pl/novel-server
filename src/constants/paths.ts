@@ -51,3 +51,12 @@ export const PATHS_CHARACTERS = {
     "/characters/:character_id/image/:img_filename/delete",
   CHARACTER_ADD_IMAGES: "/characters/:id/images",
 };
+
+export const PATHS_ACT = {
+  ADD: "/acts/add",
+  DELETE: "/acts/:id/delete",
+  EDIT: "/acts/:id/edit",
+  GET: "/acts/:id",
+  GET_ALL: "/acts",
+  DICTIONARY: "/acts/dictionary",
+};

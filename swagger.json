@@ -256,7 +256,7 @@
           }
         },
         "example": {
-          "message": "resource was created successfuly"
+          "message": "request was sucessfully processed"
         }
       },
       "FailedReqMsg": {
@@ -569,6 +569,287 @@
             "type": "object",
             "description": "scenery",
             "$ref": "#/components/schemas/Character"
+          }
+        }
+      },
+      "CharacterOnScreen": {
+        "type": "object",
+        "description": "signle character visible on screen options",
+        "required": [
+          "name",
+          "leftPosition",
+          "zIndex"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "name of the character visible on screen"
+          },
+          "leftPosition": {
+            "type": "number",
+            "description": "X transition on the screen"
+          },
+          "zIndex": {
+            "type": "number",
+            "description": "z-index value"
+          }
+        },
+        "example": {
+          "name": "Yuuta",
+          "leftPosition": 45,
+          "zIndex": 2
+        }
+      },
+      "Dialog": {
+        "type": "object",
+        "description": "signle Dialog type",
+        "required": [
+          "text",
+          "characterSayingText",
+          "charactersOnScreen"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "text that some charact is saying"
+          },
+          "characterSayingText": {
+            "type": "string",
+            "description": "character name that says the text"
+          },
+          "charactersOnScreen": {
+            "type": "array",
+            "description": "array of characters visible on screen",
+            "items": {
+              "$ref": "#/components/schemas/CharacterOnScreen"
+            }
+          }
+        },
+        "example": {
+          "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tempus enim ac molestie pharetra. Aliquam pretium pharetra finibus. Etiam rutrum",
+          "characterSayingText": "Yuuta",
+          "charactersOnScreen": {
+            "allOf": {
+              "$ref": "#/components/schemas/CharacterOnScreen"
+            }
+          }
+        }
+      },
+      "Scene": {
+        "type": "object",
+        "description": "signle Scene type",
+        "required": [
+          "title",
+          "bgImgUrl",
+          "dialogs"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "scene title"
+          },
+          "description": {
+            "type": "string",
+            "description": "scene description"
+          },
+          "dialogs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dialog"
+            }
+          }
+        },
+        "example": {
+          "title": "basic conversation between Yuuta and Shion",
+          "bgImgUrl": "/files/mansion.jpg",
+          "dialogs": {
+            "allOf": {
+              "$ref": "#/components/schemas/Dialog"
+            }
+          }
+        }
+      },
+      "Act": {
+        "type": "object",
+        "description": "Act type (used as newly adding Act item type and as a basic type extended by additional items from mongoDB in returning Act)",
+        "required": [
+          "title",
+          "description",
+          "type",
+          "scenes"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "act title. Its unique title (no duplications allowed)"
+          },
+          "description": {
+            "type": "string",
+            "description": "act description"
+          },
+          "type": {
+            "type": "string",
+            "description": "act type",
+            "enum": [
+              "start",
+              "normal",
+              "end"
+            ]
+          },
+          "nextActId": {
+            "type": "string",
+            "description": "title of the next Act. If its end act, then nextActId is not needed. If its used to get first act to start game, pass 'start'"
+          },
+          "scenes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Scene"
+            }
+          }
+        },
+        "example": {
+          "title": "Act I - The beginning",
+          "desciption": "This is the first Act. It introduces all main characters.",
+          "type": "start",
+          "nextActId": "Act II - The Dawn",
+          "scenes": []
+        }
+      },
+      "ActExtended": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Act"
+          }
+        ],
+        "type": "object",
+        "description": "Act type that extends basic Act type. It Adds fields from mongoDB",
+        "required": [
+          "_id",
+          "__v",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "mongodb id"
+          },
+          "__v": {
+            "type": "number",
+            "description": "mongodb __v"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "create timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "update timestamp"
+          }
+        },
+        "example": {
+          "_id": "6181395d67568b70180ce93b",
+          "__v": 0,
+          "createdAt": "2021-11-04T11:01:42.143+00:00",
+          "updatedAt": "2021-11-04T11:01:42.143+00:00"
+        }
+      },
+      "RequestUpdateAct": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Act"
+          }
+        ],
+        "type": "object",
+        "desciption": "type of act you post to update",
+        "required": [
+          "_id"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "mongodb id"
+          }
+        },
+        "example": {
+          "_id": "6181395d67568b70180ce93b"
+        }
+      },
+      "ActsResponse": {
+        "type": "object",
+        "description": "response with all acts to dispaly them in a table",
+        "required": [
+          "data",
+          "totalItems"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActExtended"
+            },
+            "description": "an array with all acts"
+          },
+          "totalItems": {
+            "type": "number",
+            "description": "nmber of total acts"
+          }
+        },
+        "example": {
+          "data": [],
+          "totalItems": 0
+        }
+      },
+      "RequestDeleteAct": {
+        "type": "object",
+        "description": "contains id of act to delete",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "act id"
+          }
+        },
+        "example": {
+          "id": "0000-0000-0000-0001"
+        }
+      },
+      "SingleActDictionaryObject": {
+        "type": "object",
+        "description": "single act id and title",
+        "required": [
+          "id",
+          "title"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "act id"
+          },
+          "title": {
+            "type": "string",
+            "description": "act title to display to user"
+          }
+        },
+        "example": {
+          "id": "0000-0000-0000-0000",
+          "title": "Act I - The beginning of the Dawn"
+        }
+      },
+      "ActDictionary": {
+        "type": "object",
+        "description": "list of objects with id and title of every act",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SingleActDictionaryObject"
+            }
           }
         }
       }
