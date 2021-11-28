@@ -113,6 +113,33 @@ actRouter.post(
 
 /**
  * @swagger
+ * /acts/dictionary:
+ *  get:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to get dictionary of all acts (array of title and id)
+ *    tags: [Acts]
+ *    responses:
+ *      200:
+ *        description: list of characters
+ *        content:
+ *          application/json:
+ *            schema:
+ *                $ref: '#/components/schemas/ActDictionary'
+ *      401:
+ *        description: unauthorized
+ *      500:
+ *        description: An error occured
+ */
+actRouter.get(
+  PATHS_ACT.DICTIONARY,
+  authenticate,
+  authorize("admin"),
+  actController.getActsDictionary
+);
+
+/**
+ * @swagger
  * /acts/{id}:
  *  get:
  *    security:
@@ -169,33 +196,6 @@ actRouter.get(
   authenticate,
   authorize("admin"),
   actController.getAllActs
-);
-
-/**
- * @swagger
- * /acts/dictionary:
- *  get:
- *    security:
- *      - bearerAuth: []
- *    summary: Used to get dictionary of all acts (array of title and id)
- *    tags: [Acts]
- *    responses:
- *      200:
- *        description: list of characters
- *        content:
- *          application/json:
- *            schema:
- *                $ref: '#/components/schemas/ActDictionary'
- *      401:
- *        description: unauthorized
- *      500:
- *        description: An error occured
- */
-actRouter.get(
-  PATHS_ACT.DICTIONARY,
-  authenticate,
-  authorize("admin"),
-  actController.getActsDictionary
 );
 
 export default actRouter;
