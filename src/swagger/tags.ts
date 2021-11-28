@@ -41,3 +41,10 @@ export {};
  *    name: Characters
  *    description: Characters in the game
  */
+
+/**
+ * @swagger
+ * tags:
+ *    name: Acts
+ *    description: Acts of game story
+ */
