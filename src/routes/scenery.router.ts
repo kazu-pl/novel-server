@@ -52,6 +52,33 @@ sceneryRouter.get(
 
 /**
  * @swagger
+ * /scenery/dictionary:
+ *  get:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to get list of sceneries
+ *    tags: [Scenery]
+ *    responses:
+ *      200:
+ *        description: list of sceneries
+ *        content:
+ *          application/json:
+ *            schema:
+ *                $ref: '#/components/schemas/SceneriesDictionary'
+ *      401:
+ *        description: unauthorized
+ *      500:
+ *        description: An error occured
+ */
+sceneryRouter.get(
+  PATHS_SCENERIES.DICTIONARY,
+  authenticate,
+  authorize("admin"),
+  sceneryController.getSceneryDictionary
+);
+
+/**
+ * @swagger
  * path:
  * /scenery/{id}:
  *  get:

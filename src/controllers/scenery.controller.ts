@@ -280,6 +280,21 @@ const updateBasicSceneryData = async (req: RequestWithJWT, res: Response) => {
   }
 };
 
+const getSceneryDictionary = async (req: RequestWithJWT, res: Response) => {
+  try {
+    const sceneries = await SceneryModel.find().exec();
+
+    return res.status(200).json({
+      data: sceneries.map((item) => ({ id: item._id, title: item.title })),
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "There was an error  while trying to process your request",
+      error,
+    });
+  }
+};
+
 export default {
   getSceneries,
   getSingleScenery,
@@ -288,4 +303,5 @@ export default {
   updateBasicSceneryData,
   deleteScenery,
   deleteSceneryImage,
+  getSceneryDictionary,
 };
