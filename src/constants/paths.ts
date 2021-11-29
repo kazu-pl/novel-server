@@ -33,6 +33,7 @@ export const PATHS_FILES = {
 
 export const PATHS_SCENERIES = {
   ALL: "/scenery",
+  DICTIONARY: "/scenery/dictionary",
   ADD: "/scenery/add",
   SCENERY_GET: "/scenery/:id",
   SCENERY_BASIC_EDIT: "/scenery/:id/edit",

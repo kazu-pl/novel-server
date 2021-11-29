@@ -329,6 +329,36 @@ export {};
  *          type: number
  *          description: number of total sceneries
  *
+ *    SingleSceneryFromDictionary:
+ *      type: object
+ *      description: type of single entity of scenery disctionary
+ *      required:
+ *      - title
+ *      - id
+ *      properties:
+ *        title:
+ *          type: string
+ *        id:
+ *          type: string
+ *      example:
+ *        title: Mansion
+ *        id: 0000-0000-0000-0000
+ *
+ *
+ *    SceneriesDictionary:
+ *      type: object
+ *      desctiption: get dictionary of all sceneries
+ *      required:
+ *        - data
+ *      properties:
+ *        data:
+ *          type: array
+ *          items:
+ *            $ref: '#/components/schemas/SingleSceneryFromDictionary'
+ *      example:
+ *        data: []
+ *
+ *
  *
  *    RequestCharacter:
  *      type: object
