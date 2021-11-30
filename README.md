@@ -28,6 +28,14 @@ $ git push heroku develop:master
 
 If you want to push your develop into heroku master branch but you use `git push heroku master` then app may won't work and throw an error like:
 
+#### WARNING:
+
+IF YOU ACCIDENTLY REMOVED YOUR HEROKU REMOTE YOU CAN ADD IT WITH THE FOLLOWING COMMAND:
+
+```
+$ heroku git:remote -a my-projekt-name
+```
+
 #### Procfile
 
 Heroku app will search for `Procfile` file to get to know to to run your app. If it's not provided, it will just run `node index.js` but this repo can't be started with that command (you use `ts-node-dev` which imports `ts-node` and `tsconfig-paths` to resolve paths in files).
