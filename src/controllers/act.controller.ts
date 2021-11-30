@@ -160,30 +160,10 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
 };
 
 const deleteAct = async (req: RequestWithJWT, res: Response) => {
-  const { id } = req.body as { id: string };
-
-  if (!id) {
-    return res.status(400).json({
-      message: "Id was not provided",
-    });
-  }
-
-  if (typeof id !== "string") {
-    return res.status(400).json({
-      message: "Id should be of type string",
-    });
-  }
+  const id = req.params.id;
 
   try {
-    const act = await ActModel.findOne({ _id: id }).exec();
-
-    if (!act) {
-      return res.status(422).json({
-        message: "Could not find any Act with that id",
-      });
-    }
-
-    await act.delete().exec();
+    await ActModel.deleteOne({ _id: id }).exec();
 
     return res.status(200).json({
       message: "Act deleted successfuly",
