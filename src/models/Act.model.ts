@@ -23,7 +23,7 @@ export interface Act {
   title: string;
   description: string;
   type: ActType;
-  nextActId?: string;
+  nextAct?: string;
   scenes: Scene[];
 }
 
@@ -34,7 +34,7 @@ const ActSchema: Schema = new Schema(
     title: { type: String, required: true },
     description: { type: String, required: true },
     type: { type: String, required: true },
-    nextActId: { type: String },
+    nextAct: { type: String },
     scenes: [
       {
         type: {

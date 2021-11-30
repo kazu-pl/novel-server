@@ -611,9 +611,9 @@ export {};
  *          type: string
  *          description: act type
  *          enum: [start, normal, end]
- *        nextActId:
+ *        nextAct:
  *          type: string
- *          description: title of the next Act. If its end act, then nextActId is not needed. If its used to get first act to start game, pass 'start'
+ *          description: title of the next Act. If its end act, then nextAct is not needed. If its used to get first act to start game, pass 'start'
  *        scenes:
  *          type: array
  *          items:
@@ -622,7 +622,7 @@ export {};
  *        title: Act I - The beginning
  *        desciption: This is the first Act. It introduces all main characters.
  *        type: start
- *        nextActId: Act II - The Dawn
+ *        nextAct: Act II - The Dawn
  *        scenes: []
  *
  *    ActExtended:
