@@ -45,6 +45,7 @@ export const PATHS_SCENERIES = {
 export const PATHS_CHARACTERS = {
   ALL: "/characters",
   ADD: "/characters/add",
+  DICTIONARY: "/characters/dictionary",
   CHARACTER_GET: "/characters/:id",
   CHARACTER_BASIC_EDIT: "/characters/:id/edit",
   CHARACTER_DELETE: "/characters/:id/delete",
