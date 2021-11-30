@@ -466,6 +466,36 @@ export {};
  *          type: number
  *          description: number of total characters
  *
+ *
+ *    SingleCharacterFromDictionary:
+ *      type: object
+ *      description: type of single entity of characters disctionary
+ *      required:
+ *      - title
+ *      - id
+ *      properties:
+ *        title:
+ *          type: string
+ *        id:
+ *          type: string
+ *      example:
+ *        title: Yuuta
+ *        id: 0000-0000-0000-0000
+ *
+ *
+ *    CharactersDictionary:
+ *      type: object
+ *      desctiption: get dictionary of all characters
+ *      required:
+ *        - data
+ *      properties:
+ *        data:
+ *          type: array
+ *          items:
+ *            $ref: '#/components/schemas/SingleCharacterFromDictionary'
+ *      example:
+ *        data: []
+ *
  *    SingleCharacterResponse:
  *      type: object
  *      description: response with character data in `data` key
@@ -487,6 +517,7 @@ export {};
  *      - name
  *      - leftPosition
  *      - zIndex
+ *      - imgUrl
  *      properties:
  *        name:
  *          type: string
@@ -497,10 +528,14 @@ export {};
  *        zIndex:
  *          type: number
  *          description: z-index value
+ *        imgUrl:
+ *          type: string
+ *          description: link to character img
  *      example:
  *        name: Yuuta
  *        leftPosition: 45
  *        zIndex: 2
+ *        imgUrl: /files/character-sad.jpg
  *
  *
  *    Dialog:

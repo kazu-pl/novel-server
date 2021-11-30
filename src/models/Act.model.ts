@@ -13,6 +13,7 @@ export interface Scene {
         name: string;
         leftPosition: number;
         zIndex: number;
+        imgUrl: string;
       }[];
     }
   ];
@@ -50,6 +51,7 @@ const ActSchema: Schema = new Schema(
                       name: { type: String, required: true },
                       leftPosition: { type: Number, required: true },
                       zIndex: { type: Number, required: true },
+                      imgUrl: { type: String, required: true },
                     },
                   },
                 ],

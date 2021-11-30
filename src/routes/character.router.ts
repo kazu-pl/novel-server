@@ -53,6 +53,34 @@ characterRouter.get(
 /**
  * @swagger
  * path:
+ * /characters/dictionary":
+ *  get:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to add new character
+ *    tags: [Characters]
+ *    responses:
+ *      200:
+ *        description: list of characters
+ *        content:
+ *          application/json:
+ *            schema:
+ *                $ref: '#/components/schemas/SingleCharacterResponse'
+ *      401:
+ *        description: unauhhorized
+ *      500:
+ *        description: An error occured
+ */
+characterRouter.get(
+  PATHS_CHARACTERS.DICTIONARY,
+  authenticate,
+  authorize("admin"),
+  characterController.getCharactersDictionary
+);
+
+/**
+ * @swagger
+ * path:
  * /characters/{id}:
  *  get:
  *    security:

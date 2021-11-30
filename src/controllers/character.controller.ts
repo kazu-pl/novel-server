@@ -283,6 +283,21 @@ const updateBasicCharacterData = async (req: RequestWithJWT, res: Response) => {
   }
 };
 
+const getCharactersDictionary = async (req: RequestWithJWT, res: Response) => {
+  try {
+    const characters = await CharacterModel.find().exec();
+
+    return res.status(200).json({
+      data: characters.map((item) => ({ id: item._id, title: item.title })),
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "There was an error while trying to process your request",
+      error,
+    });
+  }
+};
+
 export default {
   getCharacters,
   getSingleCharacter,
@@ -291,4 +306,5 @@ export default {
   updateBasicCharacterData,
   deleteCharacter,
   deleteCharacterImage,
+  getCharactersDictionary,
 };
