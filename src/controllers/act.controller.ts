@@ -293,7 +293,9 @@ const getActsDictionary = async (req: RequestWithJWT, res: Response) => {
     const data = await ActModel.find().exec();
 
     return res.status(200).json({
-      data: data.map((item) => ({ id: item.id, title: item.title })),
+      data: data
+        .filter((act) => act.type !== ("start" as ActType))
+        .map((item) => ({ id: item.id, title: item.title })),
     });
   } catch (error) {
     return res.status(500).json({
