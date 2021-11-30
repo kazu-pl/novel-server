@@ -3,7 +3,7 @@ import { RequestWithJWT } from "types/jwt.types";
 import ActModel, { Act, ActType } from "models/Act.model";
 
 const addAct = async (req: RequestWithJWT, res: Response) => {
-  const { title, description, type, scenes, nextActId } = req.body as Act;
+  const { title, description, type, scenes, nextAct } = req.body as Act;
 
   if (!title || !description || !type || !scenes) {
     return res.status(400).json({
@@ -11,9 +11,9 @@ const addAct = async (req: RequestWithJWT, res: Response) => {
     });
   }
 
-  if (nextActId && typeof nextActId !== "string") {
+  if (nextAct && typeof nextAct !== "string") {
     return res.status(400).json({
-      message: "nextActId should be of type string",
+      message: "nextAct should be of type string",
     });
   }
 
@@ -70,7 +70,7 @@ const addAct = async (req: RequestWithJWT, res: Response) => {
       title,
       description,
       type,
-      ...(nextActId && { nextActId }),
+      ...(nextAct && { nextAct }),
       scenes,
     }).save();
     return res.status(201).json({ message: "Act created successfuly" });
@@ -84,10 +84,9 @@ const addAct = async (req: RequestWithJWT, res: Response) => {
 };
 
 const updateAct = async (req: RequestWithJWT, res: Response) => {
-  const { _id, title, description, type, scenes, nextActId } =
-    req.body as Act & {
-      _id: string;
-    };
+  const { _id, title, description, type, scenes, nextAct } = req.body as Act & {
+    _id: string;
+  };
 
   if (!title || !description || !type || !scenes || !_id) {
     return res.status(400).json({
@@ -95,9 +94,9 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
     });
   }
 
-  if (nextActId && typeof nextActId !== "string") {
+  if (nextAct && typeof nextAct !== "string") {
     return res.status(400).json({
-      message: "nextActId should be of type string",
+      message: "nextAct should be of type string",
     });
   }
 
@@ -145,6 +144,7 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
         description,
         type,
         scenes,
+        nextAct,
       })
       .exec();
 
@@ -177,17 +177,17 @@ const deleteAct = async (req: RequestWithJWT, res: Response) => {
 };
 
 const getSingleAct = async (req: RequestWithJWT, res: Response) => {
-  const { nextActId } = req.body as Required<Pick<Act, "nextActId">>;
+  const { nextAct } = req.body as Required<Pick<Act, "nextAct">>;
 
-  if (typeof nextActId !== "string") {
+  if (typeof nextAct !== "string") {
     return res.status(400).json({
-      message: "nextActId should be of type string",
+      message: "nextAct should be of type string",
     });
   }
 
-  if (nextActId === "start") {
+  if (nextAct === "start") {
     try {
-      const startAct = await ActModel.findOne({ type: nextActId }).exec();
+      const startAct = await ActModel.findOne({ type: "start" }).exec();
       return res.status(200).json({
         data: startAct,
       });
@@ -200,7 +200,7 @@ const getSingleAct = async (req: RequestWithJWT, res: Response) => {
   }
 
   try {
-    const act = await ActModel.findOne({ id: nextActId }).exec();
+    const act = await ActModel.findOne({ title: nextAct }).exec();
     return res.status(200).json({
       data: act,
     });
