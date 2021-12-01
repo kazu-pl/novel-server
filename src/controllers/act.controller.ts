@@ -177,15 +177,9 @@ const deleteAct = async (req: RequestWithJWT, res: Response) => {
 };
 
 const getSingleAct = async (req: RequestWithJWT, res: Response) => {
-  const { nextAct } = req.body as Required<Pick<Act, "nextAct">>;
+  const id = req.params.id;
 
-  if (typeof nextAct !== "string") {
-    return res.status(400).json({
-      message: "nextAct should be of type string",
-    });
-  }
-
-  if (nextAct === "start") {
+  if (id === "start") {
     try {
       const startAct = await ActModel.findOne({ type: "start" }).exec();
       return res.status(200).json({
@@ -200,7 +194,7 @@ const getSingleAct = async (req: RequestWithJWT, res: Response) => {
   }
 
   try {
-    const act = await ActModel.findOne({ title: nextAct }).exec();
+    const act = await ActModel.findOne({ _id: id }).exec();
     return res.status(200).json({
       data: act,
     });
