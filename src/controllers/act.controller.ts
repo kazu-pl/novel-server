@@ -126,6 +126,22 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
   }
 
   // walidation of scenes objects here cdn...
+  try {
+    if (type === "start" || type === "end") {
+      const act = await ActModel.findOne({ type }).exec();
+
+      if (act) {
+        return res.status(422).json({
+          message: `Act with type "${type}" already exists`,
+        });
+      }
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: "An error occured",
+      error,
+    });
+  }
 
   try {
     const act = await ActModel.findOne({ _id }).exec();
