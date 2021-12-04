@@ -4,7 +4,10 @@ export type ActType = "start" | "normal" | "end";
 
 export interface Scene {
   title: string;
-  bgImgUrl: string;
+  bgImg: {
+    sceneryId: string;
+    link: string;
+  };
   dialogs: [
     {
       text: string;
@@ -39,7 +42,12 @@ const ActSchema: Schema = new Schema(
       {
         type: {
           title: { type: String, required: true },
-          bgImgUrl: { type: String, required: true },
+          bgImg: {
+            type: {
+              sceneryId: { type: String, required: true },
+              link: { type: String, required: true },
+            },
+          },
           dialogs: [
             {
               type: {
