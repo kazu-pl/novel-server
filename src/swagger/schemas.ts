@@ -655,6 +655,18 @@ export {};
  *        updatedAt: 2021-11-04T11:01:42.143+00:00
  *
  *
+ *    ActExtendedResponse:
+ *      type: object
+ *      description: resonse with extended act in data member
+ *      required:
+ *      - data
+ *      properties:
+ *        data:
+ *          type: object
+ *          description: extended act
+ *          $ref: '#/components/schemas/ActExtended'
+ *
+ *
  *    RequestUpdateAct:
  *      allOf:
  *        - $ref: '#/components/schemas/Act'
