@@ -571,22 +571,32 @@ export {};
  *      description: signle Scene type
  *      required:
  *      - title
- *      - bgImgUrl
+ *      - bgImg
  *      - dialogs
  *      properties:
  *        title:
  *          type: string
  *          description: scene title
- *        bgImgUrl:
- *          type: string
+ *        bgImg:
+ *          type: object
  *          description: scene background image
+ *          required:
+ *          - sceneryId
+ *          - link
+ *          properties:
+ *            sceneryId:
+ *              type: string
+ *            link:
+ *              type: string
  *        dialogs:
  *          type: array
  *          items:
  *            $ref: '#/components/schemas/Dialog'
  *      example:
  *        title: basic conversation between Yuuta and Shion
- *        bgImgUrl: /files/mansion.jpg
+ *        bgImg:
+ *          link: /files/mansion.jpg
+ *          sceneryId: 0000-0000-0000-0000
  *        dialogs:
  *          allOf:
  *            $ref: '#/components/schemas/Dialog'
