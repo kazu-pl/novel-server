@@ -138,13 +138,11 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
 
     await act
       .updateOne({
-        ...act,
-        // _id,
         title,
         description,
         type,
         scenes,
-        nextAct,
+        ...(nextAct && { nextAct }),
       })
       .exec();
 
