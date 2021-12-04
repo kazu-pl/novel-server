@@ -159,7 +159,7 @@ actRouter.get(
  *        content:
  *          application/json:
  *            schema:
- *                $ref: '#/components/schemas/ActExtended'
+ *                $ref: '#/components/schemas/ActExtendedResponse'
  *      401:
  *        description: unauthorized
  *      400:
