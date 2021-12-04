@@ -537,10 +537,24 @@ export {};
  *        zIndex: 2
  *        imgUrl: /files/character-sad.jpg
  *
+ *    CharacterOnScreenExtended:
+ *      allOf:
+ *        - $ref: '#/components/schemas/CharacterOnScreen'
+ *      type: object
+ *      required:
+ *      - name
+ *      - leftPosition
+ *      - zIndex
+ *      - imgUrl
+ *      - _id
+ *      properties:
+ *        _id:
+ *          type: string
+ *
  *
  *    Dialog:
  *      type: object
- *      description: signle Dialog type
+ *      description: Single Dialog type
  *      required:
  *      - text
  *      - characterSayingText
@@ -563,6 +577,27 @@ export {};
  *        charactersOnScreen:
  *          allOf:
  *            $ref: '#/components/schemas/CharacterOnScreen'
+ *
+ *
+ *    DialogExtended:
+ *      allOf:
+ *        - $ref: '#/components/schemas/Dialog'
+ *      type: object
+ *      description: Single Dialog type with mongoDB _id field
+ *      required:
+ *      - text
+ *      - characterSayingText
+ *      - charactersOnScreen
+ *      - _id
+ *      properties:
+ *        _id:
+ *          type: string
+ *        charactersOnScreen:
+ *          type: array
+ *          description: array of characters visible on screen
+ *          items:
+ *            $ref: '#/components/schemas/CharacterOnScreenExtended'
+ *
  *
  *
  *
@@ -601,6 +636,36 @@ export {};
  *          allOf:
  *            $ref: '#/components/schemas/Dialog'
  *
+ *
+ *    SceneExtended:
+ *      allOf:
+ *        - $ref: '#/components/schemas/Scene'
+ *      required:
+ *      - title
+ *      - bgImg
+ *      - dialogs
+ *      - _id
+ *      properties:
+ *        _id:
+ *          type: string
+ *        bgImg:
+ *          type: object
+ *          description: scene background image
+ *          required:
+ *          - sceneryId
+ *          - link
+ *          - _id
+ *          properties:
+ *            sceneryId:
+ *              type: string
+ *            link:
+ *              type: string
+ *            _id:
+ *              type: string
+ *        dialogs:
+ *          type: array
+ *          items:
+ *            $ref: '#/components/schemas/DialogExtended'
  *
  *    Act:
  *      type: object
@@ -641,11 +706,19 @@ export {};
  *      type: object
  *      description: Act type that extends basic Act type. It Adds fields from mongoDB
  *      required:
+ *      - title
+ *      - description
+ *      - type
+ *      - scenes
  *      - _id
  *      - __v
  *      - createdAt
  *      - updatedAt
  *      properties:
+ *        scenes:
+ *          type: array
+ *          items:
+ *            $ref: '#/components/schemas/SceneExtended'
  *        _id:
  *          type: string
  *          description: mongodb id
