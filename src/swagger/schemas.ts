@@ -514,14 +514,18 @@ export {};
  *      type: object
  *      description: signle character visible on screen options
  *      required:
- *      - name
+ *      - characterId
  *      - leftPosition
  *      - zIndex
  *      - imgUrl
+ *      - name
  *      properties:
+ *        characterId:
+ *          type: string
+ *          description: id of the character visible on screen
  *        name:
  *          type: string
- *          description: name of the character visible on screen
+ *          description: character name
  *        leftPosition:
  *          type: number
  *          description: X transition on the screen
@@ -532,8 +536,9 @@ export {};
  *          type: string
  *          description: link to character img
  *      example:
- *        name: Yuuta
+ *        characterId: 0000-0000-0000-0000
  *        leftPosition: 45
+ *        name: Aqua
  *        zIndex: 2
  *        imgUrl: /files/character-sad.jpg
  *
