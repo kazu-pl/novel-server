@@ -130,7 +130,7 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
     if (type === "start" || type === "end") {
       const act = await ActModel.findOne({ type }).exec();
 
-      if (act) {
+      if (act && act.id !== _id) {
         return res.status(422).json({
           message: `Act with type "${type}" already exists`,
         });
