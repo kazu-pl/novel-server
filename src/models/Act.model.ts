@@ -13,6 +13,7 @@ export interface Scene {
       text: string;
       characterSayingText: string;
       charactersOnScreen: {
+        characterId: string;
         name: string;
         leftPosition: number;
         zIndex: number;
@@ -56,6 +57,7 @@ const ActSchema: Schema = new Schema(
                 charactersOnScreen: [
                   {
                     type: {
+                      characterId: { type: String, required: true },
                       name: { type: String, required: true },
                       leftPosition: { type: Number, required: true },
                       zIndex: { type: Number, required: true },
