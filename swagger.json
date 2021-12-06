@@ -713,7 +713,6 @@
         "description": "Single Dialog type",
         "required": [
           "text",
-          "characterSayingText",
           "charactersOnScreen"
         ],
         "properties": {
@@ -753,7 +752,6 @@
         "description": "Single Dialog type with mongoDB _id field",
         "required": [
           "text",
-          "characterSayingText",
           "charactersOnScreen",
           "_id"
         ],

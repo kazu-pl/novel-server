@@ -562,7 +562,6 @@ export {};
  *      description: Single Dialog type
  *      required:
  *      - text
- *      - characterSayingText
  *      - charactersOnScreen
  *      properties:
  *        text:
@@ -591,7 +590,6 @@ export {};
  *      description: Single Dialog type with mongoDB _id field
  *      required:
  *      - text
- *      - characterSayingText
  *      - charactersOnScreen
  *      - _id
  *      properties:
