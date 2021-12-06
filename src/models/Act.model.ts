@@ -53,7 +53,7 @@ const ActSchema: Schema = new Schema(
             {
               type: {
                 text: { type: String, required: true },
-                characterSayingText: { type: String, required: true },
+                characterSayingText: { type: String },
                 charactersOnScreen: [
                   {
                     type: {
