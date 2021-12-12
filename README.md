@@ -1,3 +1,10 @@
+# forgot password doesn't work anymore
+
+to use Gmail you need to enable `lesssecureapps` option, you can do this here:
+https://myaccount.google.com/lesssecureapps
+but remember that Gmail will disable if after some time anyway so you have to update it once a while
+found here: https://www.youtube.com/watch?v=Va9UKGs1bwI
+
 # How to push this repo to heroku:
 
 Basic steps are shown on your profile heroku dashboard:
