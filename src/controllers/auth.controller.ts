@@ -106,6 +106,7 @@ const register = async (req: Request, res: Response, variant: Variant) => {
         const newUser = new UserModel({
           password: hashedPassword,
           ...(variant === "cms" && { isAdmin: true }),
+          ...(variant === "users" && { isAdmin: false }),
           data: {
             email,
             name,
