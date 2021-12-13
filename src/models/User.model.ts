@@ -14,7 +14,7 @@ export interface User extends Document {
 const UserSchema: Schema = new Schema(
   {
     password: { type: String, required: true },
-    isAdmin: { type: Boolean, required: false },
+    isAdmin: { type: Boolean, required: true },
     data: {
       type: Object,
       required: true,
