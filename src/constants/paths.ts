@@ -25,6 +25,7 @@ export const PATHS_USER_DATA = {
   RENEW_PASSWORD: "/users/renew-password/:id",
   UPDATE_PASSWORD: "/users/me/update-password",
   AVATAR: "/users/me/avatar",
+  DELETE_ACCOUNT: "/users/me/delete",
 };
 
 export const PATHS_FILES = {

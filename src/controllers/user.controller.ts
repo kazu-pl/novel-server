@@ -12,6 +12,7 @@ import cache, { createNewPasswdLinkName } from "config/cache";
 import { Request as MulterRequest } from "types/multer.types";
 import PhotoFileModel from "models/PhotoFile.model";
 import PhotoChunkModel from "models/PhotoChunk.model";
+import { RequestWithJWT } from "types/jwt.types";
 
 const getUserData = (req: Request, res: Response) => {
   const accessToken = req.headers.authorization?.split(" ")[1];
@@ -477,6 +478,56 @@ const deleteAvatar = (req: Request & MulterRequest, res: Response) => {
   });
 };
 
+const deleteAccount = (req: RequestWithJWT, res: Response) => {
+  const accessToken = req.headers.authorization?.split(" ")[1];
+
+  if (!accessToken) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+
+  jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
+    if (error || !decoded) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
+    try {
+      const userToDelete = await UserModel.findOne({ _id: decoded._id }).exec();
+
+      if (!userToDelete) {
+        return res.status(404).json({
+          message: "User profile not found",
+        });
+      }
+
+      if (userToDelete.data.avatar) {
+        const photoToDelete = await PhotoFileModel.findOne({
+          filename: `${userToDelete.data.avatar.slice(
+            "/files/".length,
+            userToDelete.data.avatar.length
+          )}`,
+        }).exec();
+
+        if (photoToDelete) {
+          await Promise.all([photoToDelete.delete(), userToDelete.delete()]);
+          return res.status(200).json({ message: "Account was deleted" });
+        } else {
+          await userToDelete.delete();
+          return res.status(200).json({ message: "Account was deleted" });
+        }
+      } else {
+        await userToDelete.delete();
+        return res.status(200).json({ message: "Account was deleted" });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: "An error occured", error });
+    }
+  });
+};
+
 export default {
   getUserData,
   updateUserData,
@@ -485,4 +536,5 @@ export default {
   updatePassword,
   putAvatar,
   deleteAvatar,
+  deleteAccount,
 };
