@@ -204,4 +204,27 @@ userRouter.delete(
   userController.deleteAvatar
 );
 
+/**
+ * @swagger
+ * path:
+ * /users/me/delete:
+ *  delete:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to delete user account
+ *    tags: [User]
+ *    responses:
+ *      200:
+ *        description: A successful resposne
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *        description: An error occured while trying to update avatar
+ */
+userRouter.delete(
+  PATHS_USER_DATA.DELETE_ACCOUNT,
+  authenticate,
+  userController.deleteAccount
+);
+
 export default userRouter;
