@@ -125,6 +125,12 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
     });
   }
 
+  if (type === "end" && nextAct) {
+    return res.status(400).json({
+      message: "Act with type 'end' can't have 'nextAct' field",
+    });
+  }
+
   // walidation of scenes objects here cdn...
   try {
     if (type === "start" || type === "end") {
@@ -158,7 +164,7 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
         description,
         type,
         scenes,
-        ...(nextAct && { nextAct }),
+        nextAct: nextAct || "",
       })
       .exec();
 
