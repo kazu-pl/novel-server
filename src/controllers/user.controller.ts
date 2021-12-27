@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import UserModel from "models/User.model";
+import UserModel, { ExtendedGameSave, GameSave } from "models/User.model";
 import jwt from "jsonwebtoken";
 import {
   ACCESS_TOKEN_SECRET,
@@ -528,6 +528,146 @@ const deleteAccount = (req: RequestWithJWT, res: Response) => {
   });
 };
 
+const addGameSave = (req: RequestWithJWT, res: Response) => {
+  const accessToken = req.headers.authorization?.split(" ")[1];
+  const newGameSave = req.body as GameSave;
+
+  if (!accessToken) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+
+  jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
+    if (error || !decoded) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
+    try {
+      const user = await UserModel.findOne({ _id: decoded._id }).exec();
+      if (!user) {
+        return res.status(404).json({
+          message: "User profile not found",
+        });
+      }
+
+      const prevUserGameSaves = user.gameSaves;
+
+      user
+        .updateOne({
+          gameSaves: prevUserGameSaves
+            ? [...prevUserGameSaves, newGameSave as ExtendedGameSave]
+            : [newGameSave as ExtendedGameSave],
+        })
+        .then(() => {
+          return res.status(200).json({
+            message: "Updated successfuly",
+          });
+        })
+        .catch((error) => {
+          return res.status(500).json({
+            message: "Could not update user profile",
+            error,
+          });
+        });
+    } catch (error) {
+      return res.status(500).json({
+        message: "An error occured",
+        error,
+      });
+    }
+  });
+};
+
+const deleteGameSave = (req: RequestWithJWT, res: Response) => {
+  const accessToken = req.headers.authorization?.split(" ")[1];
+  const { saveId } = req.params as { saveId: string };
+
+  if (!accessToken) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+
+  jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
+    if (error || !decoded) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
+    try {
+      const user = await UserModel.findOne({ _id: decoded._id }).exec();
+      if (!user) {
+        return res.status(404).json({
+          message: "User profile not found",
+        });
+      }
+
+      user
+        .updateOne({
+          gameSaves: user.gameSaves?.filter(
+            (save) => save._id.toString() !== saveId
+          ),
+        })
+        .then(() => {
+          return res.status(200).json({
+            message: "Removed successfuly",
+          });
+        })
+        .catch((error) => {
+          return res.status(500).json({
+            message: "Could not remove save",
+            error,
+          });
+        });
+    } catch (error) {
+      return res.status(500).json({
+        message: "An error occured",
+        error,
+      });
+    }
+  });
+};
+
+const getAllGameSaves = (req: RequestWithJWT, res: Response) => {
+  const accessToken = req.headers.authorization?.split(" ")[1];
+
+  if (!accessToken) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+
+  jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
+    if (error || !decoded) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+
+    try {
+      const user = await UserModel.findOne({ _id: decoded._id }).exec();
+      if (!user) {
+        return res.status(404).json({
+          message: "User profile not found",
+        });
+      }
+
+      return res.status(200).json({
+        data: user.gameSaves?.sort(() => -1),
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: "An error occured",
+        error,
+      });
+    }
+  });
+};
+
 export default {
   getUserData,
   updateUserData,
@@ -537,4 +677,7 @@ export default {
   putAvatar,
   deleteAvatar,
   deleteAccount,
+  addGameSave,
+  deleteGameSave,
+  getAllGameSaves,
 };

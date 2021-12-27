@@ -3,6 +3,7 @@ import { PATHS_USER_DATA } from "constants/paths";
 import userController from "controllers/user.controller";
 import authenticate from "middleware/authenticate";
 import fileUpload from "middleware/fileUpload";
+import authorize from "middleware/authorize";
 
 const userRouter = express.Router();
 
@@ -225,6 +226,95 @@ userRouter.delete(
   PATHS_USER_DATA.DELETE_ACCOUNT,
   authenticate,
   userController.deleteAccount
+);
+
+/**
+ * @swagger
+ * path:
+ * /users/me/game-saves:
+ *  get:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to get all game saves
+ *    tags: [User]
+ *    responses:
+ *      200:
+ *        description: get list of all game saves for your account
+ *        content:
+ *          application/json:
+ *            schema:
+ *                $ref: '#/components/schemas/ExtendedGameSaveResponse'
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *        description: An error occured
+ */
+userRouter.get(
+  PATHS_USER_DATA.GET_ALL_GAME_SAVES,
+  authenticate,
+  authorize("user"),
+  userController.getAllGameSaves
+);
+
+/**
+ * @swagger
+ * path:
+ * /users/me/game-saves:
+ *  post:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to add new game save
+ *    tags: [User]
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/RequestGameSave'
+ *    responses:
+ *      200:
+ *        description: A successful resposne
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *        description: An error occured
+ */
+userRouter.post(
+  PATHS_USER_DATA.ADD_NEW_GAME_SAVE,
+  authenticate,
+  authorize("user"),
+  userController.addGameSave
+);
+
+/**
+ * @swagger
+ * path:
+ * /users/me/game-saves/{saveId}/delete:
+ *  delete:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to delete game save
+ *    tags: [User]
+ *    parameters:
+ *      - in: path
+ *        name: saveId
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: save to delete id
+ *    responses:
+ *      200:
+ *        description: A successful resposne
+ *      401:
+ *        description: Unauthorized
+ *      500:
+ *        description: An error occured
+ */
+userRouter.delete(
+  PATHS_USER_DATA.DELETE_GAME_SAVE,
+  authenticate,
+  authorize("user"),
+  userController.deleteGameSave
 );
 
 export default userRouter;

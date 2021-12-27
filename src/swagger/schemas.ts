@@ -830,4 +830,55 @@ export {};
  *            $ref: '#/components/schemas/SingleActDictionaryObject'
  *
  *
+ *
+ *    RequestGameSave:
+ *      type: object
+ *      description: object of game save
+ *      required:
+ *      - actId
+ *      - actTitle
+ *      - sceneIndex
+ *      - dialogIndex
+ *      - text
+ *      properties:
+ *        actId:
+ *          type: string
+ *        actTitle:
+ *          type: string
+ *        sceneIndex:
+ *          type: number
+ *        dialogIndex:
+ *          type: number
+ *        text:
+ *          type: string
+ *        characterSayingText:
+ *          type: string
+ *
+ *    ExtendedGameSave:
+ *      allOf:
+ *        - $ref: '#/components/schemas/RequestGameSave'
+ *      type: object
+ *      required:
+ *      - actId
+ *      - actTitle
+ *      - sceneIndex
+ *      - dialogIndex
+ *      - text
+ *      - _id
+ *      properties:
+ *        _id:
+ *          type: string
+ *          description: mongodb id
+ *
+ *    ExtendedGameSaveResponse:
+ *      type: object
+ *      required:
+ *      - data
+ *      properties:
+ *        data:
+ *          type: array
+ *          items:
+ *            $ref: '#/components/schemas/ExtendedGameSave'
+ *
+ *
  */
