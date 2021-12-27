@@ -117,6 +117,24 @@ REMEMBER THAT IF YOU PUSH WITH heroku APP LOGIN (THEY WAY IT'S SHOWN ABOVE) YOU 
 
 But you can also deploy by connecting to your GitHub and automate the whole process so you don't need to manually push changes to heroku app.
 
+# How to get id as string from ObjectId type
+
+field `_id` is type of ObjectId. (full type is: Schema.Types.ObjectId)
+
+so if you console log it, it returns something like this:
+
+```ts
+new ObjectId("asdf4gbr5hj34jfgn4n5g");
+```
+
+So to get the string itself you need to call `toString()` method, like this (if that method does not exist, try to cast that id as `any`):
+
+```ts
+user.updateOne({
+  gameSaves: user.gameSaves?.filter((save) => save._id.toString() !== saveId),
+});
+```
+
 # how to run TS in node with auto refresh when a file got edited
 
 - `yarn ts-node-dev typescript -D`

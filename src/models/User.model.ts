@@ -1,4 +1,19 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, ObjectId } from "mongoose";
+
+export interface GameSave {
+  actId: string;
+  actTitle: string;
+  sceneIndex: number;
+  dialogIndex: number;
+  characterSayingText?: string;
+  text: string;
+}
+
+export interface ExtendedGameSave extends GameSave {
+  _id: ObjectId;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface User extends Document {
   password: string;
@@ -9,6 +24,7 @@ export interface User extends Document {
     email: string;
     avatar?: string;
   };
+  gameSaves?: ExtendedGameSave[];
 }
 
 const UserSchema: Schema = new Schema(
@@ -19,6 +35,18 @@ const UserSchema: Schema = new Schema(
       type: Object,
       required: true,
     },
+    gameSaves: [
+      {
+        type: {
+          actId: { type: String, required: true },
+          actTitle: { type: String, required: true },
+          sceneIndex: { type: Number, required: true },
+          dialogIndex: { type: Number, required: true },
+          characterSayingText: { type: String },
+          text: { type: String, required: true },
+        },
+      },
+    ],
   },
   {
     timestamps: true,

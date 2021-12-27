@@ -26,6 +26,9 @@ export const PATHS_USER_DATA = {
   UPDATE_PASSWORD: "/users/me/update-password",
   AVATAR: "/users/me/avatar",
   DELETE_ACCOUNT: "/users/me/delete",
+  GET_ALL_GAME_SAVES: "/users/me/game-saves",
+  ADD_NEW_GAME_SAVE: "/users/me/game-saves",
+  DELETE_GAME_SAVE: "/users/me/game-saves/:saveId/delete",
 };
 
 export const PATHS_FILES = {
