@@ -58,7 +58,7 @@ command `node -r ts-node/register/transpile-only -r tsconfig-paths/register buil
 
 Above command uses packages:
 
-```
+```json
   "ts-node-dev": "^1.1.8",
   "tsconfig-paths": "^3.11.0"
 ```
@@ -140,7 +140,7 @@ user.updateOne({
 - `yarn ts-node-dev typescript -D`
 - add script:
 
-```
+```json
 // package.json
 
  "scripts": {
@@ -159,7 +159,7 @@ Below instruction assumes that you have installed `ts-node-dev` via `yarn add ts
 - install `tsconfig-paths` package via `yarn add tsconfig-paths -D`
 - add/modify script for running your app like so:
 
-```
+```json
 // package.json
 
  "scripts": {
@@ -172,9 +172,8 @@ THE IMPORTANT CODE IS `tsconfig-paths/register` PART WHICH ALLOWS TO CORRECTLY C
 
 After that you can write code like:
 
-```
+```ts
 // any file for example src/index.ts
-
 
 import logging from "config/logging";
 ```
@@ -195,7 +194,7 @@ found [here](https://stackoverflow.com/questions/61342753/paths-from-tsconfig-js
 
 #### build sciript for settings with prettier VSC extension installed
 
-```
+```json
 // package.json
 
 
@@ -228,7 +227,7 @@ WHEN it is UNcommented it DISables to transpile build fules (you can run `yarn b
 - `1` - install globally swagger-json via `npm install -g swagger-jsdoc`
 - `2` - create `swagger-def.js` or `swagger-def.json` file that contains options to generating swagger. Example:
 
-```
+```json
 // src/config/swagger-def.json
 {
   "openapi": "3.0.0",
@@ -252,8 +251,6 @@ WHEN it is UNcommented it DISables to transpile build fules (you can run `yarn b
     }
   ]
 }
-
-
 ```
 
 - `3` - run `swagger-jsdoc -d src/config/swagger-def.json src/Router.ts` where `src/Router.ts` are the paths to your files with JSDoc comments
@@ -264,7 +261,7 @@ if you just want to generate interfaces (not whole client) then you can create `
 
 - `3a` - you can also add script for generating `json` file like so:
 
-```
+```json
 // package.json
 
   "scripts": {
@@ -283,7 +280,7 @@ Also, [here](https://dev.to/kabartolo/how-to-document-an-express-api-with-swagge
 
 Share `json` file on the server via endpoint:
 
-```
+```ts
 // router.ts
 
 import swaggerJsonSchema from "../swagger.json";
@@ -297,7 +294,7 @@ Router.use("/swagger/schema.json", (req, res) => res.send(swaggerJsonSchema));
 
 - `6a` - create `generateTypes.js` file in the root directory of your front-end application:
 
-```
+```js
 // generateTypes.js
 
 const { generateApi } = require("swagger-typescript-api");
@@ -310,13 +307,11 @@ generateApi({
   generateClient: false,
   generateRouteTypes: false,
 }).catch((e) => console.error(e));
-
-
 ```
 
 - `6b` - add script to your `package.json` to generate types:
 
-```
+```json
 // package.json
 
  "scripts": {
@@ -330,7 +325,7 @@ generateApi({
 
 Additionaly, you can modify your `start` script to generate types with every start of your application. You will know if api changed:
 
-```
+```json
 "scripts": {
     "start": "yarn generate-types && react-scripts start",
     "generate-types": "node ./generateTypes.js"
@@ -356,11 +351,12 @@ if you want to generate whole client then you have to place schemas and tags in 
 
 - `1` - make sure you have swagger options configured like this:
 
-```
+```ts
 const swggerOptions: Options = {
   swaggerDefinition: {
     openapi: "3.0.0", // you need this
-    components: { // also needed to JWT
+    components: {
+      // also needed to JWT
       securitySchemes: {
         bearerAuth: {
           type: "http",
@@ -377,7 +373,7 @@ export const swaggerSpec = swaggerJSDoc(swggerOptions);
 
 - `2` - add security fields in swagger jsdoc annotations like this:
 
-```
+```ts
 // Router.ts
 
 /**
@@ -392,15 +388,13 @@ export const swaggerSpec = swaggerJSDoc(swggerOptions);
  *      200:
  *        description: The book description by id
  */
- Router.get(
+Router.get(
   PATHS_ADMIN_AUTH.PROTECTED,
   authenticate,
   authorize("admin"),
   (req, res, next) =>
     res.status(200).json({ message: "you're alloved to be here - admin" })
 );
-
-
 ```
 
 Found [here](https://stackoverflow.com/questions/50736784/how-to-authorise-swagger-jsdoc-with-jwt-token) - search for `To make this work, you will need to add the openAPI property to your swaggerDefinition object.`
@@ -416,7 +410,7 @@ Multer will catch files from request from front-end (front-end sends it in `form
 
 - `1` - Create middleware `fileUpload.ts`:
 
-```
+```ts
 // src/middleware/fileUpload.ts
 // this middleware WILL PUSH IMAGES TO MongoDB INSTANTLY ONCE ITS APPLIED AS MIDDLEWARE IN ANY ENDPOINT!
 
@@ -448,19 +442,18 @@ const storage = new GridFsStorage({
 });
 
 export default multer({ storage });
-
 ```
 
 - `2` - Use `fileUpload.ts` middleware in any endpoint like:
 
-```
+```ts
 // Router.ts
 import express from "express";
 
 const Router = express.Router();
 
 Router.put(
-  '/users/me/avatar',
+  "/users/me/avatar",
   fileUpload.single("file"),
   userController.putAvatar
 );
@@ -468,15 +461,13 @@ Router.put(
 // fileUpload.single("") method will receive single file from front-end request and upload it to mongoDB.
 // "file" name in `.single("file")` is the name of the field from `form-data` that contains a file.
 
-
 // if  you want to receive multiple files, use .array() instead:
 
 Router.put(
-  '/products/bike/images',
+  "/products/bike/images",
   fileUpload.array("file"), // just send multiple files in `form-data` under the same name as here ("file')
   userController.putProductImages
 );
-
 ```
 
 - `3` - create Models for files and its chunks to make saerching for files easy:
@@ -488,7 +479,7 @@ You need them just to enable searching for images.
 
 Actuall file model:
 
-```
+```ts
 // src/models/photoFileModel.ts
 
 import mongoose, { Schema, Document } from "mongoose";
@@ -514,12 +505,11 @@ export default mongoose.model<PhotoFile>(
   `${photosBucketName}.file`,
   PhotoFileSchema
 );
-
 ```
 
 File chunks model:
 
-```
+```ts
 // src/models/FileChunksModel.ts
 
 import mongoose, { Schema, Document } from "mongoose";
@@ -541,18 +531,16 @@ export default mongoose.model<PhotoChunk>(
   `${photosBucketName}.chunk`,
   PhotoChunkSchema
 );
-
 ```
 
 - `4` - now you can receive that files in controller methods like this:
 
-```
+```ts
 // userController.ts
 
 // REMEMBER THAT HERE IN CONTROLLER, IMAGES ARE ALREADY IN MONGO-DB !
 
 const putAvatar = (req: Request, res: Response) => {
-
   // HERE, you can use file(s) that multer adds to `req` object. If you used `.single()` method, you can get file by:
   // req.file
 
@@ -569,61 +557,56 @@ const putAvatar = (req: Request, res: Response) => {
 
   // here, you're creating a endpoint under which you can receive the image that is already in mongo db
   const newAvatarUrl = `/files/${req.file.filename}`; // req.file.filename contains name of the file that is already stored in mongoDB
-    await user.update({
-      data: {
-        ...user.data,
-        avatar: newAvatarUrl,
-      },
-    });
+  await user.update({
+    data: {
+      ...user.data,
+      avatar: newAvatarUrl,
+    },
+  });
 
   return res.status(201).json({ avatarUrl: newAvatarUrl });
-
 };
 
 export default {
-  putAvatar
-}
-
-
+  putAvatar,
+};
 ```
 
 #### How to send images from front-end to backend:
 
 - `1` - create `ref` and `<input type="file" />` tag and pass that ref to the input:
 
-```
-const Component =() => {
+```tsx
+const Component = () => {
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
 
-const inputFileRef = useRef<HTMLInputElement | null>(null);
-
-return (
-  <>
-    <input id={id} type="file" hidden ref={inputRef} {...rest} />
-    <label htmlFor={id}>
-      <Button component="span" {...buttonProps}>
-        {text}
-      </Button>
-    </label>
-  </>
-)
-}
+  return (
+    <>
+      <input id={id} type="file" hidden ref={inputRef} {...rest} />
+      <label htmlFor={id}>
+        <Button component="span" {...buttonProps}>
+          {text}
+        </Button>
+      </label>
+    </>
+  );
+};
 ```
 
 - `2` - create `form-data` and append onto it images that you will find in `ref.current`:
 
-```
+```tsx
 const fileFromInputRef = inputFileRef.current.files[0];
 
 const formData = new FormData();
 formData.append("file", fileFromInputRef); // "file" name is the same name that you use in multer `.single("file")` or `.array('file')`
-
 ```
 
 Or, if you want to send multiple files (and use .array('files') option to receive multiple files):
 
 - `2-a` - turn files from ref into array and by using forEach, append it with the same name:
 
-```
+```ts
 const filesFromInputRef = Array.from(inputFilesRef.current.files);
 
 const formData = new FormData();
@@ -631,19 +614,19 @@ const formData = new FormData();
 filesFromInputRef.forEach((file) => {
   formData.append("files", file); // "files" is the name under which you send array of images so put 'files' in .array('files')
 });
-
 ```
 
 - `2-b` - add prop `encType="multipart/form-data"` to form that contains `<input type="file" />`:
 
-```
+```tsx
 <Formik
   initialValues={initialMultipleFileValues}
   onSubmit={handleAsyncMultipleSubmit}
   validationSchema={validationMultipleFilesSchema}
 >
   {({ isSubmitting, values }) => (
-    <Form encType="multipart/form-data"> // add encType="multipart/form-data" to correctly send muliple files
+    <Form encType="multipart/form-data">
+      {/* add encType="multipart/form-data" to correctly send muliple files */}
       <FileInputFormik
         name="files"
         id="contained-button-file"
@@ -655,19 +638,17 @@ filesFromInputRef.forEach((file) => {
     </Form>
   )}
 </Formik>
-
 ```
 
 - `3` - send that data via axios:
 
-```
+```tsx
 const response = await axiosSecureInstance.put(`/users/me/files`, formData);
-
 ```
 
 #### Send files stored in mongoDB to front-end:
 
-```
+```ts
 // index.ts // <--- this is main server file
 
 import mongoose from "mongoose";
