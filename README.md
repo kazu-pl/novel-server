@@ -5,6 +5,10 @@ https://myaccount.google.com/lesssecureapps
 but remember that Gmail will disable if after some time anyway so you have to update it once a while
 found here: https://www.youtube.com/watch?v=Va9UKGs1bwI
 
+# CORS problem after pushing server to heroku
+
+If your server needs some env variables you have to add them FIRST (before pushing app to heroku). Or you need to rebuild the whole app afters is deployed but I'm not sure if its possible on heroku to rebuild already deployed app.
+
 # How to push this repo to heroku:
 
 Basic steps are shown on your profile heroku dashboard:
