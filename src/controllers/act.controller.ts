@@ -227,7 +227,7 @@ const getSingleAct = async (req: RequestWithJWT, res: Response) => {
 };
 
 const getAllActs = async (req: RequestWithJWT, res: Response) => {
-  const { sortBy, sortDirection, pageSize, currentPage } = req.query;
+  const { sortBy, sortDirection, pageSize, currentPage, search } = req.query;
 
   if (
     typeof sortBy !== "string" ||
@@ -262,13 +262,28 @@ const getAllActs = async (req: RequestWithJWT, res: Response) => {
   const direction = sortDirection === "asc" ? -1 : 1;
 
   try {
-    const data = await ActModel.find()
+    const data = await ActModel.find({
+      ...(search && {
+        // found here: https://kb.objectrocket.com/mongo-db/mongoose-partial-text-search-606
+        title: {
+          $regex: search as string,
+          $options: "i", // allow to search string/part of a string in the whole `title` value, not just if it starts with `search` value
+        },
+      }),
+    })
       .limit(size)
       .sort({ [sortKey]: direction })
       .skip(size * (page - 1))
       // .skip(size * page) // use this if you want to start pagination at page=0 instead of page=1
       .exec();
-    const totalItems = await ActModel.countDocuments();
+    const totalItems = await ActModel.find({
+      ...(search && {
+        title: {
+          $regex: search as string,
+          $options: "i", // allow to search string/part of a string in the whole `title` value, not just if it starts with `search` value
+        },
+      }),
+    }).countDocuments();
 
     return res.status(200).json({
       data,
