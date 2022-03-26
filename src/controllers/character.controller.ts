@@ -3,6 +3,7 @@ import { RequestWithJWT } from "types/jwt.types";
 import CharacterModel, { CharacterImage } from "models/Character.model";
 import PhotoChunkModel from "models/PhotoChunk.model";
 import PhotoFileModel from "models/PhotoFile.model";
+import getTranslatedMessage from "utils/getTranslatedMessage";
 
 const getCharacters = async (req: RequestWithJWT, res: Response) => {
   const { sortBy, sortDirection, pageSize, currentPage, search } = req.query;
@@ -14,8 +15,11 @@ const getCharacters = async (req: RequestWithJWT, res: Response) => {
     typeof currentPage !== "string"
   ) {
     return res.status(400).json({
-      message:
-        "sortBy, sortDirection, pageSize and currentPage should be of type string",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "sortBy, sortDirection, pageSize i currentPage powinny być typu string",
+        en: "sortBy, sortDirection, pageSize and currentPage should be of type string",
+        de: "sortBy, sortDirection, pageSize und currentPage sollten vom Typ string sein",
+      }),
     });
   }
 
@@ -24,15 +28,21 @@ const getCharacters = async (req: RequestWithJWT, res: Response) => {
 
   if (typeof size !== "number" || typeof page !== "number") {
     return res.status(400).json({
-      message:
-        "pageSize and currentPage should be of type string but the value should be still a number-like. Example: '1' or '5'",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "pageSize i currentPage powinny być typu string, ale wartość powinna nadal przypominać liczbę. Przykład: '1' lub '5'",
+        en: "pageSize and currentPage should be of type string but the value should be still a number-like. Example: '1' or '5'",
+        de: "pageSize und currentPage sollten vom Typ String sein, aber der Wert sollte immer noch eine Zahl sein. Beispiel: '1' oder '5'",
+      }),
     });
   }
 
   if (sortDirection && !["asc", "desc"].includes(sortDirection)) {
     return res.status(400).json({
-      message:
-        "Invalid sortDirection query. Allowed directions: 'asc' or 'desc'",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nieprawidłowe zapytanie sortDirection. Dozwolone kierunki: 'asc' lub 'desc'",
+        en: "Invalid sortDirection query. Allowed directions: 'asc' or 'desc'",
+        de: "Ungültige sortDirection-Abfrage. Zulässige Richtungen: 'asc' oder 'desc'",
+      }),
     });
   }
 
@@ -70,7 +80,11 @@ const getCharacters = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "An error occured",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Wystąpił błąd",
+        en: "An error occured",
+        de: "Es ist ein Fehler aufgetreten",
+      }),
       error,
     });
   }
@@ -81,13 +95,21 @@ const addCharacter = async (req: RequestWithJWT, res: Response) => {
 
   if (!title || !description) {
     return res.status(422).json({
-      message: "title and/or description was not provided",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "nie podano tytułu i/lub opisu",
+        en: "title and/or description was not provided",
+        de: "Titel und/oder Beschreibung wurde nicht angegeben",
+      }),
     });
   }
 
   if (typeof title !== "string" || typeof description !== "string") {
     return res.status(422).json({
-      message: "title and description should be of type string",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "tytuł i opis powinny być typu string",
+        en: "title and description should be of type string",
+        de: "Titel und Beschreibung sollten vom Typ String sein",
+      }),
     });
   }
 
@@ -95,7 +117,11 @@ const addCharacter = async (req: RequestWithJWT, res: Response) => {
     const character = await CharacterModel.findOne({ title }).exec();
     if (character) {
       return res.status(422).json({
-        message: "character with that name already exists",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "postać o tej nazwie już istnieje",
+          en: "character with that name already exists",
+          de: "Charakter mit diesem Namen existiert bereits",
+        }),
       });
     }
 
@@ -106,21 +132,31 @@ const addCharacter = async (req: RequestWithJWT, res: Response) => {
     })
       .save()
       .then(() => {
-        return res
-          .status(201)
-          .json({ message: "character created successfuly" });
+        return res.status(201).json({
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "postać stworzona pomyślnie",
+            en: "character created successfuly",
+            de: "Charakter erfolgreich erstellt",
+          }),
+        });
       })
       .catch((error) => {
         return res.status(500).json({
-          message:
-            "There was an error on the server while trying to process your request",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Wystąpił błąd na serwerze podczas próby przetworzenia twojego żądania",
+            en: "There was an error on the server while trying to process your request",
+            de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist auf dem Server ein Fehler aufgetreten",
+          }),
           error,
         });
       });
   } catch (error) {
     return res.status(500).json({
-      message:
-        "There was an error on the server while trying to process your request",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Wystąpił błąd na serwerze podczas próby przetworzenia twojego żądania",
+        en: "There was an error on the server while trying to process your request",
+        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist auf dem Server ein Fehler aufgetreten",
+      }),
       error,
     });
   }
@@ -132,7 +168,11 @@ const getSingleCharacter = async (req: RequestWithJWT, res: Response) => {
 
     if (!data) {
       return res.status(404).json({
-        message: "character was not found",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "nie znaleziono postaci",
+          en: "character was not found",
+          de: "Zeichen wurde nicht gefunden",
+        }),
       });
     }
 
@@ -141,7 +181,11 @@ const getSingleCharacter = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "An error occured",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Wystąpił błąd",
+        en: "An error occured",
+        de: "Es ist ein Fehler aufgetreten",
+      }),
       error,
     });
   }
@@ -153,11 +197,19 @@ const deleteCharacter = async (req: RequestWithJWT, res: Response) => {
   try {
     await CharacterModel.deleteOne({ _id: id }).exec();
     return res.status(200).json({
-      message: "character removed",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "postać została usunięta",
+        en: "character removed",
+        de: "Zeichen entfernt",
+      }),
     });
   } catch (error) {
     return res.status(500).json({
-      message: "An error occured",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Wystąpił błąd",
+        en: "An error occured",
+        de: "Es ist ein Fehler aufgetreten",
+      }),
       error,
     });
   }
@@ -168,7 +220,11 @@ const addCharacterImages = async (req: RequestWithJWT, res: Response) => {
 
   if (!req.files) {
     return res.status(422).json({
-      message: "files were not provided or were provided not as 'files'",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "pliki nie zostały dostarczone lub nie zostały dostarczone jako 'files'",
+        en: "files were not provided or were provided not as 'files'",
+        de: "Dateien wurden nicht oder nicht als 'files' bereitgestellt",
+      }),
     });
   }
 
@@ -177,13 +233,21 @@ const addCharacterImages = async (req: RequestWithJWT, res: Response) => {
 
     if (!character) {
       return res.status(404).json({
-        message: "character with that id does no exist",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "postać o tym identyfikatorze nie istnieje",
+          en: "character with that id does no exist",
+          de: "Charakter mit dieser ID existiert nicht",
+        }),
       });
     }
 
     if (!Array.isArray(req.files)) {
       return res.status(422).json({
-        message: "Files were not an array",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Pliki nie były tablicą",
+          en: "Files were not an array",
+          de: "Dateien waren kein Array",
+        }),
       });
     }
 
@@ -202,11 +266,19 @@ const addCharacterImages = async (req: RequestWithJWT, res: Response) => {
       .exec();
 
     return res.status(201).json({
-      message: "images added successfuly",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "obrazy dodane pomyślnie",
+        en: "images added successfuly",
+        de: "Bilder erfolgreich hinzugefügt",
+      }),
     });
   } catch (error) {
     return res.status(500).json({
-      message: "there was an error when trying to add images",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "wystąpił błąd podczas próby dodania zdjęć",
+        en: "there was an error when trying to add images",
+        de: "Beim Hinzufügen von Bildern ist ein Fehler aufgetreten",
+      }),
       error,
     });
   }
@@ -222,7 +294,11 @@ const deleteCharacterImage = async (req: RequestWithJWT, res: Response) => {
 
     if (!character) {
       return res.status(404).json({
-        message: "Character was not found",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nie znaleziono postaci",
+          en: "Character was not found",
+          de: "Zeichen wurde nicht gefunden",
+        }),
       });
     }
 
@@ -241,11 +317,19 @@ const deleteCharacterImage = async (req: RequestWithJWT, res: Response) => {
       .exec();
 
     return res.status(200).json({
-      message: "Image deleted sucessfuly",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Obraz usunięty pomyślnie",
+        en: "Image deleted sucessfuly",
+        de: "Bild erfolgreich gelöscht",
+      }),
     });
   } catch (error) {
     return res.status(500).json({
-      message: "An error occured",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Wystąpił błąd",
+        en: "An error occured",
+        de: "Es ist ein Fehler aufgetreten",
+      }),
       error,
     });
   }
@@ -257,13 +341,21 @@ const updateBasicCharacterData = async (req: RequestWithJWT, res: Response) => {
 
   if (!title || !description) {
     return res.status(422).json({
-      message: "title and/or description was not provided",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "nie podano tytułu i/lub opisu",
+        en: "title and/or description was not provided",
+        de: "Titel und/oder Beschreibung wurde nicht angegeben",
+      }),
     });
   }
 
   if (typeof title !== "string" || typeof description !== "string") {
     return res.status(422).json({
-      message: "title and description should be of type string",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "tytuł i opis powinny być typu string",
+        en: "title and description should be of type string",
+        de: "Titel und Beschreibung sollten vom Typ String sein",
+      }),
     });
   }
   try {
@@ -274,7 +366,11 @@ const updateBasicCharacterData = async (req: RequestWithJWT, res: Response) => {
     const character = await CharacterModel.findOne({ _id: id }).exec();
     if (!character) {
       return res.status(404).json({
-        message: "Character was not found",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nie znaleziono postaci",
+          en: "Character was not found",
+          de: "Zeichen wurde nicht gefunden",
+        }),
       });
     }
 
@@ -283,17 +379,29 @@ const updateBasicCharacterData = async (req: RequestWithJWT, res: Response) => {
       potentialCharacterWithTheSameName?.id !== character.id
     ) {
       return res.status(422).json({
-        message: "character with that name already exists",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "postać o tej nazwie już istnieje",
+          en: "character with that name already exists",
+          de: "Charakter mit diesem Namen existiert bereits",
+        }),
       });
     }
 
     await character.updateOne({ title, description }).exec();
     return res.status(200).json({
-      message: "Character was updated successfuly",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Postać została zaktualizowana pomyślnie",
+        en: "Character was updated successfuly",
+        de: "Charakter wurde erfolgreich aktualisiert",
+      }),
     });
   } catch (error) {
     return res.status(500).json({
-      message: "There was an error  while trying to process your request",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
+        en: "There was an error  while trying to process your request",
+        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+      }),
       error,
     });
   }
@@ -308,7 +416,11 @@ const getCharactersDictionary = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "There was an error while trying to process your request",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
+        en: "There was an error while trying to process your request",
+        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+      }),
       error,
     });
   }
