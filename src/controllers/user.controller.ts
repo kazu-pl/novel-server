@@ -13,25 +13,38 @@ import { Request as MulterRequest } from "types/multer.types";
 import PhotoFileModel from "models/PhotoFile.model";
 import PhotoChunkModel from "models/PhotoChunk.model";
 import { RequestWithJWT } from "types/jwt.types";
+import getTranslatedMessage from "utils/getTranslatedMessage";
 
 const getUserData = (req: Request, res: Response) => {
   const accessToken = req.headers.authorization?.split(" ")[1];
 
   if (!accessToken) {
     return res.status(401).json({
-      message: "Unauthorized",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nieautoryzowany",
+        en: "Unauthorized",
+        de: "Unbefugt",
+      }),
     });
   }
 
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
     if (error) {
       return res.status(401).json({
-        message: "Unauthorized",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nieautoryzowany",
+          en: "Unauthorized",
+          de: "Unbefugt",
+        }),
       });
     } else {
       if (!decoded) {
         return res.status(401).json({
-          message: "Unauthorized",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nieautoryzowany",
+            en: "Unauthorized",
+            de: "Unbefugt",
+          }),
         });
       }
 
@@ -40,14 +53,22 @@ const getUserData = (req: Request, res: Response) => {
 
         if (!result) {
           return res.status(404).json({
-            message: "User profile not found",
+            message: getTranslatedMessage(req.headers["accept-language"], {
+              pl: "Nie znaleziono profilu użytkownika",
+              en: "User profile not found",
+              de: "Benutzerprofil nicht gefunden",
+            }),
           });
         }
 
         return res.status(200).json(result.data);
       } catch (error) {
         return res.status(500).json({
-          message: "User profile not found",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nie znaleziono profilu użytkownika",
+            en: "User profile not found",
+            de: "Benutzerprofil nicht gefunden",
+          }),
           error,
         });
       }
@@ -61,19 +82,31 @@ const updateUserData = (req: Request, res: Response) => {
 
   if (!email.includes("@") || !email.includes(".")) {
     return res.status(422).json({
-      message: "wrong email format",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "niewłaściwy format e-maila",
+        en: "wrong email format",
+        de: "Falsches E-Mail-Format",
+      }),
     });
   }
 
   if (!accessToken) {
     return res.status(401).json({
-      message: "Unauthorized",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nieautoryzowany",
+        en: "Unauthorized",
+        de: "Unbefugt",
+      }),
     });
   }
 
   if (!name || !surname || !email) {
     return res.status(422).json({
-      message: "Missing required data (name or surname or email)",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Brak wymaganych danych (imię lub nazwisko lub e-mail)",
+        en: "Missing required data (name or surname or email)",
+        de: "Fehlende erforderliche Daten (Vor- oder Nachname oder E-Mail)",
+      }),
     });
   }
 
@@ -83,20 +116,31 @@ const updateUserData = (req: Request, res: Response) => {
     typeof email !== "string"
   ) {
     return res.status(422).json({
-      message:
-        "Incorect data type. Fields name, surname and email should be of type string",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nieprawidłowy typ danych. Pola imię, nazwisko i email powinny być typu string",
+        en: "Incorect data type. Fields name, surname and email should be of type string",
+        de: "Falscher Datentyp. Die Felder Name, Nachname und E-Mail sollten vom Typ Zeichenfolge sein",
+      }),
     });
   }
 
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
     if (error) {
       return res.status(401).json({
-        message: "Unauthorized",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nieautoryzowany",
+          en: "Unauthorized",
+          de: "Unbefugt",
+        }),
       });
     } else {
       if (!decoded) {
         return res.status(401).json({
-          message: "Unauthorized",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nieautoryzowany",
+            en: "Unauthorized",
+            de: "Unbefugt",
+          }),
         });
       }
 
@@ -105,7 +149,11 @@ const updateUserData = (req: Request, res: Response) => {
 
         if (!result) {
           return res.status(404).json({
-            message: "User profile not found",
+            message: getTranslatedMessage(req.headers["accept-language"], {
+              pl: "Nie znaleziono profilu użytkownika",
+              en: "User profile not found",
+              de: "Benutzerprofil nicht gefunden",
+            }),
           });
         }
 
@@ -120,18 +168,30 @@ const updateUserData = (req: Request, res: Response) => {
           })
           .then(() => {
             return res.status(200).json({
-              message: "Updated successfuly",
+              message: getTranslatedMessage(req.headers["accept-language"], {
+                pl: "Zaktualizowano pomyślnie",
+                en: "Updated successfuly",
+                de: "Aktualisiert erfolgreich",
+              }),
             });
           })
           .catch((error) => {
             return res.status(500).json({
-              message: "Could not update user profile",
+              message: getTranslatedMessage(req.headers["accept-language"], {
+                pl: "Nie można zaktualizować profilu użytkownika",
+                en: "Could not update user profile",
+                de: "Benutzerprofil konnte nicht aktualisiert werden",
+              }),
               error,
             });
           });
       } catch (error) {
         return res.status(500).json({
-          message: "An error occured",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Wystąpił błąd",
+            en: "An error occured",
+            de: "Es ist ein Fehler aufgetreten",
+          }),
           error,
         });
       }
@@ -144,12 +204,20 @@ const remindPassword = (req: Request, res: Response) => {
 
   if (!email) {
     return res.status(422).json({
-      message: "email was not provided",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "e-mail nie został podany",
+        en: "email was not provided",
+        de: "E-Mail wurde nicht angegeben",
+      }),
     });
   }
   if (typeof email !== "string") {
     return res.status(422).json({
-      message: "email has to be of type string",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "e-mail musi być typu string",
+        en: "email has to be of type string",
+        de: "E-Mail muss vom Typ String sein",
+      }),
     });
   }
 
@@ -160,7 +228,11 @@ const remindPassword = (req: Request, res: Response) => {
     .then((result) => {
       if (!result) {
         return res.status(404).json({
-          message: "Account with that email does not exist",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Konto z tym adresem e-mail nie istnieje",
+            en: "Account with that email does not exist",
+            de: "Konto mit dieser E-Mail existiert nicht",
+          }),
         });
       }
 
@@ -193,15 +265,22 @@ const remindPassword = (req: Request, res: Response) => {
           });
         } else {
           return res.status(200).json({
-            message:
-              "We've just sent you a link that will allow you to change your password. Check your email.",
+            message: getTranslatedMessage(req.headers["accept-language"], {
+              pl: "Właśnie wysłaliśmy Ci link, który pozwoli Ci zmienić hasło. Sprawdź pocztę.",
+              en: "We've just sent you a link that will allow you to change your password. Check your email.",
+              de: "Wir haben Ihnen gerade einen Link geschickt, mit dem Sie Ihr Passwort ändern können. Überprüfen Sie Ihre E-Mail.",
+            }),
           });
         }
       });
     })
     .catch((error) => {
       return res.status(500).json({
-        message: "An error occured when searching for email",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Wystąpił błąd podczas wyszukiwania e-maila",
+          en: "An error occured when searching for email",
+          de: "Bei der Suche nach E-Mail ist ein Fehler aufgetreten",
+        }),
         error,
       });
     });
@@ -212,38 +291,61 @@ const renewPassword = (req: Request, res: Response) => {
 
   if (!password) {
     return res.status(422).json({
-      message: "Password was not provided",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Hasło nie zostało podane",
+        en: "Password was not provided",
+        de: "Passwort wurde nicht angegeben",
+      }),
     });
   }
 
   if (!repeatedPassword) {
     return res.status(422).json({
-      message: "Repeated password was not provided",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nie podano powtórzonego hasła",
+        en: "Repeated password was not provided",
+        de: "Wiederholtes Passwort wurde nicht angegeben",
+      }),
     });
   }
 
   if (password !== repeatedPassword) {
     return res.status(422).json({
-      message: "Different passwords",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Różne hasła",
+        en: "Different passwords",
+        de: "Unterschiedliche Passwörter",
+      }),
     });
   }
 
   if (typeof password !== "string" || typeof repeatedPassword !== "string") {
     return res.status(422).json({
-      message: "password, repeatedPassword should be of type string",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "hasło, repeatPassword powinno być typu string",
+        en: "password, repeatedPassword should be of type string",
+        de: "password, repeatedPassword sollte vom Typ string sein",
+      }),
     });
   }
 
   if (typeof password === "string" && password.length < 8) {
     return res.status(422).json({
-      message: "Password must be at least 8 characters",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Hasło musi zawierać co najmniej 8 znaków",
+        en: "Password must be at least 8 characters",
+        de: "Passwort muss mindestens 8 Zeichen lang sein",
+      }),
     });
   }
 
   if (!cache.has(createNewPasswdLinkName(req.params.id))) {
     return res.status(401).json({
-      message:
-        "Changing password link expired or user didn't request to change password",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Link do zmiany hasła wygasł lub użytkownik nie prosił o zmianę hasła",
+        en: "Changing password link expired or user didn't request to change password",
+        de: "Der Link zum Ändern des Passworts ist abgelaufen oder der Benutzer hat keine Änderung des Passworts angefordert",
+      }),
     });
   }
 
@@ -252,7 +354,11 @@ const renewPassword = (req: Request, res: Response) => {
     .then((result) => {
       if (!result) {
         return res.status(404).json({
-          message: "User profile not found",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nie znaleziono profilu użytkownika",
+            en: "User profile not found",
+            de: "Benutzerprofil nicht gefunden",
+          }),
         });
       }
 
@@ -272,12 +378,20 @@ const renewPassword = (req: Request, res: Response) => {
             cache.has(createNewPasswdLinkName(req.params.id)) &&
               cache.del(createNewPasswdLinkName(req.params.id));
             return res.status(200).json({
-              message: "Updated successfuly",
+              message: getTranslatedMessage(req.headers["accept-language"], {
+                pl: "Zaktualizowano pomyślnie",
+                en: "Updated successfuly",
+                de: "Aktualisiert erfolgreich",
+              }),
             });
           })
           .catch((error) => {
             return res.status(500).json({
-              message: "Could not update user profile",
+              message: getTranslatedMessage(req.headers["accept-language"], {
+                pl: "Nie można zaktualizować profilu użytkownika",
+                en: "Could not update user profile",
+                de: "Benutzerprofil konnte nicht aktualisiert werden",
+              }),
               error,
             });
           });
@@ -285,7 +399,11 @@ const renewPassword = (req: Request, res: Response) => {
     })
     .catch((error) => {
       return res.status(500).json({
-        message: "An error occured",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Wystąpił błąd",
+          en: "An error occured",
+          de: "Es ist ein Fehler aufgetreten",
+        }),
         error,
       });
     });
@@ -297,43 +415,71 @@ const updatePassword = (req: Request, res: Response) => {
 
   if (!password) {
     return res.status(422).json({
-      message: "Password was not provided",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Hasło nie zostało podane",
+        en: "Password was not provided",
+        de: "Passwort wurde nicht angegeben",
+      }),
     });
   }
 
   if (!repeatedPassword) {
     return res.status(422).json({
-      message: "Repeated password was not provided",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nie podano powtórzonego hasła",
+        en: "Repeated password was not provided",
+        de: "Wiederholtes Passwort wurde nicht angegeben",
+      }),
     });
   }
 
   if (password !== repeatedPassword) {
     return res.status(422).json({
-      message: "Different passwords",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Różne hasła",
+        en: "Different passwords",
+        de: "Unterschiedliche Passwörter",
+      }),
     });
   }
 
   if (typeof password !== "string" || typeof repeatedPassword !== "string") {
     return res.status(422).json({
-      message: "password, repeatedPassword should be of type string",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "hasło, powtórzone hasło powinno być typu string",
+        en: "password, repeatedPassword should be of type string",
+        de: "password, repeatedPassword sollte vom Typ string sein",
+      }),
     });
   }
 
   if (!accessToken) {
     return res.status(401).json({
-      message: "Unauthorized",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nieautoryzowany",
+        en: "Unauthorized",
+        de: "Nicht autorisiert",
+      }),
     });
   }
 
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
     if (error) {
       return res.status(401).json({
-        message: "Unauthorized",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nieautoryzowany",
+          en: "Unauthorized",
+          de: "Nicht autorisiert",
+        }),
       });
     } else {
       if (!decoded) {
         return res.status(401).json({
-          message: "Unauthorized",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nieautoryzowany",
+            en: "Unauthorized",
+            de: "Nicht autorisiert",
+          }),
         });
       }
 
@@ -342,7 +488,11 @@ const updatePassword = (req: Request, res: Response) => {
 
         if (!result) {
           return res.status(404).json({
-            message: "User profile not found",
+            message: getTranslatedMessage(req.headers["accept-language"], {
+              pl: "Nie znaleziono profilu użytkownika",
+              en: "User profile not found",
+              de: "Benutzerprofil nicht gefunden",
+            }),
           });
         }
 
@@ -360,19 +510,31 @@ const updatePassword = (req: Request, res: Response) => {
             })
             .then(() => {
               return res.status(200).json({
-                message: "Updated successfuly",
+                message: getTranslatedMessage(req.headers["accept-language"], {
+                  pl: "Zaktualizowano pomyślnie",
+                  en: "Updated successfuly",
+                  de: "Aktualisiert erfolgreich",
+                }),
               });
             })
             .catch((error) => {
               return res.status(500).json({
-                message: "Could not update user profile",
+                message: getTranslatedMessage(req.headers["accept-language"], {
+                  pl: "Nie można zaktualizować profilu użytkownika",
+                  en: "Could not update user profile",
+                  de: "Benutzerprofil konnte nicht aktualisiert werden",
+                }),
                 error,
               });
             });
         });
       } catch (error) {
         return res.status(500).json({
-          message: "An error occured",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Wystąpił błąd",
+            en: "An error occured",
+            de: "Es ist ein Fehler aufgetreten",
+          }),
           error,
         });
       }
@@ -385,14 +547,22 @@ const putAvatar = (req: Request & MulterRequest, res: Response) => {
 
   if (!accessToken) {
     return res.status(401).json({
-      message: "Unauthorized",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nieautoryzowany",
+        en: "Unauthorized",
+        de: "Nicht autorisiert",
+      }),
     });
   }
 
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
     if (error || !decoded) {
       return res.status(401).json({
-        message: "Unauthorized",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nieautoryzowany",
+          en: "Unauthorized",
+          de: "Nicht autorisiert",
+        }),
       });
     }
 
@@ -403,7 +573,11 @@ const putAvatar = (req: Request & MulterRequest, res: Response) => {
 
       if (!user) {
         return res.status(404).json({
-          message: "User profile not found",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nie znaleziono profilu użytkownika",
+            en: "User profile not found",
+            de: "Benutzerprofil nicht gefunden",
+          }),
         });
       }
 
@@ -426,7 +600,11 @@ const putAvatar = (req: Request & MulterRequest, res: Response) => {
       return res.status(201).json({ avatarUrl: newAvatarUrl });
     } catch (error) {
       return res.status(500).json({
-        message: "An error occured",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Wystąpił błąd",
+          en: "An error occured",
+          de: "Es ist ein Fehler aufgetreten",
+        }),
         error,
       });
     }
@@ -438,14 +616,22 @@ const deleteAvatar = (req: Request & MulterRequest, res: Response) => {
 
   if (!accessToken) {
     return res.status(401).json({
-      message: "Unauthorized",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nieautoryzowany",
+        en: "Unauthorized",
+        de: "Nicht autorisiert",
+      }),
     });
   }
 
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
     if (error || !decoded) {
       return res.status(401).json({
-        message: "Unauthorized",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nieautoryzowany",
+          en: "Unauthorized",
+          de: "Nicht autorisiert",
+        }),
       });
     }
 
@@ -454,7 +640,11 @@ const deleteAvatar = (req: Request & MulterRequest, res: Response) => {
 
       if (!user) {
         return res.status(404).json({
-          message: "User profile not found",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nie znaleziono profilu użytkownika",
+            en: "User profile not found",
+            de: "Benutzerprofil nicht gefunden",
+          }),
         });
       }
 
@@ -471,9 +661,22 @@ const deleteAvatar = (req: Request & MulterRequest, res: Response) => {
         },
       });
 
-      return res.status(200).json({ message: "avatar was deleted" });
+      return res.status(200).json({
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "awatar został usunięty",
+          en: "avatar was deleted",
+          de: "Avatar wurde gelöscht",
+        }),
+      });
     } catch (error) {
-      return res.status(500).json({ message: "An error occured", error });
+      return res.status(500).json({
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Wystąpił błąd",
+          en: "An error occured",
+          de: "Es ist ein Fehler aufgetreten",
+        }),
+        error,
+      });
     }
   });
 };
@@ -483,14 +686,22 @@ const deleteAccount = (req: RequestWithJWT, res: Response) => {
 
   if (!accessToken) {
     return res.status(401).json({
-      message: "Unauthorized",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nieautoryzowany",
+        en: "Unauthorized",
+        de: "Nicht autorisiert",
+      }),
     });
   }
 
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
     if (error || !decoded) {
       return res.status(401).json({
-        message: "Unauthorized",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nieautoryzowany",
+          en: "Unauthorized",
+          de: "Nicht autorisiert",
+        }),
       });
     }
 
@@ -499,7 +710,11 @@ const deleteAccount = (req: RequestWithJWT, res: Response) => {
 
       if (!userToDelete) {
         return res.status(404).json({
-          message: "User profile not found",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nie znaleziono profilu użytkownika",
+            en: "User profile not found",
+            de: "Benutzerprofil nicht gefunden",
+          }),
         });
       }
 
@@ -513,17 +728,42 @@ const deleteAccount = (req: RequestWithJWT, res: Response) => {
 
         if (photoToDelete) {
           await Promise.all([photoToDelete.delete(), userToDelete.delete()]);
-          return res.status(200).json({ message: "Account was deleted" });
+          return res.status(200).json({
+            message: getTranslatedMessage(req.headers["accept-language"], {
+              pl: "Konto zostało usunięte",
+              en: "Account was deleted",
+              de: "Konto wurde gelöscht",
+            }),
+          });
         } else {
           await userToDelete.delete();
-          return res.status(200).json({ message: "Account was deleted" });
+          return res.status(200).json({
+            message: getTranslatedMessage(req.headers["accept-language"], {
+              pl: "Konto zostało usunięte",
+              en: "Account was deleted",
+              de: "Konto wurde gelöscht",
+            }),
+          });
         }
       } else {
         await userToDelete.delete();
-        return res.status(200).json({ message: "Account was deleted" });
+        return res.status(200).json({
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Konto zostało usunięte",
+            en: "Account was deleted",
+            de: "Konto wurde gelöscht",
+          }),
+        });
       }
     } catch (error) {
-      return res.status(500).json({ message: "An error occured", error });
+      return res.status(500).json({
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Wystąpił błąd",
+          en: "An error occured",
+          de: "Es ist ein Fehler aufgetreten",
+        }),
+        error,
+      });
     }
   });
 };
@@ -534,14 +774,22 @@ const addGameSave = (req: RequestWithJWT, res: Response) => {
 
   if (!accessToken) {
     return res.status(401).json({
-      message: "Unauthorized",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nieautoryzowany",
+        en: "Unauthorized",
+        de: "Nicht autorisiert",
+      }),
     });
   }
 
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
     if (error || !decoded) {
       return res.status(401).json({
-        message: "Unauthorized",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nieautoryzowany",
+          en: "Unauthorized",
+          de: "Nicht autorisiert",
+        }),
       });
     }
 
@@ -549,7 +797,11 @@ const addGameSave = (req: RequestWithJWT, res: Response) => {
       const user = await UserModel.findOne({ _id: decoded._id }).exec();
       if (!user) {
         return res.status(404).json({
-          message: "User profile not found",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nie znaleziono profilu użytkownika",
+            en: "User profile not found",
+            de: "Benutzerprofil nicht gefunden",
+          }),
         });
       }
 
@@ -563,18 +815,30 @@ const addGameSave = (req: RequestWithJWT, res: Response) => {
         })
         .then(() => {
           return res.status(200).json({
-            message: "Updated successfuly",
+            message: getTranslatedMessage(req.headers["accept-language"], {
+              pl: "Zaktualizowano pomyślnie",
+              en: "Updated successfuly",
+              de: "Aktualisiert erfolgreich",
+            }),
           });
         })
         .catch((error) => {
           return res.status(500).json({
-            message: "Could not update user profile",
+            message: getTranslatedMessage(req.headers["accept-language"], {
+              pl: "Nie można zaktualizować profilu użytkownika",
+              en: "Could not update user profile",
+              de: "Benutzerprofil konnte nicht aktualisiert werden",
+            }),
             error,
           });
         });
     } catch (error) {
       return res.status(500).json({
-        message: "An error occured",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Wystąpił błąd",
+          en: "An error occured",
+          de: "Es ist ein Fehler aufgetreten",
+        }),
         error,
       });
     }
@@ -587,14 +851,22 @@ const deleteGameSave = (req: RequestWithJWT, res: Response) => {
 
   if (!accessToken) {
     return res.status(401).json({
-      message: "Unauthorized",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nieautoryzowany",
+        en: "Unauthorized",
+        de: "Unbefugt",
+      }),
     });
   }
 
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
     if (error || !decoded) {
       return res.status(401).json({
-        message: "Unauthorized",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nieautoryzowany",
+          en: "Unauthorized",
+          de: "Unbefugt",
+        }),
       });
     }
 
@@ -602,7 +874,11 @@ const deleteGameSave = (req: RequestWithJWT, res: Response) => {
       const user = await UserModel.findOne({ _id: decoded._id }).exec();
       if (!user) {
         return res.status(404).json({
-          message: "User profile not found",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nie znaleziono profilu użytkownika",
+            en: "User profile not found",
+            de: "Benutzerprofil nicht gefunden",
+          }),
         });
       }
 
@@ -614,18 +890,30 @@ const deleteGameSave = (req: RequestWithJWT, res: Response) => {
         })
         .then(() => {
           return res.status(200).json({
-            message: "Removed successfuly",
+            message: getTranslatedMessage(req.headers["accept-language"], {
+              pl: "Usunięto pomyślnie",
+              en: "Removed successfuly",
+              de: "Erfolgreich entfernt",
+            }),
           });
         })
         .catch((error) => {
           return res.status(500).json({
-            message: "Could not remove save",
+            message: getTranslatedMessage(req.headers["accept-language"], {
+              pl: "Nie udało się usunąć zapisu",
+              en: "Could not remove save",
+              de: "Speichern konnte nicht entfernt werden",
+            }),
             error,
           });
         });
     } catch (error) {
       return res.status(500).json({
-        message: "An error occured",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Wystąpił błąd",
+          en: "An error occured",
+          de: "Es ist ein Fehler aufgetreten",
+        }),
         error,
       });
     }
@@ -637,14 +925,22 @@ const getAllGameSaves = (req: RequestWithJWT, res: Response) => {
 
   if (!accessToken) {
     return res.status(401).json({
-      message: "Unauthorized",
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Nieautoryzowany",
+        en: "Unauthorized",
+        de: "Unbefugt",
+      }),
     });
   }
 
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, async (error, decoded) => {
     if (error || !decoded) {
       return res.status(401).json({
-        message: "Unauthorized",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nieautoryzowany",
+          en: "Unauthorized",
+          de: "Unbefugt",
+        }),
       });
     }
 
@@ -652,7 +948,11 @@ const getAllGameSaves = (req: RequestWithJWT, res: Response) => {
       const user = await UserModel.findOne({ _id: decoded._id }).exec();
       if (!user) {
         return res.status(404).json({
-          message: "User profile not found",
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nie znaleziono profilu użytkownika",
+            en: "User profile not found",
+            de: "Benutzerprofil nicht gefunden",
+          }),
         });
       }
 
@@ -661,7 +961,11 @@ const getAllGameSaves = (req: RequestWithJWT, res: Response) => {
       });
     } catch (error) {
       return res.status(500).json({
-        message: "An error occured",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Wystąpił błąd",
+          en: "An error occured",
+          de: "Es ist ein Fehler aufgetreten",
+        }),
         error,
       });
     }

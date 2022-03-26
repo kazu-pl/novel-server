@@ -9,6 +9,7 @@ import { GridFSBucket } from "mongodb";
 import { photosBucketName } from "middleware/fileUpload";
 import PhotoFileModel from "models/PhotoFile.model";
 import { PATHS_FILES } from "constants/paths";
+import getTranslatedMessage from "utils/getTranslatedMessage";
 
 export let gridFSBucket: GridFSBucket;
 
@@ -70,7 +71,13 @@ app.get(PATHS_FILES.SINGLE_FILE, (req, res) => {
     .exec()
     .then((file) => {
       if (file === undefined || file === null) {
-        return res.status(404).json({ message: "Photo Not found" });
+        return res.status(404).json({
+          message: getTranslatedMessage(req.headers["accept-language"], {
+            pl: "Nie znaleziono zdjęcia",
+            en: "Photo Not found",
+            de: "Foto nicht gefunden",
+          }),
+        });
       }
 
       //  below line produces an error when you build server via `yarn build` and run via `yarn start`.
@@ -79,7 +86,11 @@ app.get(PATHS_FILES.SINGLE_FILE, (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        message: "an error occured",
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "wystąpił błąd",
+          en: "an error occured",
+          de: "es ist ein Fehler aufgetreten",
+        }),
         error,
       });
     });
