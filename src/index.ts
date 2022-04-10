@@ -1,6 +1,7 @@
 import { PORT, HOSTNAME, MONGO_DB_URI } from "constants/env";
 import express from "express";
 import CORS from "middleware/CORS";
+// import cors from "cors"; // alternative to writting your own cors middleware
 import logger from "middleware/logger";
 import logging from "./config/logging";
 import Router from "Router";
@@ -42,6 +43,14 @@ mongoose
 app.use(logger);
 
 app.use(CORS);
+
+//// below is usage of the alternative to your own CORS middleware
+// app.use(
+//   cors({
+//     credentials: true,
+//     origin: ["http://localhost:3000"],
+//   })
+// );
 
 /**
  * @swagger
