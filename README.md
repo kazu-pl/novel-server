@@ -1,3 +1,11 @@
+# how to generate tsconfig.json with default values:
+
+First, install typescript with:
+`yarn add typescript -D`
+
+and then generate default typescript config file with:
+`npx tsc --init`
+
 # how to find documents whose `title` or `name` or whatever field contains full or part string that front send in url as `search` param
 
 ```tsx
@@ -340,13 +348,16 @@ Router.use("/swagger/schema.json", (req, res) => res.send(swaggerJsonSchema));
 ```js
 // generateTypes.js
 
+const dotenv = require("dotenv"); // you don't need to install it additionally, it will be globally installed
+dotenv.config();
+
 const { generateApi } = require("swagger-typescript-api");
 const path = require("path");
 
 generateApi({
   name: "nameOfMyGeneratedFIle.types.ts",
   output: path.resolve(process.cwd(), "./src/types"), // path in which the file with interaces will be created
-  url: "http://localhost:4000/swagger/schema.json", // THIS IS THE ENDPOINT THAT SERVES `swagger-schema.json`
+  url: `${process.env.REACT_APP_API_URL}/swagger/schema.json`, // THIS IS THE ENDPOINT THAT SERVES `swagger-schema.json`
   generateClient: false,
   generateRouteTypes: false,
 }).catch((e) => console.error(e));
@@ -441,6 +452,78 @@ Router.get(
 ```
 
 Found [here](https://stackoverflow.com/questions/50736784/how-to-authorise-swagger-jsdoc-with-jwt-token) - search for `To make this work, you will need to add the openAPI property to your swaggerDefinition object.`
+
+# how to make cookie-session auth in swagger instead of JWT:
+
+1 - specify swagger options:
+
+```ts
+//  src/swagger/swaggerSpec.ts
+
+import swaggerJSDoc, { Options } from "swagger-jsdoc";
+import { PATHS_SWAGGER } from "constants/paths";
+
+// swagger-def.json contains the same information is swagger.ts - the only reason for existense of swagger-def.json is that TS files cannot be used for swagger-jsdoc command
+
+const swggerOptions: Options = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Novel-server",
+      version: "1.0.0",
+      description: "This is a server for Novel project",
+    },
+    externalDocs: {
+      url: PATHS_SWAGGER.SWAGGER_SCHEMA_JSON,
+      description: "Link to swagger-schema.json",
+    },
+    components: {
+      securitySchemes: {
+        //// here you can find how to handle cookie-session auth: https://swagger.io/docs/specification/authentication/cookie-authentication/
+        cookieAuth: {
+          type: "apiKey", //   # arbitrary name for the security scheme; will be used in the "security" key later
+          in: "cookie",
+          name: "sessionId", // # cookie name
+        },
+      },
+    },
+  },
+  apis: ["./**/*.ts"], // list of files with js-doc annotations to generate swagger from
+};
+
+export default swaggerJSDoc(swggerOptions);
+```
+
+2 - use cookie auth instead of JWT at the level of endpoints you want to protect with cookie session:
+
+```ts
+// src/routers/any.router.ts
+
+/**
+ * @swagger
+ * /acts/{id}/edit:
+ *  post:
+ *    security:
+ *      - cookieAuth: []        // <--- here you put cookieAuth instead of bearerAuth >
+ *    summary: Used to update act
+ *    tags: [Acts]
+ *    responses:
+ *      200:
+ *        description: list of characters
+ *        content:
+ *          application/json:
+ *            schema:
+ *                $ref: '#/components/schemas/SuccessfulReqMsg'
+ *      401:
+ *        description: unauthorized
+ */
+actRouter.post(
+  PATHS_ACT.EDIT,
+  authenticate,
+  authorize("admin"),
+  actController.updateAct
+);
+```
 
 # How to receive files and store them in mongoDB:
 

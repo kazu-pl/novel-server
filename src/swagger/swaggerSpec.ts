@@ -22,6 +22,13 @@ const swggerOptions: Options = {
           scheme: "bearer",
           bearerFormat: "JWT",
         },
+        //
+        //// here you can find how to handle cookie-session auth: https://swagger.io/docs/specification/authentication/cookie-authentication/
+        // cookieAuth: {
+        //   type: "apiKey", //   # arbitrary name for the security scheme; will be used in the "security" key later
+        //   in: "cookie",
+        //   name: "sessionId", // # cookie name
+        // },
       },
     },
   },
