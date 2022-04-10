@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 const CORS = (req: Request, res: Response, next: NextFunction) => {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "*"); // you should put http://localhost:3000 when in development mode but when in prod mode you should put your website url address here
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
