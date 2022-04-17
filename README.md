@@ -1,3 +1,94 @@
+# How simulate relations / references of one model in another model by using `ref` attribute and `populate`
+
+```ts
+import mongoose, { Schema, Document } from "mongoose";
+
+export interface Act {
+  title: string;
+  description: string;
+  postedBy: string;
+}
+
+export interface ActDocument extends Act, Document {}
+
+const ActSchema: Schema = new Schema({
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  postedBy: {
+    type: mongoose.Types.ObjectId, // add info that it will be mongoDB objectId type
+    ref: "character", // 'character' is the name of another model, for example this Act model name is `act`
+  },
+});
+
+// below is this current model name which is `act`
+export default mongoose.model<ActDocument>(`act`, ActSchema);
+```
+
+In MongoDB, Population is the process of replacing the specified path in the document of one collection with the actual document from the other collection.
+
+Then when you will try to get all Acts the `postedBy` field will be just string but you can "populate" it which will return the whole object instaed that the ref was reffering to:
+
+```ts
+router.get("/acts", (req, res) => {
+  ActModel.find()
+    .populate("postedBy") // with this as `postedBy` key you will get the WHOLE character model data instead of just its id
+    // .populate("postedBy", "_id name") // you can also pass 2nd argument to select only those 2 fields you want to show instead of the whole object. Pass then after space.
+    .then((data) => {
+      return res.status(200).json({
+        data,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({ error });
+    });
+});
+```
+
+explanation and more info [here](https://www.geeksforgeeks.org/mongoose-populate-method/)
+
+You can also search for acts that were posted by current user:
+
+```ts
+router.get("/acts", (req, res) => {
+  ActModel.find({
+    postedBy: req.user._id, // you can use here any user / any model id becuase you specified in Act model that postedBy is `ref` and of type `mongoose.Types.ObjectId`
+  })
+    .then((data) => {
+      return res.status(200).json({
+        data,
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({ error });
+    });
+});
+```
+
+# How to find some resource and update it at the same time:
+
+```tsx
+router.put("/unlike", (req, res) => {
+  PostModel.findByIdAndUpdate(
+    req.body.postId,
+    {
+      $push: {
+        // $push will add something to comments array (because comments is an array), while $pull will remove something
+        comments: `new comment`, // `comments` is the field you specify in Model, it's one of those fields like `title` or `description`
+      },
+    },
+    {
+      new: true, // You should set the new option to true to return the document after update was applied. more info here: https://mongoosejs.com/docs/tutorials/findoneandupdate.html#getting-started
+    }
+  ).exec((error, result) => {
+    if (error) {
+      return res.status(422).json({ error });
+    } else {
+      return res.json({ result });
+    }
+  });
+});
+```
+
 # how to generate tsconfig.json with default values:
 
 First, install typescript with:

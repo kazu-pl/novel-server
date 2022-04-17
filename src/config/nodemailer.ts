@@ -18,3 +18,15 @@ export const transporter = nodemailer.createTransport({
 });
 
 export type { SendMailOptions };
+
+// you can also use SendGrid as transport with nodemailer: https://sendgrid.com/
+
+// yarn add nodemailer-sendgrid-transport
+
+// import sendgridTransport from 'nodemailer-sendgrid-transport';
+
+// export const transporter = nodemailer.createTransport(sendgridTransport{
+//   auth: {
+//     api_key: "api_key_you_set_for_your_account_on_sendgrid_website"
+//   }
+// });

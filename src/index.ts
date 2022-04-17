@@ -25,6 +25,8 @@ const NAMESPACE = "server";
 
 const app = express();
 
+app.set("x-powered-by", false); // disables x-powered-by header so front-end app has no idea that server was created with express
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
