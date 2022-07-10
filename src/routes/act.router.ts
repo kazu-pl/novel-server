@@ -177,6 +177,38 @@ actRouter.get(PATHS_ACT.GET, authenticate, actController.getSingleAct);
  *      - bearerAuth: []
  *    summary: Used to get list of all acts
  *    tags: [Acts]
+ *    parameters:
+ *    - in: query
+ *      name: sortBy
+ *      schema:
+ *        type: string
+ *      required: true
+ *      description: sory by. Default sort is asc by createdAt
+ *    - in: query
+ *      name: sortDirection
+ *      description: data sorting direction
+ *      schema:
+ *        type: string
+ *        enum: [asc, desc]
+ *      required: true
+ *    - in: query
+ *      name: pageSize
+ *      schema:
+ *        type: string
+ *      required: true
+ *      description: number of acts you fetch at a single request
+ *    - in: query
+ *      name: currentPage
+ *      schema:
+ *        type: string
+ *      required: true
+ *      description: number of current page in paginated list e.g.'5' page
+ *    - in: query
+ *      name: search
+ *      schema:
+ *        type: string
+ *      required: false
+ *      description: act name if you want to search acts by theirs name
  *    responses:
  *      200:
  *        description: list of characters

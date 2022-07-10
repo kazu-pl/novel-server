@@ -1,8 +1,3 @@
-# TODO:
-
-1 - wgrać te sprawdzenia zdjęć (masz je w stage)
-2 - zrobić upgrade dostępnych parametró w url w swagger do adresów gdzie pobierasz lsitydanych
-
 # How to NOT send any response data, only status like 200:
 
 ```tsx

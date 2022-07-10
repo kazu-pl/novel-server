@@ -20,7 +20,7 @@ const characterRouter = express.Router();
  *      name: sortBy
  *      schema:
  *        type: string
- *      required: false
+ *      required: true
  *      description: sory by. Default sort is asc by createdAt
  *    - in: query
  *      name: sortDirection
@@ -28,7 +28,25 @@ const characterRouter = express.Router();
  *      schema:
  *        type: string
  *        enum: [asc, desc]
+ *      required: true
+ *    - in: query
+ *      name: pageSize
+ *      schema:
+ *        type: string
+ *      required: true
+ *      description: number of characters you fetch at a single request
+ *    - in: query
+ *      name: currentPage
+ *      schema:
+ *        type: string
+ *      required: true
+ *      description: number of current page in paginated list e.g.'5' page
+ *    - in: query
+ *      name: search
+ *      schema:
+ *        type: string
  *      required: false
+ *      description: character name if you want to search characters by theirs name
  *    responses:
  *      200:
  *        description: list of characters
@@ -53,7 +71,7 @@ characterRouter.get(
 /**
  * @swagger
  * path:
- * /characters/dictionary":
+ * /characters/dictionary:
  *  get:
  *    security:
  *      - bearerAuth: []
