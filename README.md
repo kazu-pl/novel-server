@@ -1,3 +1,9 @@
+# How to NOT send any response data, only status like 200:
+
+```tsx
+return res.status(200).json(null);
+```
+
 # How simulate relations / references of one model in another model by using `ref` attribute and `populate`
 
 ```ts

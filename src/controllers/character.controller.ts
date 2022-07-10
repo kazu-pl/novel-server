@@ -305,6 +305,17 @@ const deleteCharacterImage = async (req: RequestWithJWT, res: Response) => {
     const imageToBeDeleted = await PhotoFileModel.findOne({
       filename: img_filename,
     });
+
+    if (!imageToBeDeleted) {
+      return res.status(404).json({
+        message: getTranslatedMessage(req.headers["accept-language"], {
+          pl: "Nie znaleziono zdjęcia",
+          en: "IMG was not found",
+          de: "IMG wurde nicht gefunden",
+        }),
+      });
+    }
+
     await PhotoChunkModel.deleteMany({ files_id: imageToBeDeleted?._id });
     await imageToBeDeleted?.delete();
 
