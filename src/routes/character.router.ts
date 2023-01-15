@@ -99,6 +99,34 @@ characterRouter.get(
 /**
  * @swagger
  * path:
+ * /characters/images-count:
+ *  get:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to get list of character's images count. Used for GRAPHS
+ *    tags: [Characters]
+ *    responses:
+ *      200:
+ *        description: list of characters
+ *        content:
+ *          application/json:
+ *            schema:
+ *                $ref: '#/components/schemas/ImagesCountResponse'
+ *      401:
+ *        description: unauhhorized
+ *      500:
+ *        description: An error occured
+ */
+characterRouter.get(
+  PATHS_CHARACTERS.CHARACTERS_IMAGES_COUNT,
+  authenticate,
+  authorize("admin"),
+  characterController.getCharacterImagesCount
+);
+
+/**
+ * @swagger
+ * path:
  * /characters/{id}:
  *  get:
  *    security:

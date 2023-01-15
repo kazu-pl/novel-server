@@ -44,6 +44,7 @@ export const PATHS_SCENERIES = {
   SCENERY_DELETE: "/scenery/:id/delete",
   SCENERY_IMAGE_DELETE: "/scenery/:scenery_id/image/:img_filename/delete",
   SCENERY_ADD_IMAGES: "/scenery/:id/images",
+  SCENERY_IMAGES_COUNT: "/scenery/images-count",
 };
 
 export const PATHS_CHARACTERS = {
@@ -56,6 +57,7 @@ export const PATHS_CHARACTERS = {
   CHARACTER_IMAGE_DELETE:
     "/characters/:character_id/image/:img_filename/delete",
   CHARACTER_ADD_IMAGES: "/characters/:id/images",
+  CHARACTERS_IMAGES_COUNT: "/characters/images-count",
 };
 
 export const PATHS_ACT = {
@@ -65,4 +67,6 @@ export const PATHS_ACT = {
   GET: "/acts/:id",
   GET_ALL: "/acts",
   DICTIONARY: "/acts/dictionary",
+  SCENES_COUNT: "/acts/scenes-list",
+  DIALOGS_COUNT: "/acts/dialogs-list",
 };
