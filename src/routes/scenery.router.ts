@@ -98,11 +98,39 @@ sceneryRouter.get(
 /**
  * @swagger
  * path:
+ * /scenery/images-count:
+ *  get:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to get list of scenery's images count. Used for GRAPHS
+ *    tags: [Scenery]
+ *    responses:
+ *      200:
+ *        description: list of characters
+ *        content:
+ *          application/json:
+ *            schema:
+ *                $ref: '#/components/schemas/ImagesCountResponse'
+ *      401:
+ *        description: unauhhorized
+ *      500:
+ *        description: An error occured
+ */
+sceneryRouter.get(
+  PATHS_SCENERIES.SCENERY_IMAGES_COUNT,
+  authenticate,
+  authorize("admin"),
+  sceneryController.getSceneryImagesCount
+);
+
+/**
+ * @swagger
+ * path:
  * /scenery/{id}:
  *  get:
  *    security:
  *      - bearerAuth: []
- *    summary: Used to add new scenery
+ *    summary: Used to get scenery by its id
  *    tags: [Scenery]
  *    parameters:
  *      - in: path

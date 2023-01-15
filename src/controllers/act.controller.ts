@@ -441,6 +441,54 @@ const getActsDictionary = async (req: RequestWithJWT, res: Response) => {
   }
 };
 
+const getActsScenesCount = async (req: RequestWithJWT, res: Response) => {
+  try {
+    const acts = await ActModel.find().exec();
+
+    return res.status(200).json({
+      data: acts.map((item) => ({
+        id: item._id,
+        name: item.title,
+        count: item.scenes.length,
+      })),
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
+        en: "There was an error while trying to process your request",
+        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+      }),
+      error,
+    });
+  }
+};
+
+const getActsDialogsCount = async (req: RequestWithJWT, res: Response) => {
+  try {
+    const acts = await ActModel.find().exec();
+
+    return res.status(200).json({
+      data: acts.map((item) => ({
+        id: item._id,
+        name: item.title,
+        count: item.scenes.reduce((acc, curr) => {
+          return acc + curr.dialogs.length;
+        }, 0),
+      })),
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
+        en: "There was an error while trying to process your request",
+        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+      }),
+      error,
+    });
+  }
+};
+
 export default {
   addAct,
   updateAct,
@@ -448,4 +496,6 @@ export default {
   getSingleAct,
   getAllActs,
   getActsDictionary,
+  getActsScenesCount,
+  getActsDialogsCount,
 };
