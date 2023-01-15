@@ -1,3 +1,39 @@
+# Single database connection stirng vs assembling it:
+
+When heroku disabled its free plan I had to move this server on `https://render.com` but it could not build the server and it throwed the following error:
+
+```powershell
+Jan 15 04:53:44 PM  [2023-01-15T15:53:44.686Z] [INFO] [server] Server is running on srv-cejehmla4991ihml96d0-kn-00002-deployment-54f6dbd7bd-mkjvl:10000
+Jan 15 04:53:45 PM  [2023-01-15T15:53:44.689Z] [ERROR] [server] URI must include hostname, domain name, and tld MongoAPIError: URI must include hostname, domain name, and tld
+Jan 15 04:53:45 PM      at Object.resolveSRVRecord (/opt/render/project/src/node_modules/mongodb/src/connection_string.ts:73:21)
+Jan 15 04:53:45 PM      at Object.connect (/opt/render/project/src/node_modules/mongodb/src/operations/connect.ts:52:12)
+Jan 15 04:53:45 PM      at /opt/render/project/src/node_modules/mongodb/src/mongo_client.ts:412:7
+Jan 15 04:53:45 PM      at Object.maybePromise (/opt/render/project/src/node_modules/mongodb/src/utils.ts:634:3)
+Jan 15 04:53:45 PM      at MongoClient.connect (/opt/render/project/src/node_modules/mongodb/src/mongo_client.ts:411:12)
+Jan 15 04:53:45 PM      at /opt/render/project/src/node_modules/mongoose/lib/connection.js:786:12
+Jan 15 04:53:45 PM      at new Promise (<anonymous>)
+Jan 15 04:53:45 PM      at NativeConnection.Connection.openUri (/opt/render/project/src/node_modules/mongoose/lib/connection.js:776:19)
+Jan 15 04:53:45 PM      at /opt/render/project/src/node_modules/mongoose/lib/index.js:330:10
+Jan 15 04:53:45 PM      at /opt/render/project/src/node_modules/mongoose/lib/helpers/promiseOrCallback.js:32:5
+```
+
+The important part is `URI must include hostname, domain name, and tld MongoAPIError: URI must include hostname, domain name, and tld`
+
+So to make it work I had to use single string for database connection string like this:
+
+```ts
+export const MONGO_DB_URI = `${process.env.MONGO_DB_CONNECTION_STRING}`;
+```
+
+But it's important to remember to pass all required data in the connection string.
+It looks like this:
+
+```ts
+export const MONGO_DB_URI = `mongodb+srv://${MONGO_USERNAME}:${MONGO_USERNAME_PASSWORD}@${MONGO_HOST}/${MONGO_DB_NAME}`;
+```
+
+But when you go to MongoDB Atlas, select `connect` button and then select `connect your application` then you wil get connection string without the mongo database name so I had to add it manually to the env I was passing so the `MONGO_DB_CONNECTION_STRING` had to include at the end something like `/my-db-name`
+
 # How to NOT send any response data, only status like 200:
 
 ```tsx
