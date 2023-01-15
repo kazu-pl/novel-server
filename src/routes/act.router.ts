@@ -140,6 +140,62 @@ actRouter.get(
 
 /**
  * @swagger
+ * path:
+ * /acts/scenes-list:
+ *  get:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to get list of acts's scenes count. Used for GRAPHS
+ *    tags: [Acts]
+ *    responses:
+ *      200:
+ *        description: list of acts's scenes count
+ *        content:
+ *          application/json:
+ *            schema:
+ *                $ref: '#/components/schemas/ScenesCountResponse'
+ *      401:
+ *        description: unauhhorized
+ *      500:
+ *        description: An error occured
+ */
+actRouter.get(
+  PATHS_ACT.SCENES_COUNT,
+  authenticate,
+  authorize("admin"),
+  actController.getActsScenesCount
+);
+
+/**
+ * @swagger
+ * path:
+ * /acts/dialogs-list:
+ *  get:
+ *    security:
+ *      - bearerAuth: []
+ *    summary: Used to get list of acts's dialogs count. Used for GRAPHS
+ *    tags: [Acts]
+ *    responses:
+ *      200:
+ *        description: list of acts's dialogs count
+ *        content:
+ *          application/json:
+ *            schema:
+ *                $ref: '#/components/schemas/DialogsCountResponse'
+ *      401:
+ *        description: unauhhorized
+ *      500:
+ *        description: An error occured
+ */
+actRouter.get(
+  PATHS_ACT.DIALOGS_COUNT,
+  authenticate,
+  authorize("admin"),
+  actController.getActsDialogsCount
+);
+
+/**
+ * @swagger
  * /acts/{id}:
  *  get:
  *    security:

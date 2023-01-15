@@ -436,6 +436,29 @@ const getSceneryDictionary = async (req: RequestWithJWT, res: Response) => {
   }
 };
 
+const getSceneryImagesCount = async (req: RequestWithJWT, res: Response) => {
+  try {
+    const sceneries = await SceneryModel.find().exec();
+
+    return res.status(200).json({
+      data: sceneries.map((item) => ({
+        id: item._id,
+        name: item.title,
+        imagesCount: item.imagesList.length,
+      })),
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: getTranslatedMessage(req.headers["accept-language"], {
+        pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
+        en: "There was an error while trying to process your request",
+        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+      }),
+      error,
+    });
+  }
+};
+
 export default {
   getSceneries,
   getSingleScenery,
@@ -445,4 +468,5 @@ export default {
   deleteScenery,
   deleteSceneryImage,
   getSceneryDictionary,
+  getSceneryImagesCount,
 };

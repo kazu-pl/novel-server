@@ -464,6 +464,60 @@
           "data": []
         }
       },
+      "ImagesCountResponse": {
+        "type": "object",
+        "desctiption": "get list of all characters's images, their ids and names",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SingleCharacterFromImagesCount"
+            }
+          }
+        },
+        "example": {
+          "data": []
+        }
+      },
+      "ScenesCountResponse": {
+        "type": "object",
+        "desctiption": "get list of all acts's scenes amount",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SingleItemFromActScenesOrDialogCount"
+            }
+          }
+        },
+        "example": {
+          "data": []
+        }
+      },
+      "DialogsCountResponse": {
+        "type": "object",
+        "desctiption": "get list of all acts's dialogs amount",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SingleItemFromActScenesOrDialogCount"
+            }
+          }
+        },
+        "example": {
+          "data": []
+        }
+      },
       "RequestCharacter": {
         "type": "object",
         "description": "type of request data passed in request when creating new character or update basic character data",
@@ -632,6 +686,56 @@
         },
         "example": {
           "data": []
+        }
+      },
+      "SingleCharacterFromImagesCount": {
+        "type": "object",
+        "description": "type of single entity of character from images count list",
+        "required": [
+          "id",
+          "name",
+          "imagesCount"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "imagesCount": {
+            "type": "number"
+          }
+        },
+        "example": {
+          "title": "Yuuta",
+          "id": "0000-0000-0000-0000",
+          "imagesCount": 6
+        }
+      },
+      "SingleItemFromActScenesOrDialogCount": {
+        "type": "object",
+        "description": "type of single entity of act scenes count",
+        "required": [
+          "id",
+          "name",
+          "count"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "type": "number"
+          }
+        },
+        "example": {
+          "title": "Yuuta",
+          "id": "0000-0000-0000-0000",
+          "count": 6
         }
       },
       "SingleCharacterResponse": {
