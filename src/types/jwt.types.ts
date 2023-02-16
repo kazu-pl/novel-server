@@ -8,3 +8,10 @@ export interface RequestWithJWT extends Request {
     role: Role;
   };
 }
+
+export interface DecodedUser {
+  _id: string;
+  role: Role;
+  iat: number;
+  exp: number;
+}

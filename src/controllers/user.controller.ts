@@ -14,9 +14,10 @@ import PhotoFileModel from "models/PhotoFile.model";
 import PhotoChunkModel from "models/PhotoChunk.model";
 import { RequestWithJWT } from "types/jwt.types";
 import getTranslatedMessage from "utils/getTranslatedMessage";
+import getAccessTokenFromHeaders from "utils/getAccessTokenFromHeaders";
 
 const getUserData = (req: Request, res: Response) => {
-  const accessToken = req.headers.authorization?.split(" ")[1];
+  const accessToken = getAccessTokenFromHeaders(req.headers);
 
   if (!accessToken) {
     return res.status(401).json({
@@ -78,7 +79,7 @@ const getUserData = (req: Request, res: Response) => {
 
 const updateUserData = (req: Request, res: Response) => {
   const { name, surname, email } = req.body;
-  const accessToken = req.headers.authorization?.split(" ")[1];
+  const accessToken = getAccessTokenFromHeaders(req.headers);
 
   if (!email.includes("@") || !email.includes(".")) {
     return res.status(422).json({
@@ -411,7 +412,7 @@ const renewPassword = (req: Request, res: Response) => {
 
 const updatePassword = (req: Request, res: Response) => {
   const { password, repeatedPassword } = req.body;
-  const accessToken = req.headers.authorization?.split(" ")[1];
+  const accessToken = getAccessTokenFromHeaders(req.headers);
 
   if (!password) {
     return res.status(422).json({
@@ -543,7 +544,7 @@ const updatePassword = (req: Request, res: Response) => {
 };
 
 const putAvatar = (req: Request & MulterRequest, res: Response) => {
-  const accessToken = req.headers.authorization?.split(" ")[1];
+  const accessToken = getAccessTokenFromHeaders(req.headers);
 
   if (!accessToken) {
     return res.status(401).json({
@@ -612,7 +613,7 @@ const putAvatar = (req: Request & MulterRequest, res: Response) => {
 };
 
 const deleteAvatar = (req: Request & MulterRequest, res: Response) => {
-  const accessToken = req.headers.authorization?.split(" ")[1];
+  const accessToken = getAccessTokenFromHeaders(req.headers);
 
   if (!accessToken) {
     return res.status(401).json({
@@ -682,7 +683,7 @@ const deleteAvatar = (req: Request & MulterRequest, res: Response) => {
 };
 
 const deleteAccount = (req: RequestWithJWT, res: Response) => {
-  const accessToken = req.headers.authorization?.split(" ")[1];
+  const accessToken = getAccessTokenFromHeaders(req.headers);
 
   if (!accessToken) {
     return res.status(401).json({
@@ -769,7 +770,7 @@ const deleteAccount = (req: RequestWithJWT, res: Response) => {
 };
 
 const addGameSave = (req: RequestWithJWT, res: Response) => {
-  const accessToken = req.headers.authorization?.split(" ")[1];
+  const accessToken = getAccessTokenFromHeaders(req.headers);
   const newGameSave = req.body as GameSave;
 
   if (!accessToken) {
@@ -846,7 +847,7 @@ const addGameSave = (req: RequestWithJWT, res: Response) => {
 };
 
 const deleteGameSave = (req: RequestWithJWT, res: Response) => {
-  const accessToken = req.headers.authorization?.split(" ")[1];
+  const accessToken = getAccessTokenFromHeaders(req.headers);
   const { saveId } = req.params as { saveId: string };
 
   if (!accessToken) {
@@ -921,7 +922,7 @@ const deleteGameSave = (req: RequestWithJWT, res: Response) => {
 };
 
 const getAllGameSaves = (req: RequestWithJWT, res: Response) => {
-  const accessToken = req.headers.authorization?.split(" ")[1];
+  const accessToken = getAccessTokenFromHeaders(req.headers);
 
   if (!accessToken) {
     return res.status(401).json({

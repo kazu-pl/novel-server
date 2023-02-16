@@ -4,6 +4,8 @@ import authorize from "middleware/authorize";
 import { PATHS_SCENERIES } from "constants/paths";
 import sceneryController from "controllers/scenery.controller";
 import fileUpload from "middleware/fileUpload";
+import throwModyfingAssetsForObserverUser from "middleware/throwModyfingAssetsForObserverUser";
+import { PROTECTED_SCENERIES } from "constants/protectedAssets";
 
 const sceneryRouter = express.Router();
 
@@ -232,6 +234,7 @@ sceneryRouter.patch(
   PATHS_SCENERIES.SCENERY_BASIC_EDIT,
   authenticate,
   authorize("admin"),
+  throwModyfingAssetsForObserverUser(PROTECTED_SCENERIES),
   sceneryController.updateBasicSceneryData
 );
 
@@ -265,6 +268,7 @@ sceneryRouter.delete(
   PATHS_SCENERIES.SCENERY_DELETE,
   authenticate,
   authorize("admin"),
+  throwModyfingAssetsForObserverUser(PROTECTED_SCENERIES),
   sceneryController.deleteScenery
 );
 
@@ -338,6 +342,7 @@ sceneryRouter.delete(
   PATHS_SCENERIES.SCENERY_IMAGE_DELETE,
   authenticate,
   authorize("admin"),
+  throwModyfingAssetsForObserverUser(PROTECTED_SCENERIES, "scenery_id"),
   sceneryController.deleteSceneryImage
 );
 

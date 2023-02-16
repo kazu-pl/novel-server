@@ -33,3 +33,5 @@ export const RENEW_PASSWORD_EXPIRATION_TIME_IN_SECONDS = (process.env
   .RENEW_PASSWORD_EXPIRATION_TIME_IN_SECONDS || 300) as number;
 
 export const FRONT_APP_URL = process.env.FRONT_APP_URL;
+
+export const OBSERVER_USER_ID = process.env.OBSERVER_USER_ID || "";
