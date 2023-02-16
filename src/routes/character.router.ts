@@ -4,6 +4,8 @@ import authorize from "middleware/authorize";
 import { PATHS_CHARACTERS } from "constants/paths";
 import characterController from "controllers/character.controller";
 import fileUpload from "middleware/fileUpload";
+import throwModyfingAssetsForObserverUser from "middleware/throwModyfingAssetsForObserverUser";
+import { PROTECTED_CHARACTERS } from "constants/protectedAssets";
 
 const characterRouter = express.Router();
 
@@ -233,6 +235,7 @@ characterRouter.patch(
   PATHS_CHARACTERS.CHARACTER_BASIC_EDIT,
   authenticate,
   authorize("admin"),
+  throwModyfingAssetsForObserverUser(PROTECTED_CHARACTERS),
   characterController.updateBasicCharacterData
 );
 
@@ -266,6 +269,7 @@ characterRouter.delete(
   PATHS_CHARACTERS.CHARACTER_DELETE,
   authenticate,
   authorize("admin"),
+  throwModyfingAssetsForObserverUser(PROTECTED_CHARACTERS),
   characterController.deleteCharacter
 );
 
@@ -339,6 +343,7 @@ characterRouter.delete(
   PATHS_CHARACTERS.CHARACTER_IMAGE_DELETE,
   authenticate,
   authorize("admin"),
+  throwModyfingAssetsForObserverUser(PROTECTED_CHARACTERS, "character_id"),
   characterController.deleteCharacterImage
 );
 

@@ -3,6 +3,8 @@ import authenticate from "middleware/authenticate";
 import authorize from "middleware/authorize";
 import { PATHS_ACT } from "constants/paths";
 import actController from "controllers/act.controller";
+import throwModyfingAssetsForObserverUser from "middleware/throwModyfingAssetsForObserverUser";
+import { PROTECTED_ACTS } from "constants/protectedAssets";
 
 const actRouter = express.Router();
 
@@ -73,6 +75,7 @@ actRouter.delete(
   PATHS_ACT.DELETE,
   authenticate,
   authorize("admin"),
+  throwModyfingAssetsForObserverUser(PROTECTED_ACTS),
   actController.deleteAct
 );
 
@@ -108,6 +111,7 @@ actRouter.post(
   PATHS_ACT.EDIT,
   authenticate,
   authorize("admin"),
+  throwModyfingAssetsForObserverUser(PROTECTED_ACTS),
   actController.updateAct
 );
 
