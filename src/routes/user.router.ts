@@ -4,6 +4,7 @@ import userController from "controllers/user.controller";
 import authenticate from "middleware/authenticate";
 import fileUpload from "middleware/fileUpload";
 import authorize from "middleware/authorize";
+import throwObserverUser from "middleware/throwObserverUser";
 
 const userRouter = express.Router();
 
@@ -59,7 +60,12 @@ userRouter.get(PATHS_USER_DATA.ME, authenticate, userController.getUserData);
  *      500:
  *        description: An error occured while trying to register new user
  */
-userRouter.put(PATHS_USER_DATA.ME, authenticate, userController.updateUserData);
+userRouter.put(
+  PATHS_USER_DATA.ME,
+  authenticate,
+  throwObserverUser,
+  userController.updateUserData
+);
 
 /**
  * @swagger
@@ -146,7 +152,12 @@ userRouter.post(PATHS_USER_DATA.RENEW_PASSWORD, userController.renewPassword);
  *      500:
  *        description: An error occured while trying to renew password
  */
-userRouter.put(PATHS_USER_DATA.UPDATE_PASSWORD, userController.updatePassword);
+userRouter.put(
+  PATHS_USER_DATA.UPDATE_PASSWORD,
+  authenticate,
+  throwObserverUser,
+  userController.updatePassword
+);
 
 /**
  * @swagger
@@ -225,6 +236,7 @@ userRouter.delete(
 userRouter.delete(
   PATHS_USER_DATA.DELETE_ACCOUNT,
   authenticate,
+  throwObserverUser,
   userController.deleteAccount
 );
 
