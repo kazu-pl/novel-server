@@ -73,9 +73,65 @@ Then import `i18n` it in `index.ts` like so:
 // src/index.ts
 
 import "./i18n"; // just simply import i18n
+
+// OR
+import i18n from "./i18n"; // use this version if you want to additionaly translate something in index.ts
 ```
 
-And then you can use it to return messages to front:
+IF you want, you can also create types for translation keys and namespaces:
+
+```ts
+// src/locales/locales.types.ts
+
+import en from "./en/_en";
+
+// This file creates literal union of each namespace translation keys based on EN language which is  the default language
+
+export type TranslationKeysAuth = keyof typeof en.auth;
+export type TranslationKeysCommon = keyof typeof en.common;
+export type TranslationKeysFiles = keyof typeof en.files;
+
+export type TranslationNamespaces = keyof typeof en;
+```
+
+OR BETTER - USE THE BELOW TYPE:
+
+```ts
+type T = typeof en;
+
+export type TranslationNamespaces = keyof typeof en;
+
+export type TranslationKey = {
+  [Property in keyof T]: keyof T[Property];
+};
+```
+
+which changes structure of translation files type from this type:
+
+```ts
+// the original type:
+
+const OriginalTranslationJsonFileType = {
+  common: {
+    anErrorOccured: "Wystąpił błąd",
+  },
+  auth: {
+    unauthorized: "brak autoryzacji",
+    forbidden: "Zabronione",
+  },
+};
+```
+
+into this:
+
+```ts
+const NewTranslationJsonFileType = {
+  common: "anErrorOccured",
+  auth: "unauthorized" | "forbidden",
+};
+```
+
+And then you can use it all to return messages to front:
 
 ```ts
 const getCharacters = (req: RequestWithJWT, res: Response) => {
@@ -84,9 +140,10 @@ const getCharacters = (req: RequestWithJWT, res: Response) => {
   // work
   // here
   return res.status(403).json({
-    message: i18n.t("notSufficientPrivilege", {
+    message: i18n.t("notSufficientPrivilege" as TranslationKeysAuth, {
+      // use as TranslationKeysAuth or as TranslationKey["auth"]
       lng: req.headers["accept-language"],
-      // ns: "translation", // if you want to not use translation.json but use namespaces then pass here the correct namespace (you can also specify `defaultNS` or `fallbackNS` in `18n.ts` for a default namespace like `common` so you don't need to pass anything here as `ns` key)
+      // ns: "translation" as TranslationNamespaces, // if you want to not use translation.json but use namespaces then pass here the correct namespace (you can also specify `defaultNS` or `fallbackNS` in `18n.ts` for a default namespace like `common` so you don't need to pass anything here as `ns` key)
     }),
   });
 };

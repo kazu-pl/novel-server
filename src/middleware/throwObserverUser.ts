@@ -4,10 +4,7 @@ import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET, OBSERVER_USER_ID } from "constants/env";
 import getAccessTokenFromHeaders from "utils/getAccessTokenFromHeaders";
 import i18n from "i18n";
-import {
-  TranslationKeysAuth,
-  TranslationNamespaces,
-} from "locales/locales.types";
+import { TranslationKey, TranslationNamespaces } from "locales/locales.types";
 
 const throwObserverUser = (
   req: RequestWithJWT,
@@ -21,14 +18,14 @@ const throwObserverUser = (
 
     if (error || !decodedData) {
       return res.status(401).json({
-        message: i18n.t("unauthorized" as TranslationKeysAuth, {
+        message: i18n.t("unauthorized" as TranslationKey["auth"], {
           lng: req.headers["accept-language"],
           ns: "auth" as TranslationNamespaces,
         }),
       });
     } else if (decodedData._id === OBSERVER_USER_ID) {
       return res.status(403).json({
-        message: i18n.t("notSufficientPrivilege" as TranslationKeysAuth, {
+        message: i18n.t("notSufficientPrivilege" as TranslationKey["auth"], {
           lng: req.headers["accept-language"],
           ns: "auth" as TranslationNamespaces,
         }),

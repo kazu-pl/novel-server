@@ -13,11 +13,7 @@ import { PATHS_FILES } from "constants/paths";
 
 import i18n from "./i18n";
 
-import {
-  TranslationKeysCommon,
-  TranslationKeysFiles,
-  TranslationNamespaces,
-} from "locales/locales.types";
+import { TranslationKey, TranslationNamespaces } from "locales/locales.types";
 
 export let gridFSBucket: GridFSBucket;
 
@@ -90,7 +86,7 @@ app.get(PATHS_FILES.SINGLE_FILE, (req, res) => {
     .then((file) => {
       if (file === undefined || file === null) {
         return res.status(404).json({
-          message: i18n.t("photoNotFound" as TranslationKeysFiles, {
+          message: i18n.t("photoNotFound" as TranslationKey["files"], {
             lng: req.headers["accept-language"],
             ns: "files" as TranslationNamespaces,
           }),
@@ -103,7 +99,7 @@ app.get(PATHS_FILES.SINGLE_FILE, (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        message: i18n.t("anErrorOccured" as TranslationKeysCommon, {
+        message: i18n.t("anErrorOccured" as TranslationKey["common"], {
           lng: req.headers["accept-language"],
           ns: "common" as TranslationNamespaces,
         }),

@@ -4,10 +4,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET } from "constants/env";
 import cache, { createAccessTokenName } from "config/cache";
 import i18n from "i18n";
-import {
-  TranslationKeysAuth,
-  TranslationNamespaces,
-} from "locales/locales.types";
+import { TranslationKey, TranslationNamespaces } from "locales/locales.types";
 const NAMESPACE = "authenticate middleware";
 
 const authenticate = (
@@ -21,7 +18,7 @@ const authenticate = (
 
   if (!token || token.length > 2) {
     return res.status(401).json({
-      message: i18n.t("unauthorized" as TranslationKeysAuth, {
+      message: i18n.t("unauthorized" as TranslationKey["auth"], {
         lng: req.headers["accept-language"],
         ns: "auth" as TranslationNamespaces,
       }),
@@ -32,7 +29,7 @@ const authenticate = (
 
   if (typeof accessToken !== "string") {
     return res.status(401).json({
-      message: i18n.t("accessTokenShouldBeString" as TranslationKeysAuth, {
+      message: i18n.t("accessTokenShouldBeString" as TranslationKey["auth"], {
         lng: req.headers["accept-language"],
         ns: "auth" as TranslationNamespaces,
       }),
@@ -41,7 +38,7 @@ const authenticate = (
 
   if (cache.has(createAccessTokenName(accessToken))) {
     return res.status(401).json({
-      message: i18n.t("blacklistedAccessToken" as TranslationKeysAuth, {
+      message: i18n.t("blacklistedAccessToken" as TranslationKey["auth"], {
         lng: req.headers["accept-language"],
         ns: "auth" as TranslationNamespaces,
       }),
@@ -51,7 +48,7 @@ const authenticate = (
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, (error, decoded) => {
     if (error) {
       return res.status(401).json({
-        message: i18n.t("unauthorized" as TranslationKeysAuth, {
+        message: i18n.t("unauthorized" as TranslationKey["auth"], {
           lng: req.headers["accept-language"],
           ns: "auth" as TranslationNamespaces,
         }),
