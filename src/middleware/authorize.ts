@@ -2,7 +2,11 @@ import { Response, NextFunction } from "express";
 import { Role } from "controllers/auth.controller";
 import logging from "config/logging";
 import { RequestWithJWT } from "types/jwt.types";
-import getTranslatedMessage from "utils/getTranslatedMessage";
+import {
+  TranslationKeysAuth,
+  TranslationNamespaces,
+} from "locales/locales.types";
+import i18n from "i18n";
 const NAMESPACE = "authorize middleware";
 
 const authorize = (allowedRole: Role) => {
@@ -15,10 +19,9 @@ const authorize = (allowedRole: Role) => {
 
     if (req.jwt && req.jwt.role !== allowedRole) {
       return res.status(403).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Dostep zabroniony",
-          en: "Forbidden",
-          de: "Verboten",
+        message: i18n.t("forbidden" as TranslationKeysAuth, {
+          lng: req.headers["accept-language"],
+          ns: "auth" as TranslationNamespaces,
         }),
       });
     } else {

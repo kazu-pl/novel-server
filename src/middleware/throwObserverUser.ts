@@ -1,10 +1,13 @@
 import { Response, NextFunction } from "express";
 import { DecodedUser, RequestWithJWT } from "types/jwt.types";
-import getTranslatedMessage from "utils/getTranslatedMessage";
 import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET, OBSERVER_USER_ID } from "constants/env";
 import getAccessTokenFromHeaders from "utils/getAccessTokenFromHeaders";
 import i18n from "i18n";
+import {
+  TranslationKeysAuth,
+  TranslationNamespaces,
+} from "locales/locales.types";
 
 const throwObserverUser = (
   req: RequestWithJWT,
@@ -18,17 +21,16 @@ const throwObserverUser = (
 
     if (error || !decodedData) {
       return res.status(401).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Nieautoryzowany",
-          en: "Unauthorized",
-          de: "Unbefugt",
+        message: i18n.t("unauthorized" as TranslationKeysAuth, {
+          lng: req.headers["accept-language"],
+          ns: "auth" as TranslationNamespaces,
         }),
       });
     } else if (decodedData._id === OBSERVER_USER_ID) {
       return res.status(403).json({
-        message: i18n.t("notSufficientPrivilege", {
+        message: i18n.t("notSufficientPrivilege" as TranslationKeysAuth, {
           lng: req.headers["accept-language"],
-          ns: "auth",
+          ns: "auth" as TranslationNamespaces,
         }),
       });
     } else {

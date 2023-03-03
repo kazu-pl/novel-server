@@ -3,7 +3,11 @@ import logging from "../config/logging";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET } from "constants/env";
 import cache, { createAccessTokenName } from "config/cache";
-import getTranslatedMessage from "utils/getTranslatedMessage";
+import i18n from "i18n";
+import {
+  TranslationKeysAuth,
+  TranslationNamespaces,
+} from "locales/locales.types";
 const NAMESPACE = "authenticate middleware";
 
 const authenticate = (
@@ -17,10 +21,9 @@ const authenticate = (
 
   if (!token || token.length > 2) {
     return res.status(401).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Nieautoryzowany",
-        en: "Unauthorized",
-        de: "Unbefugt",
+      message: i18n.t("unauthorized" as TranslationKeysAuth, {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
@@ -29,20 +32,18 @@ const authenticate = (
 
   if (typeof accessToken !== "string") {
     return res.status(401).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Nieautoryzowany - accessToken powinien być typu string",
-        en: "Unauthorized - accessToken should be of type string",
-        de: "Unbefugt - accessToken sollte vom Typ string sein",
+      message: i18n.t("accessTokenShouldBeString" as TranslationKeysAuth, {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
 
   if (cache.has(createAccessTokenName(accessToken))) {
     return res.status(401).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Nieautoryzowany - token dostępu na czarnej liście",
-        en: "Unauthorized - blacklisted access token",
-        de: "Unbefugt - Zugriffstoken auf der schwarzen Liste",
+      message: i18n.t("blacklistedAccessToken" as TranslationKeysAuth, {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
@@ -50,10 +51,9 @@ const authenticate = (
   jwt.verify(accessToken, ACCESS_TOKEN_SECRET, (error, decoded) => {
     if (error) {
       return res.status(401).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Nieautoryzowany",
-          en: "Unauthorized",
-          de: "Unbefugt",
+        message: i18n.t("unauthorized" as TranslationKeysAuth, {
+          lng: req.headers["accept-language"],
+          ns: "auth" as TranslationNamespaces,
         }),
       });
     } else {

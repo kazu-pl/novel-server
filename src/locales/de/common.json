@@ -1,4 +1,5 @@
 {
+  "anErrorOccured": "es ist ein Fehler aufgetreten",
   "successfulMsg": "Żądanie powiodło się",
   "errorMsg": "Żądanie nie powiodło sie"
 }
