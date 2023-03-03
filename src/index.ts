@@ -12,6 +12,8 @@ import PhotoFileModel from "models/PhotoFile.model";
 import { PATHS_FILES } from "constants/paths";
 import getTranslatedMessage from "utils/getTranslatedMessage";
 
+import "./i18n";
+
 export let gridFSBucket: GridFSBucket;
 
 const conn = mongoose.connection;

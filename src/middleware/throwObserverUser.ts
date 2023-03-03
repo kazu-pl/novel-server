@@ -4,6 +4,7 @@ import getTranslatedMessage from "utils/getTranslatedMessage";
 import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET, OBSERVER_USER_ID } from "constants/env";
 import getAccessTokenFromHeaders from "utils/getAccessTokenFromHeaders";
+import i18n from "i18n";
 
 const throwObserverUser = (
   req: RequestWithJWT,
@@ -25,10 +26,9 @@ const throwObserverUser = (
       });
     } else if (decodedData._id === OBSERVER_USER_ID) {
       return res.status(403).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "To konto nie ma wystarczających uprawnień do wykonania tej akcji",
-          en: "your account does not have sufficient privileges to perform this action",
-          de: "Ihr Konto verfügt nicht über ausreichende Berechtigungen, um diese Aktion auszuführen",
+        message: i18n.t("notSufficientPrivilege", {
+          lng: req.headers["accept-language"],
+          ns: "auth",
         }),
       });
     } else {
