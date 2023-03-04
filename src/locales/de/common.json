@@ -1,5 +1,9 @@
 {
   "anErrorOccured": "es ist ein Fehler aufgetreten",
-  "successfulMsg": "Żądanie powiodło się",
-  "errorMsg": "Żądanie nie powiodło sie"
+  "successfulMsg": "ok",
+  "errorMsg": "es ist ein Fehler aufgetreten",
+  "shouldBeOfType": "{{key}} should be of type {{type}}",
+  "keyHasInvalidValue": "Der {{key}} hat einen ungültigen Wert. Zulässige Werte: {{allowedValues}}",
+  "requiredFieldsWereNotProvided": "Pflichtfelder sind nicht vorhanden",
+  "endActCantHaveNextActField": "Akt mit Typ 'end' darf kein 'nextAct'-Feld haben"
 }

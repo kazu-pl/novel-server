@@ -1,1 +1,13 @@
-{}
+{
+  "titleDescriptionStatusScenesWereNotProvided": "nie podano tytułu, opisu, statusu lub scen",
+  "titleDescriptionShouldBeString": "tytuł, opis, typ powinien być typu string",
+  "onlyOneActWithType": "Może istnieć tylko 1 rozdział typu: {{type}}",
+  "actWithThisTitleAlreadyExists": "Rozdział o tym tytule już istnieje",
+  "actCreatedSuccessfuly": "Akt utworzony pomyślnie",
+  "actWithThisTypeAlreadyExists": "Rozdział z typem '{{type}}' już istnieje",
+  "couldNotFindActWithThisId": "Nie udało się znaleźć żadnego aktu o tym identyfikatorze",
+  "actUpdatedSuccessfuly": "Rozdział zaktualizowany pomyślnie",
+  "actDeletedSuccessfuly": "Akt został usunięty",
+  "pageSizeAndCurrentPageShouldBeStringNumberlike": "pageSize i currentPage powinny być typu string, ale wartość powinna nadal przypominać liczbę. Przykład: '1' lub '5'",
+  "invalidSortDirection": "Nieprawidłowe zapytanie sortDirection. Dozwolone kierunki: 'asc' lub 'desc'"
+}

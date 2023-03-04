@@ -1,5 +1,9 @@
 {
   "anErrorOccured": "an error occured",
-  "successfulMsg": "Żądanie powiodło się",
-  "errorMsg": "Żądanie nie powiodło sie"
+  "successfulMsg": "Request completed successfuly",
+  "errorMsg": "Request failed",
+  "shouldBeOfType": "{{key}} should be of type {{type}}",
+  "keyHasInvalidValue": "{{key}} key has invalid value. Allowed values: {{allowedValues}}",
+  "requiredFieldsWereNotProvided": "Required fields were not procided",
+  "endActCantHaveNextActField": "Act with type 'end' can't have 'nextAct' field"
 }

@@ -1,1 +1,13 @@
-{}
+{
+  "titleDescriptionStatusScenesWereNotProvided": "Titel, Beschreibung, Status oder Szenen wurden nicht angegeben",
+  "titleDescriptionShouldBeString": "Titel, Beschreibung, Typ sollten vom Typ Zeichenfolge seing",
+  "onlyOneActWithType": "Es darf nur 1 Akt mit Typ geben: {{type}}",
+  "actWithThisTitleAlreadyExists": "Akt mit diesem Titel existiert bereits",
+  "actCreatedSuccessfuly": "Akt erfolgreich erstellt",
+  "actWithThisTypeAlreadyExists": "Akt mit Typ '{{type}}' existiert bereits",
+  "couldNotFindActWithThisId": "Konnte keinen Akt mit dieser ID finden",
+  "actUpdatedSuccessfuly": "Akt erfolgreich aktualisiert",
+  "actDeletedSuccessfuly": "Akt erfolgreich gelöscht",
+  "pageSizeAndCurrentPageShouldBeStringNumberlike": "pageSize und currentPage sollten vom Typ String sein, aber der Wert sollte immer noch eine Zahl sein. Beispiel: '1' oder '5'",
+  "invalidSortDirection": "Ungültige sortDirection-Abfrage. Zulässige Richtungen: 'asc' oder 'desc'"
+}

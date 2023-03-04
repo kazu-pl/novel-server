@@ -1,5 +1,9 @@
 {
   "anErrorOccured": "wystąpił błąd",
   "successfulMsg": "Żądanie powiodło się",
-  "errorMsg": "Żądanie nie powiodło sie"
+  "errorMsg": "Żądanie nie powiodło sie",
+  "shouldBeOfType": "{{key}} musi być typu {{type}}",
+  "keyHasInvalidValue": "Pole {{key}} ma nieprawidłową wartość. Dozwolone wartości: {{allowedValues}}",
+  "requiredFieldsWereNotProvided": "Wymagane pola nie zostały podane",
+  "endActCantHaveNextActField": "Akt typu 'end' nie może mieć pola 'nextAct'"
 }
