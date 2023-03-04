@@ -95,15 +95,21 @@ const getCharacters = async (req: RequestWithJWT, res: Response) => {
 const addCharacter = async (req: RequestWithJWT, res: Response) => {
   const { title, description } = req.body;
 
-  if (!title || !description) {
+  if (!title) {
     return res.status(422).json({
-      message: i18n.t(
-        "requiredFieldsWereNotProvided" as TranslationKey["common"],
-        {
-          lng: req.headers["accept-language"],
-          ns: "common" as TranslationNamespaces,
-        }
-      ),
+      message: i18n.t("titleNotProvied" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+      }),
+    });
+  }
+
+  if (!description) {
+    return res.status(422).json({
+      message: i18n.t("descriptionNotProvied" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+      }),
     });
   }
 
