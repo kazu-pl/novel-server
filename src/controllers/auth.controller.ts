@@ -15,6 +15,8 @@ import cache, {
   createRefreshTokenName,
 } from "config/cache";
 import getTranslatedMessage from "utils/getTranslatedMessage";
+import { TranslationKey, TranslationNamespaces } from "locales/locales.types";
+import i18n from "i18n";
 
 type Variant = "users" | "cms";
 export type Role = "admin" | "user";
@@ -24,58 +26,52 @@ const register = async (req: Request, res: Response, variant: Variant) => {
 
   if (!password) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Nie podano hasła",
-        en: "Password was not provided",
-        de: "Passwort wurde nicht angegeben",
+      message: i18n.t("passwordNotProvided" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
 
   if (!repeatedPassword) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Nie podano powtarzającego się hasła",
-        en: "Repeated password was not provided",
-        de: "Wiederholtes Passwort wurde nicht angegeben",
+      message: i18n.t("repeatedPasswordNotProvided" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
 
   if (password !== repeatedPassword) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Różne hasła",
-        en: "Different passwords",
-        de: "Unterschiedliche Passwörter",
+      message: i18n.t("differentPasswords" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
 
   if (!email) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "e-mail nie został podany",
-        en: "email was not provided",
-        de: "E-Mail wurde nicht angegeben",
+      message: i18n.t("emailNotProvided" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
   if (!name) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "imię nie zostało podane",
-        en: "name was not provided",
-        de: "Name wurde nicht angegeben",
+      message: i18n.t("nameNotProvided" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
   if (!surname) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "nie podano nazwiska",
-        en: "surname was not provided",
-        de: "Nachname wurde nicht angegeben",
+      message: i18n.t("surnameNotProvided" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
@@ -88,30 +84,30 @@ const register = async (req: Request, res: Response, variant: Variant) => {
     typeof repeatedPassword !== "string"
   ) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "email, hasło, ponownie hasło, imię, nazwisko i email powinny być typu string",
-        en: "email, password, repeatedPassword, name, surname and email should be of type string",
-        de: "email, password, repeatPassword, name, surname und email sollten vom Typ string sein",
-      }),
+      message: i18n.t(
+        "basicFieldsShouldBeOfTypeString" as TranslationKey["auth"],
+        {
+          lng: req.headers["accept-language"],
+          ns: "auth" as TranslationNamespaces,
+        }
+      ),
     });
   }
 
   if (typeof password === "string" && password.length < 8) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Hasło musi zawierać co najmniej 8 znaków",
-        en: "Password must be at least 8 characters",
-        de: "Das Passwort muss mindestens 8 Zeichen lang sein",
+      message: i18n.t("passwordAtLeast8Chars" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
 
   if (!email.includes("@") || !email.includes(".")) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "zły format e-maila",
-        en: "wrong email format",
-        de: "falsches E-Mail-Formatn",
+      message: i18n.t("emailIncorrectFormat" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
@@ -127,18 +123,23 @@ const register = async (req: Request, res: Response, variant: Variant) => {
         return res.status(422).json({
           message:
             variant === "cms"
-              ? getTranslatedMessage(req.headers["accept-language"], {
-                  pl: "Administrator z tym adresem e-mail już istnieje",
-                  en: "Admin with that email already exists",
-                  de: "Der Administrator mit dieser E-Mail-Adresse existiert bereits",
-                })
-              : getTranslatedMessage(req.headers["accept-language"], {
-                  pl: "Użytkownik z tym adresem e-mail już istnieje",
-                  en: "User with that email already exists",
-                  de: "Benutzer mit dieser E-Mail existiert bereits",
-                }),
+              ? i18n.t(
+                  "adminWithThisEmailAlreadyExists" as TranslationKey["auth"],
+                  {
+                    lng: req.headers["accept-language"],
+                    ns: "auth" as TranslationNamespaces,
+                  }
+                )
+              : i18n.t(
+                  "userWithThisEmailAlreadyExists" as TranslationKey["auth"],
+                  {
+                    lng: req.headers["accept-language"],
+                    ns: "auth" as TranslationNamespaces,
+                  }
+                ),
         });
       }
+
       bcryptjs.hash(password, 10, (hashError, hashedPassword) => {
         if (hashError) {
           return res.status(500).json({
@@ -168,16 +169,18 @@ const register = async (req: Request, res: Response, variant: Variant) => {
               } with email ${email} was added to the database`
             );
             return res.status(201).json({
-              message: getTranslatedMessage(req.headers["accept-language"], {
-                pl: "Pomyślnie utworzono użytkownika",
-                en: "Successfuly created user",
-                de: "Benutzer erfolgreich erstellt",
+              message: i18n.t("createdNewUser" as TranslationKey["auth"], {
+                lng: req.headers["accept-language"],
+                ns: "auth" as TranslationNamespaces,
               }),
             });
           })
           .catch((error) => {
             return res.status(500).json({
-              message: error.message,
+              message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+                lng: req.headers["accept-language"],
+                ns: "common" as TranslationNamespaces,
+              }),
               error,
             });
           });
@@ -185,7 +188,10 @@ const register = async (req: Request, res: Response, variant: Variant) => {
     })
     .catch((error) => {
       return res.status(500).json({
-        message: error.message,
+        message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+          lng: req.headers["accept-language"],
+          ns: "common" as TranslationNamespaces,
+        }),
         error,
       });
     });
@@ -196,30 +202,40 @@ export const login = async (req: Request, res: Response, variant: Variant) => {
 
   if (!email) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "e-mail nie został podany",
-        en: "email was not provided",
-        de: "E-Mail wurde nicht angegeben",
+      message: i18n.t("emailNotProvided" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
 
   if (!password) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "hasło nie zostało podane",
-        en: "password was not provided",
-        de: "Passwort wurde nicht angegeben",
+      message: i18n.t("passwordNotProvided" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
 
-  if (typeof email !== "string" || typeof password !== "string") {
+  if (typeof email !== "string") {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "e-mail i hasło powinny być typu string",
-        en: "email and password should be of type string",
-        de: "E-Mail und Passwort sollten vom Typ Zeichenfolge sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "Email",
+        type: "string",
+      }),
+    });
+  }
+
+  if (typeof password !== "string") {
+    return res.status(422).json({
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "password",
+        type: "string",
       }),
     });
   }
@@ -233,11 +249,13 @@ export const login = async (req: Request, res: Response, variant: Variant) => {
     .then((users) => {
       if (!users.length) {
         return res.status(401).json({
-          message: getTranslatedMessage(req.headers["accept-language"], {
-            pl: "Konto z tym adresem e-mail i hasłem nie istnieje",
-            en: "Account with that email and password does not exist",
-            de: "Konto mit dieser E-Mail-Adresse und diesem Passwort existiert nicht",
-          }),
+          message: i18n.t(
+            "accountWithThisPasswordAndEmailNotExist" as TranslationKey["auth"],
+            {
+              lng: req.headers["accept-language"],
+              ns: "auth" as TranslationNamespaces,
+            }
+          ),
         });
       }
 
@@ -282,17 +300,22 @@ export const login = async (req: Request, res: Response, variant: Variant) => {
               "Could not sign tokens when trying to login"
             );
             return res.status(401).json({
-              message: "Unauthorized",
+              message: i18n.t("unauthorized" as TranslationKey["auth"], {
+                lng: req.headers["accept-language"],
+                ns: "auth" as TranslationNamespaces,
+              }),
               error,
             });
           }
         } else {
           return res.status(401).json({
-            message: getTranslatedMessage(req.headers["accept-language"], {
-              pl: "Konto z tym adresem e-mail i hasłem nie istnieje",
-              en: "Account with that email and password does not exist",
-              de: "Konto mit dieser E-Mail-Adresse und diesem Passwort existiert nicht",
-            }),
+            message: i18n.t(
+              "accountWithThisPasswordAndEmailNotExist" as TranslationKey["auth"],
+              {
+                lng: req.headers["accept-language"],
+                ns: "auth" as TranslationNamespaces,
+              }
+            ),
           });
         }
       });
@@ -310,29 +333,28 @@ const refreshAccessToken = (req: Request, res: Response, variant: Variant) => {
 
   if (!refreshToken) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "refreshToken nie został dostarczony",
-        en: "refreshToken was not provided",
-        de: "refreshToken wurde nicht bereitgestellt",
+      message: i18n.t("refreshTokenNotProvided" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
 
   if (typeof refreshToken !== "string") {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "refreshToken powinien być typu string",
-        en: "refreshToken should be of type string",
-        de: "refreshToken sollte vom Typ Zeichenfolge sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "RefreshToken",
+        type: "string",
       }),
     });
   }
   if (cache.has(createRefreshTokenName(refreshToken))) {
     return res.status(401).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Unauthorized - refreshToken jest na czarnej liście ",
-        en: "Unauthorized - blacklisted refreshToken",
-        de: "Unauthorized -  RefreshToken auf der schwarzen Liste",
+      message: i18n.t("blacklistedRefreshToken" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
@@ -342,19 +364,17 @@ const refreshAccessToken = (req: Request, res: Response, variant: Variant) => {
       const err = error as TokenExpiredError;
       if (err.message === "jwt expired") {
         return res.status(403).json({
-          message: getTranslatedMessage(req.headers["accept-language"], {
-            pl: "Twoja sesja odświeżania tokena wygasła. Zaloguj się jeszcze raz",
-            en: "Your refresh token session expired. Log in again",
-            de: "Ihre Sitzung mit dem Aktualisierungstoken ist abgelaufen. Nochmal anmelden",
+          message: i18n.t("sessionExpired" as TranslationKey["auth"], {
+            lng: req.headers["accept-language"],
+            ns: "auth" as TranslationNamespaces,
           }),
           error,
         });
       } else {
         return res.status(403).json({
-          message: getTranslatedMessage(req.headers["accept-language"], {
-            pl: "Zabronione - wystąpił błąd",
-            en: "Forbidden - some error occured",
-            de: "Verboten - ein Fehler ist aufgetreten",
+          message: i18n.t("forbiddenErrorOccured" as TranslationKey["auth"], {
+            lng: req.headers["accept-language"],
+            ns: "auth" as TranslationNamespaces,
           }),
           error,
         });
@@ -373,11 +393,13 @@ const refreshAccessToken = (req: Request, res: Response, variant: Variant) => {
       (error, encodedAccessToken) => {
         if (error) {
           return res.status(500).json({
-            message: getTranslatedMessage(req.headers["accept-language"], {
-              pl: "Nie udało się ponownie wygenerować tokena dostępu",
-              en: "Could not regenerate access token",
-              de: "Zugriffstoken konnte nicht neu generiert werden",
-            }),
+            message: i18n.t(
+              "couldNotRegenerateAccessToken" as TranslationKey["auth"],
+              {
+                lng: req.headers["accept-language"],
+                ns: "auth" as TranslationNamespaces,
+              }
+            ),
             error,
           });
         }
@@ -393,22 +415,40 @@ const refreshAccessToken = (req: Request, res: Response, variant: Variant) => {
 const logout = (req: Request, res: Response) => {
   const { refreshToken, accessToken } = req.body;
 
-  if (!refreshToken || !accessToken) {
+  if (!accessToken) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Nie podano refreshToken i/lub accessToken",
-        en: "refreshToken and/or accessToken was not provided",
-        de: "refreshToken und/oder accessToken wurde nicht bereitgestellt",
+      message: i18n.t("accessTokenNotProvided" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
+      }),
+    });
+  }
+  if (!refreshToken) {
+    return res.status(422).json({
+      message: i18n.t("refreshTokenNotProvided" as TranslationKey["auth"], {
+        lng: req.headers["accept-language"],
+        ns: "auth" as TranslationNamespaces,
       }),
     });
   }
 
-  if (typeof refreshToken !== "string" || typeof accessToken !== "string") {
+  if (typeof accessToken !== "string") {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "refreshToken i accessToken powinny być typu string",
-        en: "refreshToken and accessToken should be of type string",
-        de: "refreshToken und accessToken sollten vom Typ string sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "AccessToken",
+        type: "string",
+      }),
+    });
+  }
+  if (typeof refreshToken !== "string") {
+    return res.status(422).json({
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "RefreshToken",
+        type: "string",
       }),
     });
   }
@@ -466,10 +506,9 @@ const logout = (req: Request, res: Response) => {
   });
 
   return res.status(200).json({
-    message: getTranslatedMessage(req.headers["accept-language"], {
-      pl: "Wylogowanie powiodło się",
-      en: "Logout successed",
-      de: "Abmeldung erfolgreich",
+    message: i18n.t("logoutSuccessed" as TranslationKey["auth"], {
+      lng: req.headers["accept-language"],
+      ns: "auth" as TranslationNamespaces,
     }),
   });
 };
