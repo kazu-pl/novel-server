@@ -5,5 +5,12 @@
   "shouldBeOfType": "{{key}} should be of type {{type}}",
   "keyHasInvalidValue": "Der {{key}} hat einen ungültigen Wert. Zulässige Werte: {{allowedValues}}",
   "requiredFieldsWereNotProvided": "Pflichtfelder sind nicht vorhanden",
-  "endActCantHaveNextActField": "Akt mit Typ 'end' darf kein 'nextAct'-Feld haben"
+  "pageSizeAndCurrentPageShouldBeStringNumberlike": "pageSize und currentPage sollten vom Typ String sein, aber der Wert sollte immer noch eine Zahl sein. Beispiel: '1' oder '5'",
+  "invalidSortDirection": "Ungültige sortDirection-Abfrage. Zulässige Richtungen: 'asc' oder 'desc'",
+  "imagesNotProvided": "Dateien wurden nicht oder nicht als 'files' bereitgestellt",
+  "imagesAdded": "Bilder erfolgreich hinzugefügt",
+  "imageNotFound": "Bilder wurde nicht gefunden",
+  "imageDeleted": "Bild erfolgreich gelöscht",
+  "titleNotProvied": "Titel sollten vom Typ String sein",
+  "descriptionNotProvied": "Beschreibung sollten vom Typ String sein"
 }

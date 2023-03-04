@@ -1,0 +1,9 @@
+{
+  "characterWithThisNameAlreadyExist": "Postać o tej nazwie już istnieje",
+  "characterWithThisNameNotExist": "Postać o tej nazwie nie istnieje",
+  "characterCreated": "Postać stworzona pomyślnie",
+  "characterNotFound": "Nie znaleziono postaci",
+  "characterDeleted": "Postać została usunięta",
+  "characterUpdated": "Postać została zaktualizowana pomyślnie",
+  "characterWithThisIdNotExist": "Postać o tym identyfikatorze nie istnieje"
+}

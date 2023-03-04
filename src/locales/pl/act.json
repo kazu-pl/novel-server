@@ -8,6 +8,5 @@
   "couldNotFindActWithThisId": "Nie udało się znaleźć żadnego aktu o tym identyfikatorze",
   "actUpdatedSuccessfuly": "Rozdział zaktualizowany pomyślnie",
   "actDeletedSuccessfuly": "Akt został usunięty",
-  "pageSizeAndCurrentPageShouldBeStringNumberlike": "pageSize i currentPage powinny być typu string, ale wartość powinna nadal przypominać liczbę. Przykład: '1' lub '5'",
-  "invalidSortDirection": "Nieprawidłowe zapytanie sortDirection. Dozwolone kierunki: 'asc' lub 'desc'"
+  "endActCantHaveNextActField": "Akt typu 'end' nie może mieć pola 'nextAct'"
 }

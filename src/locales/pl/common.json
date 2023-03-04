@@ -5,5 +5,12 @@
   "shouldBeOfType": "{{key}} musi być typu {{type}}",
   "keyHasInvalidValue": "Pole {{key}} ma nieprawidłową wartość. Dozwolone wartości: {{allowedValues}}",
   "requiredFieldsWereNotProvided": "Wymagane pola nie zostały podane",
-  "endActCantHaveNextActField": "Akt typu 'end' nie może mieć pola 'nextAct'"
+  "pageSizeAndCurrentPageShouldBeStringNumberlike": "pageSize i currentPage powinny być typu string, ale wartość powinna nadal przypominać liczbę. Przykład: '1' lub '5'",
+  "invalidSortDirection": "Nieprawidłowe zapytanie sortDirection. Dozwolone kierunki: 'asc' lub 'desc'",
+  "imagesNotProvided": "Zdjęcia nie zostały dostarczone lub nie zostały dostarczone jako 'files'",
+  "imagesAdded": "Zdjęcia dodane pomyślnie",
+  "imageNotFound": "Nie znaleziono zdjęcia",
+  "imageDeleted": "Zdjęcie zostało usunięte",
+  "titleNotProvied": "Nie podano tytułu",
+  "descriptionNotProvied": "Nie podano opisu"
 }

@@ -8,6 +8,5 @@
   "couldNotFindActWithThisId": "Konnte keinen Akt mit dieser ID finden",
   "actUpdatedSuccessfuly": "Akt erfolgreich aktualisiert",
   "actDeletedSuccessfuly": "Akt erfolgreich gelöscht",
-  "pageSizeAndCurrentPageShouldBeStringNumberlike": "pageSize und currentPage sollten vom Typ String sein, aber der Wert sollte immer noch eine Zahl sein. Beispiel: '1' oder '5'",
-  "invalidSortDirection": "Ungültige sortDirection-Abfrage. Zulässige Richtungen: 'asc' oder 'desc'"
+  "endActCantHaveNextActField": "Akt mit Typ 'end' darf kein 'nextAct'-Feld haben"
 }

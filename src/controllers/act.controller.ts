@@ -361,10 +361,10 @@ const getAllActs = async (req: RequestWithJWT, res: Response) => {
   if (typeof size !== "number" || typeof page !== "number") {
     return res.status(400).json({
       message: i18n.t(
-        "pageSizeAndCurrentPageShouldBeStringNumberlike" as TranslationKey["act"],
+        "pageSizeAndCurrentPageShouldBeStringNumberlike" as TranslationKey["common"],
         {
           lng: req.headers["accept-language"],
-          ns: "act" as TranslationNamespaces,
+          ns: "common" as TranslationNamespaces,
         }
       ),
     });
@@ -372,9 +372,9 @@ const getAllActs = async (req: RequestWithJWT, res: Response) => {
 
   if (sortDirection && !["asc", "desc"].includes(sortDirection)) {
     return res.status(400).json({
-      message: i18n.t("invalidSortDirection" as TranslationKey["act"], {
+      message: i18n.t("invalidSortDirection" as TranslationKey["common"], {
         lng: req.headers["accept-language"],
-        ns: "act" as TranslationNamespaces,
+        ns: "common" as TranslationNamespaces,
       }),
     });
   }
