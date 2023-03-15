@@ -1,0 +1,11 @@
+{
+  "userProfileNotFound": "Benutzerprofil nicht gefunden",
+  "updated": "Aktualisiert erfolgreich",
+  "accountWithThisEmailNotExist": "Konto mit dieser E-Mail existiert nicht",
+  "linkChangingPasswordSent": "Wir haben Ihnen gerade einen Link geschickt, mit dem Sie Ihr Passwort ändern können. Überprüfen Sie Ihre E-Mail.",
+  "linkChangingPasswordExpired": "Der Link zum Ändern des Passworts ist abgelaufen oder der Benutzer hat keine Änderung des Passworts angefordert",
+  "couldNotUpdateUserProfile": "Benutzerprofil konnte nicht aktualisiert werden",
+  "avatarWasDeleted": "Avatar wurde gelöscht",
+  "accountWasDeleted": "Konto wurde gelöscht",
+  "couldNotRemoveSave": "Speichern konnte nicht entfernt werden"
+}

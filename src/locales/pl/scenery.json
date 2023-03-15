@@ -1,0 +1,8 @@
+{
+  "sceneryWithThatNameAlreadyExist": "sceneria o tej nazwie już istnieje",
+  "sceneryWithThisIdNotExist": "sceneria z tym identyfikatorem nie istnieje",
+  "sceneryCreated": "sceneria stworzona pomyślnie",
+  "sceneryNotFound": "Nie znaleziono scenerii",
+  "sceneryDeleted": "Sceniera została usunięta",
+  "sceneryUpdated": "Sceneria została zaktualizowana pomyślnie"
+}

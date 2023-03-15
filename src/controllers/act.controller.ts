@@ -1,27 +1,31 @@
 import { Response } from "express";
 import { RequestWithJWT } from "types/jwt.types";
 import ActModel, { Act, ActType } from "models/Act.model";
-import getTranslatedMessage from "utils/getTranslatedMessage";
+import i18n from "i18n";
+import { TranslationKey, TranslationNamespaces } from "locales/locales.types";
 
 const addAct = async (req: RequestWithJWT, res: Response) => {
   const { title, description, type, scenes, nextAct } = req.body as Act;
 
   if (!title || !description || !type || !scenes) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "nie podano tytułu, opisu, statusu lub scen",
-        en: "title, description, status or scenes were not provided",
-        de: "Titel, Beschreibung, Status oder Szenen wurden nicht angegeben",
-      }),
+      message: i18n.t(
+        "titleDescriptionStatusScenesWereNotProvided" as TranslationKey["act"],
+        {
+          lng: req.headers["accept-language"],
+          ns: "act" as TranslationNamespaces,
+        }
+      ),
     });
   }
 
   if (nextAct && typeof nextAct !== "string") {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "nextAct powinien być typu string",
-        en: "nextAct should be of type string",
-        de: "nextAct sollte vom Typ string sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "nextAct",
+        type: "string",
       }),
     });
   }
@@ -32,36 +36,36 @@ const addAct = async (req: RequestWithJWT, res: Response) => {
     typeof type !== "string"
   ) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "tytuł, opis, typ powinien być typu string",
-        en: "title, description, type should be of type string",
-        de: "Titel, Beschreibung, Typ sollten vom Typ Zeichenfolge sein",
-      }),
+      message: i18n.t(
+        "titleDescriptionShouldBeString" as TranslationKey["act"],
+        {
+          lng: req.headers["accept-language"],
+          ns: "act" as TranslationNamespaces,
+        }
+      ),
     });
   }
 
   if (!(["start", "normal", "end"] as ActType[]).includes(type)) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: `Pole 'status' ma nieprawidłową wartość. Dozwolone wartości: ${
-          "start" as ActType
-        } lub  ${"normal" as ActType} lub ${"end" as ActType} `,
-        en: `Status key has invalid value. Allowed values: ${
-          "start" as ActType
-        } or ${"normal" as ActType} or ${"end" as ActType}`,
-        de: `Der Statusschlüssel hat einen ungültigen Wert. Zulässige Werte: ${
-          "start" as ActType
-        } oder ${"normal" as ActType} oder ${"end" as ActType}`,
+      message: i18n.t("keyHasInvalidValue" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "status",
+        allowedValues: `${"start" as ActType}, ${"normal" as ActType}, ${
+          "end" as ActType
+        }`,
       }),
     });
   }
 
   if (!Array.isArray(scenes)) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "sceny powinny być tablicą",
-        en: "scenes should be an array",
-        de: "Szenen sollten ein Array sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "scenes",
+        type: "array",
       }),
     });
   }
@@ -73,19 +77,18 @@ const addAct = async (req: RequestWithJWT, res: Response) => {
       const act = await ActModel.findOne({ type }).exec();
       if (act) {
         return res.status(422).json({
-          message: getTranslatedMessage(req.headers["accept-language"], {
-            pl: `Może istniec tylko 1 rozdział typu: ${type}`,
-            en: `There may be only 1 Act with type: ${type}`,
-            de: `Es darf nur 1 Akt mit Typ geben: ${type}`,
+          message: i18n.t("onlyOneActWithType" as TranslationKey["act"], {
+            lng: req.headers["accept-language"],
+            ns: "act" as TranslationNamespaces,
+            type,
           }),
         });
       }
     } catch (error) {
       return res.status(500).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Wystąpił błąd",
-          en: "There was an error",
-          de: "Es gab einen Fehler",
+        message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+          lng: req.headers["accept-language"],
+          ns: "common" as TranslationNamespaces,
         }),
       });
     }
@@ -95,11 +98,13 @@ const addAct = async (req: RequestWithJWT, res: Response) => {
     const act = await ActModel.findOne({ title }).exec();
     if (act) {
       return res.status(422).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Rozdział o tym tytule już istnieje",
-          en: "Act with that title already exists",
-          de: "Akt mit diesem Titel existiert bereits",
-        }),
+        message: i18n.t(
+          "actWithThisTitleAlreadyExists" as TranslationKey["act"],
+          {
+            lng: req.headers["accept-language"],
+            ns: "act" as TranslationNamespaces,
+          }
+        ),
       });
     }
 
@@ -111,18 +116,16 @@ const addAct = async (req: RequestWithJWT, res: Response) => {
       scenes,
     }).save();
     return res.status(201).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Akt utworzony pomyślnie",
-        en: "Act created successfuly",
-        de: "Akt erfolgreich erstellt",
+      message: i18n.t("actCreatedSuccessfuly" as TranslationKey["act"], {
+        lng: req.headers["accept-language"],
+        ns: "act" as TranslationNamespaces,
       }),
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd na serwerze podczas próby przetworzenia twojego żądania",
-        en: "There was an error on the server while trying to process your request",
-        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist auf dem Server ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -136,20 +139,23 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
 
   if (!title || !description || !type || !scenes || !_id) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "nie podano tytułu, opisu, rodzaju lub scen",
-        en: "title, description, type or scenes were not provided",
-        de: "Titel, Beschreibung, Typ oder Szenen wurden nicht angegeben",
-      }),
+      message: i18n.t(
+        "requiredFieldsWereNotProvided" as TranslationKey["common"],
+        {
+          lng: req.headers["accept-language"],
+          ns: "common" as TranslationNamespaces,
+        }
+      ),
     });
   }
 
   if (nextAct && typeof nextAct !== "string") {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "nextAct powinien być typu string",
-        en: "nextAct should be of type string",
-        de: "nextAct sollte vom Typ string sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "nextAct",
+        type: "string",
       }),
     });
   }
@@ -161,46 +167,44 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
     typeof type !== "string"
   ) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "_id, tytuł, opis, typ powinien być typu string",
-        en: "_id, title, description, type should be of type string",
-        de: "_id, Titel, Beschreibung, Typ sollte vom Typ Zeichenfolge sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "_id, title, description, type",
+        type: "string",
       }),
     });
   }
 
   if (!(["start", "normal", "end"] as ActType[]).includes(type)) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: `'status' ma nieprawidlową wartość. Dozwolone wartości: ${
-          "start" as ActType
-        } lub ${"normal" as ActType} lub ${"end" as ActType}`,
-        en: `Status key has invalid value. Allowed values: ${
-          "start" as ActType
-        } or ${"normal" as ActType} or ${"end" as ActType}`,
-        de: `Der Statusschlüssel hat einen ungültigen Wert. Zulässige Werte: ${
-          "start" as ActType
-        } oder ${"normal" as ActType} oder ${"end" as ActType}`,
+      message: i18n.t("keyHasInvalidValue" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "status",
+        allowedValues: `${"start" as ActType}, ${"normal" as ActType}, ${
+          "end" as ActType
+        }`,
       }),
     });
   }
 
   if (!Array.isArray(scenes)) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "sceny powinny być tablicą",
-        en: "scenes should be an array",
-        de: "Szenen sollten ein Array sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "scenes",
+        type: "array",
       }),
     });
   }
 
   if (type === "end" && nextAct) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Akt typu 'end' nie może mieć pola 'nextAct'",
-        en: "Act with type 'end' can't have 'nextAct' field",
-        de: "Akt mit Typ 'end' darf kein 'nextAct'-Feld haben",
+      message: i18n.t("endActCantHaveNextActField" as TranslationKey["act"], {
+        lng: req.headers["accept-language"],
+        ns: "act" as TranslationNamespaces,
       }),
     });
   }
@@ -212,20 +216,22 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
 
       if (act && act.id !== _id) {
         return res.status(422).json({
-          message: getTranslatedMessage(req.headers["accept-language"], {
-            pl: `Rozdział z typem "${type}" już istnieje`,
-            en: `Act with type "${type}" already exists`,
-            de: `Akt mit Typ "${type}" existiert bereits`,
-          }),
+          message: i18n.t(
+            "actWithThisTypeAlreadyExists" as TranslationKey["act"],
+            {
+              lng: req.headers["accept-language"],
+              ns: "act" as TranslationNamespaces,
+              type,
+            }
+          ),
         });
       }
     }
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd",
-        en: "An error occured",
-        de: "Es ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -236,10 +242,9 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
 
     if (!act) {
       return res.status(422).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Nie udało się znaleźć żadnego aktu o tym identyfikatorze",
-          en: "Could not find any Act with that id",
-          de: "Konnte keinen Akt mit dieser ID finden",
+        message: i18n.t("couldNotFindActWithThisId" as TranslationKey["act"], {
+          lng: req.headers["accept-language"],
+          ns: "act" as TranslationNamespaces,
         }),
       });
     }
@@ -255,18 +260,16 @@ const updateAct = async (req: RequestWithJWT, res: Response) => {
       .exec();
 
     return res.status(200).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Rozdział zaktualizowany pomyślnie",
-        en: "Act updated successfuly",
-        de: "Akt erfolgreich aktualisiert",
+      message: i18n.t("actUpdatedSuccessfuly" as TranslationKey["act"], {
+        lng: req.headers["accept-language"],
+        ns: "act" as TranslationNamespaces,
       }),
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd",
-        en: "An error occured",
-        de: "Es ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -280,18 +283,16 @@ const deleteAct = async (req: RequestWithJWT, res: Response) => {
     await ActModel.deleteOne({ _id: id }).exec();
 
     return res.status(200).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Akt usunięty pomyślnie",
-        en: "Act deleted successfuly",
-        de: "Akt erfolgreich gelöscht",
+      message: i18n.t("actDeletedSuccessfuly" as TranslationKey["act"], {
+        lng: req.headers["accept-language"],
+        ns: "act" as TranslationNamespaces,
       }),
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd",
-        en: "An error occured",
-        de: "Es ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -309,10 +310,9 @@ const getSingleAct = async (req: RequestWithJWT, res: Response) => {
       });
     } catch (error) {
       return res.status(500).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
-          en: "There was an error while trying to process your request",
-          de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+        message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+          lng: req.headers["accept-language"],
+          ns: "common" as TranslationNamespaces,
         }),
         error,
       });
@@ -326,10 +326,9 @@ const getSingleAct = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
-        en: "There was an error while trying to process your request",
-        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -346,10 +345,11 @@ const getAllActs = async (req: RequestWithJWT, res: Response) => {
     typeof currentPage !== "string"
   ) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "sortBy, sortDirection, pageSize i currentPage powinny być typu string",
-        en: "sortBy, sortDirection, pageSize and currentPage should be of type string",
-        de: "sortBy, sortDirection, pageSize und currentPage sollten vom Typ string sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "sortBy, sortDirection, pageSize, currentPage",
+        type: "string",
       }),
     });
   }
@@ -359,20 +359,21 @@ const getAllActs = async (req: RequestWithJWT, res: Response) => {
 
   if (typeof size !== "number" || typeof page !== "number") {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "pageSize i currentPage powinny być typu string, ale wartość powinna nadal przypominać liczbę. Przykład: '1' lub '5'",
-        en: "pageSize and currentPage should be of type string but the value should be still a number-like. Example: '1' or '5'",
-        de: "pageSize und currentPage sollten vom Typ String sein, aber der Wert sollte immer noch eine Zahl sein. Beispiel: '1' oder '5'",
-      }),
+      message: i18n.t(
+        "pageSizeAndCurrentPageShouldBeStringNumberlike" as TranslationKey["common"],
+        {
+          lng: req.headers["accept-language"],
+          ns: "common" as TranslationNamespaces,
+        }
+      ),
     });
   }
 
   if (sortDirection && !["asc", "desc"].includes(sortDirection)) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Nieprawidłowe zapytanie sortDirection. Dozwolone kierunki: 'asc' lub 'desc'",
-        en: "Invalid sortDirection query. Allowed directions: 'asc' or 'desc'",
-        de: "Ungültige sortDirection-Abfrage. Zulässige Richtungen: 'asc' oder 'desc'",
+      message: i18n.t("invalidSortDirection" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
     });
   }
@@ -410,10 +411,9 @@ const getAllActs = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd",
-        en: "An error occured",
-        de: "Es ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -431,10 +431,9 @@ const getActsDictionary = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd",
-        en: "An error occured",
-        de: "Es ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -454,10 +453,9 @@ const getActsScenesCount = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
-        en: "There was an error while trying to process your request",
-        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -479,10 +477,9 @@ const getActsDialogsCount = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
-        en: "There was an error while trying to process your request",
-        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });

@@ -1,0 +1,20 @@
+{
+  "anErrorOccured": "an error occured",
+  "successfulMsg": "Request completed successfuly",
+  "errorMsg": "Request failed",
+  "shouldBeOfType": "{{key}} should be of type {{type}}",
+  "keyHasInvalidValue": "{{key}} key has invalid value. Allowed values: {{allowedValues}}",
+  "requiredFieldsWereNotProvided": "Required fields were not procided",
+  "pageSizeAndCurrentPageShouldBeStringNumberlike": "pageSize and currentPage should be of type string but the value should be still a number-like. Example: '1' or '5'",
+  "invalidSortDirection": "Invalid sortDirection query. Allowed directions: 'asc' or 'desc'",
+  "imagesNotProvided": "Images were not provided or were provided not as 'files'",
+  "imagesAdded": "Images added successfuly",
+  "imageNotFound": "Image not found",
+  "imageDeleted": "Image deleted successfuly",
+  "titleNotProvied": "Title was not provided",
+  "descriptionNotProvied": "Description was not provided",
+  "emailNotProvided": "Email was not provided",
+  "removedSuccessfuly": "Removed successfuly",
+  "notFoundResourceUnderUrlOrHTTPMethod": "Not found any resource under this url and/or with this HTTP method",
+  "welcomeToNovelServer": "Welcome to Novel Server. Head to {{swagger}} for avaliable endpoints."
+}

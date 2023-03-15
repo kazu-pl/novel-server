@@ -1,0 +1,9 @@
+{
+  "characterWithThisNameAlreadyExist": "Charakter mit diesem Namen existiert bereits",
+  "characterWithThisNameNotExist": "Character with this name does not exist",
+  "characterCreated": "Charakter erfolgreich erstellt",
+  "characterNotFound": "Zeichen wurde nicht gefunden",
+  "characterDeleted": "Zeichen entfernt",
+  "characterUpdated": "Charakter wurde erfolgreich aktualisiert",
+  "characterWithThisIdNotExist": "Charakter mit dieser ID existiert nicht"
+}

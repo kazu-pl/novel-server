@@ -3,7 +3,8 @@ import { RequestWithJWT } from "types/jwt.types";
 import SceneryModel, { SceneryImage } from "models/Scenery.model";
 import PhotoChunkModel from "models/PhotoChunk.model";
 import PhotoFileModel from "models/PhotoFile.model";
-import getTranslatedMessage from "utils/getTranslatedMessage";
+import i18n from "i18n";
+import { TranslationKey, TranslationNamespaces } from "locales/locales.types";
 
 const getSceneries = async (req: RequestWithJWT, res: Response) => {
   const { sortBy, sortDirection, pageSize, currentPage, search } = req.query;
@@ -15,10 +16,11 @@ const getSceneries = async (req: RequestWithJWT, res: Response) => {
     typeof currentPage !== "string"
   ) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "sortBy, sortDirection, pageSize i currentPage powinny być typu string",
-        en: "sortBy, sortDirection, pageSize and currentPage should be of type string",
-        de: "sortBy, sortDirection, pageSize und currentPage sollten vom Typ string sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "sortBy, sortDirection, pageSize, currentPage",
+        type: "string",
       }),
     });
   }
@@ -28,20 +30,21 @@ const getSceneries = async (req: RequestWithJWT, res: Response) => {
 
   if (typeof size !== "number" || typeof page !== "number") {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "pageSize i currentPage powinny być typu string, ale wartość powinna nadal przypominać liczbę. Przykład: '1' lub '5'",
-        en: "pageSize and currentPage should be of type string but the value should be still a number-like. Example: '1' or '5'",
-        de: "pageSize und currentPage sollten vom Typ String sein, aber der Wert sollte immer noch eine Zahl sein. Beispiel: '1' oder '5'",
-      }),
+      message: i18n.t(
+        "pageSizeAndCurrentPageShouldBeStringNumberlike" as TranslationKey["common"],
+        {
+          lng: req.headers["accept-language"],
+          ns: "common" as TranslationNamespaces,
+        }
+      ),
     });
   }
 
   if (sortDirection && !["asc", "desc"].includes(sortDirection)) {
     return res.status(400).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Nieprawidłowe zapytanie sortDirection. Dozwolone kierunki: 'asc' lub 'desc'",
-        en: "Invalid sortDirection query. Allowed directions: 'asc' or 'desc'",
-        de: "Ungültige sortDirection-Abfrage. Zulässige Richtungen: 'asc' oder 'desc'",
+      message: i18n.t("invalidSortDirection" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
     });
   }
@@ -80,10 +83,9 @@ const getSceneries = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd",
-        en: "An error occured",
-        de: "Es ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -93,22 +95,31 @@ const getSceneries = async (req: RequestWithJWT, res: Response) => {
 const addScenery = async (req: RequestWithJWT, res: Response) => {
   const { title, description } = req.body;
 
-  if (!title || !description) {
+  if (!title) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "nie podano tytułu i/lub opisu",
-        en: "title and/or description was not provided",
-        de: "Titel und/oder Beschreibung wurde nicht angegeben",
+      message: i18n.t("titleNotProvied" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+      }),
+    });
+  }
+
+  if (!description) {
+    return res.status(422).json({
+      message: i18n.t("descriptionNotProvied" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
     });
   }
 
   if (typeof title !== "string" || typeof description !== "string") {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "tytuł i opis powinny być typu string",
-        en: "title and description should be of type string",
-        de: "Titel und Beschreibung sollten vom Typ String sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "title, description",
+        type: "string",
       }),
     });
   }
@@ -117,11 +128,13 @@ const addScenery = async (req: RequestWithJWT, res: Response) => {
     const scenery = await SceneryModel.findOne({ title }).exec();
     if (scenery) {
       return res.status(422).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "sceneria o tej nazwie już istnieje",
-          en: "scenery with that name already exists",
-          de: "Szenerie mit diesem Namen existiert bereits",
-        }),
+        message: i18n.t(
+          "sceneryWithThatNameAlreadyExist" as TranslationKey["scenery"],
+          {
+            lng: req.headers["accept-language"],
+            ns: "scenery" as TranslationNamespaces,
+          }
+        ),
       });
     }
 
@@ -133,29 +146,26 @@ const addScenery = async (req: RequestWithJWT, res: Response) => {
       .save()
       .then(() => {
         return res.status(201).json({
-          message: getTranslatedMessage(req.headers["accept-language"], {
-            pl: "sceneria stworzona pomyślnie",
-            en: "scenery with that name already exists",
-            de: "Landschaft erfolgreich erstellt",
+          message: i18n.t("sceneryCreated" as TranslationKey["scenery"], {
+            lng: req.headers["accept-language"],
+            ns: "scenery" as TranslationNamespaces,
           }),
         });
       })
       .catch((error) => {
         return res.status(500).json({
-          message: getTranslatedMessage(req.headers["accept-language"], {
-            pl: "Wystąpił błąd na serwerze podczas próby przetworzenia twojego żądania",
-            en: "There was an error on the server while trying to process your request",
-            de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist auf dem Server ein Fehler aufgetreten",
+          message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+            lng: req.headers["accept-language"],
+            ns: "common" as TranslationNamespaces,
           }),
           error,
         });
       });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd na serwerze podczas próby przetworzenia twojego żądania",
-        en: "There was an error on the server while trying to process your request",
-        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist auf dem Server ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -168,10 +178,9 @@ const getSingleScenery = async (req: RequestWithJWT, res: Response) => {
 
     if (!data) {
       return res.status(404).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Nie znaleziono scenerii",
-          en: "Scenery was not found",
-          de: "Landschaft wurde nicht gefunden",
+        message: i18n.t("sceneryNotFound" as TranslationKey["scenery"], {
+          lng: req.headers["accept-language"],
+          ns: "scenery" as TranslationNamespaces,
         }),
       });
     }
@@ -181,10 +190,9 @@ const getSingleScenery = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd",
-        en: "An error occured",
-        de: "Es ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -197,18 +205,16 @@ const deleteScenery = async (req: RequestWithJWT, res: Response) => {
   try {
     await SceneryModel.deleteOne({ _id: id }).exec();
     return res.status(200).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Sceniera została usunięta",
-        en: "Scenery removed",
-        de: "Landschaft entfernt",
+      message: i18n.t("sceneryDeleted" as TranslationKey["scenery"], {
+        lng: req.headers["accept-language"],
+        ns: "scenery" as TranslationNamespaces,
       }),
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd",
-        en: "An error occured",
-        de: "Es ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -220,10 +226,9 @@ const addSceneryImages = async (req: RequestWithJWT, res: Response) => {
 
   if (!req.files) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "pliki nie zostały dostarczone lub nie zostały dostarczone jako 'pliki'",
-        en: "files were not provided or were provided not as 'files'",
-        de: "Dateien wurden nicht oder nicht als 'Dateien' bereitgestellt",
+      message: i18n.t("imagesNotProvided" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
     });
   }
@@ -233,20 +238,23 @@ const addSceneryImages = async (req: RequestWithJWT, res: Response) => {
 
     if (!scenery) {
       return res.status(404).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "sceneria z tym identyfikatorem nie istnieje",
-          en: "scenery with that id does no exist",
-          de: "Szenerie mit dieser ID existiert nicht",
-        }),
+        message: i18n.t(
+          "sceneryWithThisIdNotExist" as TranslationKey["scenery"],
+          {
+            lng: req.headers["accept-language"],
+            ns: "scenery" as TranslationNamespaces,
+          }
+        ),
       });
     }
 
     if (!Array.isArray(req.files)) {
       return res.status(422).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Pliki nie były tablicą",
-          en: "Files were not an array",
-          de: "Dateien waren kein Array",
+        message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+          lng: req.headers["accept-language"],
+          ns: "common" as TranslationNamespaces,
+          key: "scenes",
+          type: "array",
         }),
       });
     }
@@ -266,18 +274,16 @@ const addSceneryImages = async (req: RequestWithJWT, res: Response) => {
       .exec();
 
     return res.status(201).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "obrazy dodane pomyślnie",
-        en: "images added successfuly",
-        de: "Bilder erfolgreich hinzugefügt",
+      message: i18n.t("imagesAdded" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "wystąpił błąd podczas próby dodania zdjęć",
-        en: "there was an error when trying to add images",
-        de: "Beim Hinzufügen von Bildern ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -292,10 +298,9 @@ const deleteSceneryImage = async (req: RequestWithJWT, res: Response) => {
 
     if (!scenery) {
       return res.status(404).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Nie znaleziono scenerii",
-          en: "Scenery was not found",
-          de: "Landschaft wurde nicht gefunden",
+        message: i18n.t("sceneryNotFound" as TranslationKey["scenery"], {
+          lng: req.headers["accept-language"],
+          ns: "scenery" as TranslationNamespaces,
         }),
       });
     }
@@ -306,10 +311,9 @@ const deleteSceneryImage = async (req: RequestWithJWT, res: Response) => {
 
     if (!imageToBeDeleted) {
       return res.status(404).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Nie znaleziono zdjęcia",
-          en: "IMG was not found",
-          de: "IMG wurde nicht gefunden",
+        message: i18n.t("imageNotFound" as TranslationKey["common"], {
+          lng: req.headers["accept-language"],
+          ns: "common" as TranslationNamespaces,
         }),
       });
     }
@@ -326,18 +330,16 @@ const deleteSceneryImage = async (req: RequestWithJWT, res: Response) => {
       .exec();
 
     return res.status(200).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "obraz usunięty pomyślnie",
-        en: "image deleted sucessfuly",
-        de: "Bild erfolgreich gelöscht",
+      message: i18n.t("sceneryDeleted" as TranslationKey["scenery"], {
+        lng: req.headers["accept-language"],
+        ns: "scenery" as TranslationNamespaces,
       }),
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd",
-        en: "An error occured",
-        de: "Es ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
       error,
     });
@@ -348,22 +350,31 @@ const updateBasicSceneryData = async (req: RequestWithJWT, res: Response) => {
   const id = req.params.id;
   const { title, description } = req.body;
 
-  if (!title || !description) {
+  if (!title) {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "nie podano tytułu i/lub opisu",
-        en: "title and/or description was not provided",
-        de: "Titel und/oder Beschreibung wurde nicht angegeben",
+      message: i18n.t("titleNotProvied" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+      }),
+    });
+  }
+
+  if (!description) {
+    return res.status(422).json({
+      message: i18n.t("descriptionNotProvied" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
       }),
     });
   }
 
   if (typeof title !== "string" || typeof description !== "string") {
     return res.status(422).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "tytuł i opis powinny być typu string",
-        en: "title and description should be of type string",
-        de: "Titel und Beschreibung sollten vom Typ String sein",
+      message: i18n.t("shouldBeOfType" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+        key: "title, description",
+        type: "string",
       }),
     });
   }
@@ -376,10 +387,9 @@ const updateBasicSceneryData = async (req: RequestWithJWT, res: Response) => {
 
     if (!scenery) {
       return res.status(404).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "nie znaleziono scenerii",
-          en: "scenery was not found",
-          de: "Szenerie wurde nicht gefunden",
+        message: i18n.t("sceneryNotFound" as TranslationKey["scenery"], {
+          lng: req.headers["accept-language"],
+          ns: "scenery" as TranslationNamespaces,
         }),
       });
     }
@@ -389,28 +399,28 @@ const updateBasicSceneryData = async (req: RequestWithJWT, res: Response) => {
       potentialSceneryWithTheSameName?.id !== scenery.id
     ) {
       return res.status(422).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "Sceneria o tej nazwie już istnieje",
-          en: "Scenery with that name already exists",
-          de: "Szenerie mit diesem Namen existiert bereits",
-        }),
+        message: i18n.t(
+          "sceneryWithThatNameAlreadyExist" as TranslationKey["scenery"],
+          {
+            lng: req.headers["accept-language"],
+            ns: "scenery" as TranslationNamespaces,
+          }
+        ),
       });
     }
 
     await scenery.updateOne({ title, description }).exec();
     return res.status(200).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Sceneria została zaktualizowana pomyślnie",
-        en: "Scenery was updated successfuly",
-        de: "Szenerie wurde erfolgreich aktualisiert",
+      message: i18n.t("sceneryUpdated" as TranslationKey["scenery"], {
+        lng: req.headers["accept-language"],
+        ns: "scenery" as TranslationNamespaces,
       }),
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
-        en: "There was an error while trying to process your request",
-        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "anErrorOccured" as TranslationNamespaces,
       }),
       error,
     });
@@ -426,10 +436,9 @@ const getSceneryDictionary = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
-        en: "There was an error while trying to process your request",
-        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "anErrorOccured" as TranslationNamespaces,
       }),
       error,
     });
@@ -449,10 +458,9 @@ const getSceneryImagesCount = async (req: RequestWithJWT, res: Response) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: getTranslatedMessage(req.headers["accept-language"], {
-        pl: "Wystąpił błąd podczas próby przetworzenia Twojego żądania",
-        en: "There was an error while trying to process your request",
-        de: "Beim Versuch, Ihre Anfrage zu verarbeiten, ist ein Fehler aufgetreten",
+      message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+        lng: req.headers["accept-language"],
+        ns: "anErrorOccured" as TranslationNamespaces,
       }),
       error,
     });

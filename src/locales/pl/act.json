@@ -1,0 +1,12 @@
+{
+  "titleDescriptionStatusScenesWereNotProvided": "nie podano tytułu, opisu, statusu lub scen",
+  "titleDescriptionShouldBeString": "tytuł, opis, typ powinien być typu string",
+  "onlyOneActWithType": "Może istnieć tylko 1 rozdział typu: {{type}}",
+  "actWithThisTitleAlreadyExists": "Rozdział o tym tytule już istnieje",
+  "actCreatedSuccessfuly": "Akt utworzony pomyślnie",
+  "actWithThisTypeAlreadyExists": "Rozdział z typem '{{type}}' już istnieje",
+  "couldNotFindActWithThisId": "Nie udało się znaleźć żadnego aktu o tym identyfikatorze",
+  "actUpdatedSuccessfuly": "Rozdział zaktualizowany pomyślnie",
+  "actDeletedSuccessfuly": "Akt został usunięty",
+  "endActCantHaveNextActField": "Akt typu 'end' nie może mieć pola 'nextAct'"
+}

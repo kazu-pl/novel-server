@@ -10,7 +10,10 @@ import { GridFSBucket } from "mongodb";
 import { photosBucketName } from "middleware/fileUpload";
 import PhotoFileModel from "models/PhotoFile.model";
 import { PATHS_FILES } from "constants/paths";
-import getTranslatedMessage from "utils/getTranslatedMessage";
+
+import i18n from "./i18n";
+
+import { TranslationKey, TranslationNamespaces } from "locales/locales.types";
 
 export let gridFSBucket: GridFSBucket;
 
@@ -83,10 +86,9 @@ app.get(PATHS_FILES.SINGLE_FILE, (req, res) => {
     .then((file) => {
       if (file === undefined || file === null) {
         return res.status(404).json({
-          message: getTranslatedMessage(req.headers["accept-language"], {
-            pl: "Nie znaleziono zdjęcia",
-            en: "Photo Not found",
-            de: "Foto nicht gefunden",
+          message: i18n.t("photoNotFound" as TranslationKey["files"], {
+            lng: req.headers["accept-language"],
+            ns: "files" as TranslationNamespaces,
           }),
         });
       }
@@ -97,10 +99,9 @@ app.get(PATHS_FILES.SINGLE_FILE, (req, res) => {
     })
     .catch((error) => {
       res.status(500).json({
-        message: getTranslatedMessage(req.headers["accept-language"], {
-          pl: "wystąpił błąd",
-          en: "an error occured",
-          de: "es ist ein Fehler aufgetreten",
+        message: i18n.t("anErrorOccured" as TranslationKey["common"], {
+          lng: req.headers["accept-language"],
+          ns: "common" as TranslationNamespaces,
         }),
         error,
       });

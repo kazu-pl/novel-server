@@ -1,0 +1,20 @@
+{
+  "anErrorOccured": "es ist ein Fehler aufgetreten",
+  "successfulMsg": "ok",
+  "errorMsg": "es ist ein Fehler aufgetreten",
+  "shouldBeOfType": "{{key}} should be of type {{type}}",
+  "keyHasInvalidValue": "Der {{key}} hat einen ungültigen Wert. Zulässige Werte: {{allowedValues}}",
+  "requiredFieldsWereNotProvided": "Pflichtfelder sind nicht vorhanden",
+  "pageSizeAndCurrentPageShouldBeStringNumberlike": "pageSize und currentPage sollten vom Typ String sein, aber der Wert sollte immer noch eine Zahl sein. Beispiel: '1' oder '5'",
+  "invalidSortDirection": "Ungültige sortDirection-Abfrage. Zulässige Richtungen: 'asc' oder 'desc'",
+  "imagesNotProvided": "Dateien wurden nicht oder nicht als 'files' bereitgestellt",
+  "imagesAdded": "Bilder erfolgreich hinzugefügt",
+  "imageNotFound": "Bilder wurde nicht gefunden",
+  "imageDeleted": "Bild erfolgreich gelöscht",
+  "titleNotProvied": "Titel wurde nicht angegeben",
+  "descriptionNotProvied": "Beschreibung wurde nicht angegeben",
+  "emailNotProvided": "Email wurde nicht angegeben",
+  "removedSuccessfuly": "Erfolgreich entfernt",
+  "notFoundResourceUnderUrlOrHTTPMethod": "Keine Ressource unter dieser URL und/oder mit dieser HTTP-Methode gefunden",
+  "welcomeToNovelServer": "Willkommen beim Novel-Server. Gehen Sie zu {{swagger}} für verfügbare Endpunkte."
+}

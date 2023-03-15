@@ -1,0 +1,8 @@
+{
+  "sceneryWithThatNameAlreadyExist": "Szenerie mit diesem Namen existiert bereits",
+  "sceneryWithThisIdNotExist": "Szenerie mit dieser ID existiert nicht",
+  "sceneryCreated": "Landschaft erfolgreich erstellt",
+  "sceneryNotFound": "Landschaft wurde nicht gefunden",
+  "sceneryDeleted": "Landschaft entfernt",
+  "sceneryUpdated": "Szenerie wurde erfolgreich aktualisiert"
+}

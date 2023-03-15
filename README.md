@@ -1,3 +1,154 @@
+# How to add i18n to translate messages:
+
+You can add simple configuration like this:
+
+```ts
+// src/i18n.ts
+
+import i18n from "i18next";
+import translationDE from "locales/de/translation.json";
+import translationEN from "locales/en/translation.json";
+import translationPL from "locales/pl/translation.json";
+
+i18n.init({
+  resources: {
+    de: {
+      translation: translationDE, // `translation` key is the default i18n namespace name (it can be changed in `defaultNS` key of i18n)
+    },
+    en: {
+      translation: translationEN,
+    },
+    pl: {
+      translation: translationPL,
+    },
+  },
+  fallbackLng: "en", // use `en` languae if detected language is not supported with your server
+  interpolation: {
+    escapeValue: false,
+  },
+});
+
+export default i18n;
+```
+
+---
+
+PAY ATTENTION that in `resources` you have to put language (like `pl`) and it's an object with key `translation`. That key is the initial namespace (can be modified in `defaultNS`). If you want to have ALL translations in that file then its okay but if you want to use more namespaces you would need to create `_pl.ts` file in which you would manually create object with namespaces and pass that object to `pl` resource:
+
+```ts
+// src/locales/pl/pl.ts
+
+// `pl` instead of `pl` becasue `pl` will always be at the top of the folder so it will be visually easier to look for this file
+
+import errors from "./errors.json";
+import common from "./translation.json";
+
+const pl = {
+  errors,
+  common,
+};
+
+export default pl;
+```
+
+and then modify configuration of `i18n`:
+
+```ts
+import i18n from "i18next";
+
+import pl from "locales/pl/_pl";
+
+i18n.init({
+  resources: {
+    pl,
+  },
+});
+```
+
+---
+
+Then import `i18n` it in `index.ts` like so:
+
+```ts
+// src/index.ts
+
+import "./i18n"; // just simply import i18n
+
+// OR
+import i18n from "./i18n"; // use this version if you want to additionaly translate something in index.ts
+```
+
+IF you want, you can also create types for translation keys and namespaces:
+
+```ts
+// src/locales/locales.types.ts
+
+import en from "./en/_en";
+
+// This file creates literal union of each namespace translation keys based on EN language which is  the default language
+
+export type TranslationKeysAuth = keyof typeof en.auth;
+export type TranslationKeysCommon = keyof typeof en.common;
+export type TranslationKeysFiles = keyof typeof en.files;
+
+export type TranslationNamespaces = keyof typeof en;
+```
+
+OR BETTER - USE THE BELOW TYPE:
+
+```ts
+type T = typeof en;
+
+export type TranslationNamespaces = keyof typeof en;
+
+export type TranslationKey = {
+  [Property in keyof T]: keyof T[Property];
+};
+```
+
+which changes structure of translation files type from this type:
+
+```ts
+// the original type:
+
+const OriginalTranslationJsonFileType = {
+  common: {
+    anErrorOccured: "Wystąpił błąd",
+  },
+  auth: {
+    unauthorized: "brak autoryzacji",
+    forbidden: "Zabronione",
+  },
+};
+```
+
+into this:
+
+```ts
+const NewTranslationJsonFileType = {
+  common: "anErrorOccured",
+  auth: "unauthorized" | "forbidden",
+};
+```
+
+And then you can use it all to return messages to front:
+
+```ts
+const getCharacters = (req: RequestWithJWT, res: Response) => {
+  // do
+  // some
+  // work
+  // here
+  return res.status(403).json({
+    message: i18n.t("notSufficientPrivilege" as TranslationKeysAuth, {
+      // use as TranslationKeysAuth or as TranslationKey["auth"]
+      lng: req.headers["accept-language"],
+      // ns: "translation" as TranslationNamespaces, // if you want to not use translation.json but use namespaces then pass here the correct namespace (you can also specify `defaultNS` or `fallbackNS` in `18n.ts` for a default namespace like `common` so you don't need to pass anything here as `ns` key)
+    }),
+  });
+};
+```
+
 # Single database connection stirng vs assembling it:
 
 When heroku disabled its free plan I had to move this server on `https://render.com` but it could not build the server and it throwed the following error:
