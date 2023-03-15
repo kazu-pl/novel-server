@@ -12,5 +12,7 @@
   "imageNotFound": "Nie znaleziono zdjęcia",
   "imageDeleted": "Zdjęcie zostało usunięte",
   "titleNotProvied": "Nie podano tytułu",
-  "descriptionNotProvied": "Nie podano opisu"
+  "descriptionNotProvied": "Nie podano opisu",
+  "emailNotProvided": "Email nie został podany",
+  "removedSuccessfuly": "Usunięto pomyślnie"
 }

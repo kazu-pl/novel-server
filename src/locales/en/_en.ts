@@ -4,6 +4,7 @@ import files from "./files.json";
 import act from "./act.json";
 import character from "./character.json";
 import scenery from "./scenery.json";
+import user from "./user.json";
 
 const en = {
   act,
@@ -12,6 +13,7 @@ const en = {
   files,
   character,
   scenery,
+  user,
 };
 
 export default en;

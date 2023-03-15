@@ -12,5 +12,7 @@
   "imageNotFound": "Image not found",
   "imageDeleted": "Image deleted successfuly",
   "titleNotProvied": "Title was not provided",
-  "descriptionNotProvied": "Description was not provided"
+  "descriptionNotProvied": "Description was not provided",
+  "emailNotProvided": "Email was not provided",
+  "removedSuccessfuly": "Removed successfuly"
 }

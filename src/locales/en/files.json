@@ -1,3 +1,4 @@
 {
-  "photoNotFound": "Photo Not found"
+  "photoNotFound": "Photo Not found",
+  "mustSelectAFile": "You must select a file"
 }

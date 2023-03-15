@@ -1,0 +1,11 @@
+{
+  "userProfileNotFound": "User profile not found",
+  "updated": "Updated successfuly",
+  "accountWithThisEmailNotExist": "Account with this email does not exist",
+  "linkChangingPasswordSent": "We've just sent you a link that will allow you to change your password. Check your email.",
+  "linkChangingPasswordExpired": "Changing password link expired or user didn't request to change password",
+  "couldNotUpdateUserProfile": "Could not update user profile",
+  "avatarWasDeleted": "Avatar was deleted",
+  "accountWasDeleted": "Account was deleted",
+  "couldNotRemoveSave": "Could not remove save"
+}

@@ -11,6 +11,8 @@
   "imagesAdded": "Bilder erfolgreich hinzugefügt",
   "imageNotFound": "Bilder wurde nicht gefunden",
   "imageDeleted": "Bild erfolgreich gelöscht",
-  "titleNotProvied": "Titel sollten vom Typ String sein",
-  "descriptionNotProvied": "Beschreibung sollten vom Typ String sein"
+  "titleNotProvied": "Titel wurde nicht angegeben",
+  "descriptionNotProvied": "Beschreibung wurde nicht angegeben",
+  "emailNotProvided": "Email wurde nicht angegeben",
+  "removedSuccessfuly": "Erfolgreich entfernt"
 }
