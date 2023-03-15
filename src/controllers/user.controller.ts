@@ -13,7 +13,6 @@ import { Request as MulterRequest } from "types/multer.types";
 import PhotoFileModel from "models/PhotoFile.model";
 import PhotoChunkModel from "models/PhotoChunk.model";
 import { RequestWithJWT } from "types/jwt.types";
-import getTranslatedMessage from "utils/getTranslatedMessage";
 import getAccessTokenFromHeaders from "utils/getAccessTokenFromHeaders";
 import i18n from "i18n";
 import { TranslationKey, TranslationNamespaces } from "locales/locales.types";

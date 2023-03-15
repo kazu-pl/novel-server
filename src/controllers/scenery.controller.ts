@@ -3,7 +3,6 @@ import { RequestWithJWT } from "types/jwt.types";
 import SceneryModel, { SceneryImage } from "models/Scenery.model";
 import PhotoChunkModel from "models/PhotoChunk.model";
 import PhotoFileModel from "models/PhotoFile.model";
-import getTranslatedMessage from "utils/getTranslatedMessage";
 import i18n from "i18n";
 import { TranslationKey, TranslationNamespaces } from "locales/locales.types";
 

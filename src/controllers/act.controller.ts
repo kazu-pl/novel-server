@@ -1,7 +1,6 @@
 import { Response } from "express";
 import { RequestWithJWT } from "types/jwt.types";
 import ActModel, { Act, ActType } from "models/Act.model";
-import getTranslatedMessage from "utils/getTranslatedMessage";
 import i18n from "i18n";
 import { TranslationKey, TranslationNamespaces } from "locales/locales.types";
 

@@ -9,17 +9,17 @@ import userRouter from "routes/user.router";
 import sceneryRouter from "routes/scenery.router";
 import characterRouter from "routes/character.router";
 import actRouter from "routes/act.router";
-
-import getTranslatedMessage from "utils/getTranslatedMessage";
+import i18n from "i18n";
+import { TranslationKey, TranslationNamespaces } from "locales/locales.types";
 
 const Router = express.Router();
 
 Router.get("/", (req, res) =>
   res.status(200).json({
-    message: getTranslatedMessage(req.headers["accept-language"], {
-      pl: `Witamy na Novel serwerze. Przejdź do ${PATHS_SWAGGER.SWAGGER}, aby uzyskać dostępne endpointy.`,
-      en: `Welcome to Novel Server. Head to ${PATHS_SWAGGER.SWAGGER} for avaliable endpoints.`,
-      de: `Willkommen beim Novel-Server. Gehen Sie zu ${PATHS_SWAGGER.SWAGGER} für verfügbare Endpunkte.`,
+    message: i18n.t("welcomeToNovelServer" as TranslationKey["common"], {
+      lng: req.headers["accept-language"],
+      ns: "common" as TranslationNamespaces,
+      swagger: PATHS_SWAGGER.SWAGGER,
     }),
   })
 );
@@ -42,11 +42,13 @@ Router.use(actRouter);
 
 Router.use((req, res, next) =>
   res.status(404).json({
-    message: getTranslatedMessage(req.headers["accept-language"], {
-      pl: `Nie znaleziono żadnego zasobu pod tym adresem URL i/lub tą metodą HTTP`,
-      en: `Not found any resource under this url and/or with this HTTP method`,
-      de: `Keine Ressource unter dieser URL und/oder mit dieser HTTP-Methode gefunden`,
-    }),
+    message: i18n.t(
+      "notFoundResourceUnderUrlOrHTTPMethod" as TranslationKey["common"],
+      {
+        lng: req.headers["accept-language"],
+        ns: "common" as TranslationNamespaces,
+      }
+    ),
   })
 );
 

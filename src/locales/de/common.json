@@ -14,5 +14,7 @@
   "titleNotProvied": "Titel wurde nicht angegeben",
   "descriptionNotProvied": "Beschreibung wurde nicht angegeben",
   "emailNotProvided": "Email wurde nicht angegeben",
-  "removedSuccessfuly": "Erfolgreich entfernt"
+  "removedSuccessfuly": "Erfolgreich entfernt",
+  "notFoundResourceUnderUrlOrHTTPMethod": "Keine Ressource unter dieser URL und/oder mit dieser HTTP-Methode gefunden",
+  "welcomeToNovelServer": "Willkommen beim Novel-Server. Gehen Sie zu {{swagger}} für verfügbare Endpunkte."
 }

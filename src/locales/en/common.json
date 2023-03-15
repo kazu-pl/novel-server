@@ -14,5 +14,7 @@
   "titleNotProvied": "Title was not provided",
   "descriptionNotProvied": "Description was not provided",
   "emailNotProvided": "Email was not provided",
-  "removedSuccessfuly": "Removed successfuly"
+  "removedSuccessfuly": "Removed successfuly",
+  "notFoundResourceUnderUrlOrHTTPMethod": "Not found any resource under this url and/or with this HTTP method",
+  "welcomeToNovelServer": "Welcome to Novel Server. Head to {{swagger}} for avaliable endpoints."
 }

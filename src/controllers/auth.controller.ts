@@ -14,7 +14,6 @@ import cache, {
   createAccessTokenName,
   createRefreshTokenName,
 } from "config/cache";
-import getTranslatedMessage from "utils/getTranslatedMessage";
 import { TranslationKey, TranslationNamespaces } from "locales/locales.types";
 import i18n from "i18n";
 

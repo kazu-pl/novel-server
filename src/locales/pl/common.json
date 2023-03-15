@@ -14,5 +14,7 @@
   "titleNotProvied": "Nie podano tytułu",
   "descriptionNotProvied": "Nie podano opisu",
   "emailNotProvided": "Email nie został podany",
-  "removedSuccessfuly": "Usunięto pomyślnie"
+  "removedSuccessfuly": "Usunięto pomyślnie",
+  "notFoundResourceUnderUrlOrHTTPMethod": "Nie znaleziono żadnego zasobu pod tym adresem URL i/lub tą metodą HTTP",
+  "welcomeToNovelServer": "Witamy na Novel serwerze. Przejdź do {{swagger}}, aby uzyskać dostępne endpointy."
 }
